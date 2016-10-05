@@ -1,19 +1,20 @@
 import cdat_info
 class StringConstructor:
-    """ This Class aims at spotting keyword in string and replacing them
+    """
+    This class aims at spotting keywords in a string and replacing them
+
     Usage
     Filler=StringConstructor(template)
     or
     Filler=StringConstructor()
     Filler.template=template
 
-    template is a string of form
-    template = 'my string here with %(keywords) in it'
+    template is a string of form: 'my string here with %(keywords) in it'
 
     You can have has many 'keyword' as you want, and use them as many times as you want
     keywords are delimited on the left by %( and ) on the right
     
-    In order to construct the string (i.e. replace keywrods with some values:
+    In order to construct the string (i.e. replace keywords with some values:
 
     str=Filler(keyword='kwstr')
     or
@@ -59,7 +60,7 @@ class StringConstructor:
 
     def construct(self,template=None,**kw):
         """
-        construct, accepts a string with a unlimited number of keyword to replace
+        Accepts a string with a unlimited number of keyword to replace
         keyword to replace must be in the format %(keyword) within the string
         keyword value are either passed as keyword to the construct function or preset
         Example:

@@ -1,5 +1,5 @@
 def statusbar(status,total=1.,prev=-1,title='Done',tk=None):
-    '''
+    """
     # Create the illusion of a progressing bar
     # Date: August 1st, 2000
     # Author: Charles Doutriaux
@@ -37,7 +37,7 @@ def statusbar(status,total=1.,prev=-1,title='Done',tk=None):
         prevtxt=statusbar(float(j)/nj,prev=prevtxt,tk=None,title='Test')
 
 
-    '''
+    """
     import sys,string
     chardic={
       0:'|',

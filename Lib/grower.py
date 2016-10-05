@@ -5,19 +5,23 @@ import cdms2 as cdms
 
 def grower(x, y, singleton=0):
     """
-    Function: grower
-
-    Description of function:
-        This function takes 2 transient variables and grows them to
-        match their axes.
+    This function takes 2 transient variables and grows them to
+    match their axes.
     
-    Usage:
-        x, y = grower(x, y, singleton=singletonoption)
+    :Example:
 
-    Options:
-        singletonoption 0 | 1
-        Default = 0 If singletonoption is set to 1 then an error is
-        raised if one of the dims is not a singleton dimension.    
+        .. doctest:: genutil_grower
+            >>> x, y = grower(x, y, singleton=1)
+
+    :param x:
+    :type x:
+
+    :param y:
+    :type y:
+
+    :param singletonoption: Integer flag to indicate whether to raise an error if either dimension is not a singleton.
+        Default = 0
+        If singletonoption is set to 1 then an error is raised if one of the dims is not a singleton dimension.
     """
     # Parse the x axes
     xorder=x.getOrder(ids=1)
