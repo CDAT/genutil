@@ -10,6 +10,8 @@ def grower(x, y, singleton=0):
     Description of function:
         This function takes 2 transient variables and grows them to
         match their axes.
+        The final order will be the order of the first variables
+        followed by all/any dimension(s) from the second variable not present in the first variable
     
     Usage:
         x, y = grower(x, y, singleton=singletonoption)
