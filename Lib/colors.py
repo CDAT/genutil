@@ -665,11 +665,16 @@ def str2rgb(col):
 
         .. doctest:: genutil_colors_str2rgb
 
-            >>> r, g, b = str2rgb('pink2') # returns: (238 , 169 , 184 )
-            >>> r, g, b = str2rgb('cray') # returns: (None, None, None)
+            >>> str2rgb('pink2')
+            238, 169, 184
+            >>> str2rgb('cray')
+            None, None, None
 
     :param col: String name of a color.
     :type col: str
+
+    :returns: A three-tuple with red, green, and blue values of the specified color, or None, None, None if the color
+            does not exist.
     """
     import string
     ret=[]

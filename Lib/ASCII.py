@@ -33,14 +33,19 @@ def readAscii( text_file ,header=0, ids=None, shape=None, next='------',separato
 
     :param text_file: A string, containing the path to an ASCII File to read from.
     :type text_file: str
+
     :param header: Number of header lines, these lines will be skipped.
     :type header: int
+
     :param ids: List of values to use as variable ids (1 per variable returned)
     :type ids: list
+
     :param shape: use the tuple/list in this list as the final shape of the variable read.
     :type shape: tuple or list
+
     :param next: character string marking separation between variables (i.e. '------')
     :type next: str
+
     :param separators: List of characters recognized as column separators (i.e. [';',',',':'])
     :type separators: list
 
@@ -104,24 +109,31 @@ def read_col( text_file ,header=0, cskip=0, cskip_type='columns', axis=False, id
 
     :param text_file: ASCII File to read from.
     :type text_file:
+
     :param header: (0) Number of header lines, these lines will be skipped.
     :type header:
+
     :param cskip: (0) Number of 'column'/'character' to skip (dummy column)
     :type cskip:
+
     :param cskip_type: ('column') is 'cskip'  a number of 'column' or 'character' to skip?
     :type cskip_type:
+
     :param axis: (False)  Use as the values for the first column as variable axis (x values in y(x))
     :type axis:
+
     :param idrow: (False) Is the first row representing the ids of var generated ?
     :type idrow:
+
     :param ids: (None) use the values in this list as variable ids (1 per column returned)
     :type ids:
+
     :param separators: ([';',',', ':']) List of character recognized as column separator
     :type separators:
 
-    :returns: List containing 1 transient varialbe per column in the files.
+    :returns: List containing 1 transient variable per column in the files.
                 Variable ids are optionaly determined by first row.
-                Variable axis may be the first column
+                Variable axis may be the first column.
     :rtype: list
     """
 

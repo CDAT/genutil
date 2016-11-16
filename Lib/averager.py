@@ -5,10 +5,10 @@ import cdat_info
 
 class AveragerError (Exception):
     def __init__ (self, args=None):
-        "Create an exception"
+        """Create an exception"""
         self.args = args
     def __str__(self):
-        "Calculate the string representation"
+        """Calculate the string representation"""
         return str(self.args)
     __repr__ = __str__
 
@@ -723,18 +723,18 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
 
     :returns: The average over the specified dimensions.
 
-    Usage:
-    ------
+    :Usage:
 
         .. code-block:: python
 
             from cdutil import averager
-            averager( V, axis='axisoptions', weights=weightoptions, action='average',
+            averager(V, axis='axisoptions', weights=weightoptions, action='average',
                       returned='0')
 
-        Where V is an array. It can be an array of numpy, numpy.ma or MV2 type. In each case
-        the function returns an array (except when it results in a scalar) of the same
-        type as V. See examples for more details.
+
+
+    :param V: an array of numpy, numpy.ma or MV2 type
+    :type V: numpy.array or numpy.ma or MV2
 
     :param axis: String specifying axisoptions.
         Default: first dimension in the data you pass to the function.
@@ -744,15 +744,17 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
         numpy.ma array, axis names have no meaning and only axis indexes are valid.
     :type axis: string
 
-    :param weights: String specifying weight options, or a
+    :param weights: String specifying weight options
 
         Default:
 
             'weighted' for Transient Variables (MV2s)
             'unweighted' for numpy.ma or numpy arrays.
 
-        Note that depending on the array being operated on by averager, the
-        default weights change!
+        .. note::
+
+            Depending on the array being operated on by averager, the
+            default weights change!
 
         Weight options are one of 'weighted', 'unweighted',  an array of weights for
         each dimension or a MaskedVariable of the same shape as the data x.
@@ -775,7 +777,6 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
             those values are used. Otherwise, bounds are generated as long as
             cdms2.setAutoBounds('on') is set.
             If cdms2.setAutoBounds() is set to 'off', then an Error is raised.
-
     :type weights: str
 
     :param action: One of 'average' or 'sum'. Specifies whether to return the weighted average or weighted sum of data.

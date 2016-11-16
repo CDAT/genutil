@@ -685,29 +685,28 @@ def covariance(x,y,weights=None,axis=0,centered=1,biased=1,max_pct_missing=100.)
             >>> cov = covariance(x, y, weights=weightoptions, axis=axisoptions,
                          centered=centeredoptions, biased=biasedoptions,
                          max_pct_missing=max_pct_missingoptions)
-    :param weightoptions:
+    :param weights:
             default = None. If you want to compute the weighted covariance,
             provide the weights here.
-    :type weightoptions:
-    
-    :type axis:
+    :type weights:
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-    :type centered:
+    :type axis:
     :param centered: None | 0 | 1
         default value = 1 removes the mean first. Set to 0 or None for
         uncentered.
-    :type biased:
+    :type centered:
     :param biased: None | 0 | 1
         default value = 1 If want to compute an unbiased variance pass
         anything but 1.
-    :type max_pct_missing:
+    :type biased:
     :param max_pct_missing:
         default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
         Set to a percentage between 0 and 100%.
         Set to 0. to mask results if any data is masked.
         Set to 100. to calculate result if any data is not masked
+    :type max_pct_missing:
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.covariance")
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -734,27 +733,27 @@ def variance(x,weights=None,axis=0,centered=1,biased=1,max_pct_missing=100.):
             >>> result = variance(x, weights=weightoptions, axis = axisoptions,
                           centered=centeredoptions, biased = biasedoptions,
                           max_pct_missing=max_pct_missingoptions)
-    :type weightoptions:
     :param weightoptions:
             If you want to compute the weighted variance, provide weights here.
-    :type axis:
+    :type weightoptions:
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-    :type centered:
+    :type axis:
     :param centered: None | 0 | 1
         default value = 1 removes the mean first. Set to 0 or None for
         uncentered.
-    :type biased:
+    :type centered:
     :param biased: None | 0 | 1
         default value = 1 If want to compute an unbiased variance pass
         anything but 1.
-    :type max_pct_missing:
+    :type biased:
     :param max_pct_missing:
         default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
         Set to a percentage between 0 and 100%.
         Set to 0. to mask results if any data is masked.
         Set to 100. to calculate result if any data is not masked
+    :type max_pct_missing:
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.variance")
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -785,27 +784,27 @@ def std(x,weights=None,axis=0,centered=1,biased=1,max_pct_missing=100.):
             >>> result = std(x, weights=weightoptions, axis = axisoptions,
                      centered=centeredoptions, biased = biasedoptions,
                      max_pct_missing=max_pct_missingoptions)
-    :type weightoptions:
     :param weightoptions:
             If you want to compute the weighted statistic, provide weights here.
-    :type axis:
+    :type weightoptions:
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-    :type centered:
+    :type axis:
     :param centered: None | 0 | 1
             default value = 1 removes the mean first. Set to 0 or None for
             uncentered.
-    :type biased:
+    :type centered:
     :param biased: None | 0 | 1
+    :type biased:
         default value = 1 If want to compute an unbiased variance pass
         anything but 1.
-    :type max_pct_missing:
     :param max_pct_missing:
         default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
         Set to a percentage between 0 and 100%.
         Set to 0. to mask results if any data is masked.
         Set to 100. to calculate result if any data is not masked
+    :type max_pct_missing:
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.std")
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -830,28 +829,28 @@ def correlation(x,y,weights=None,axis=0,centered=1,biased=1,max_pct_missing=100.
             >>> result = correlation(x, y, weights=weightoptions, axis=axisoptions,
                              centered=centeredoptions, biased=biasedoptions,
                              max_pct_missing=max_pct_missingoptions)
-    :type weights:
     :param weights:
             default = None. If you want to compute the weighted correlation,
             provide the weights here.
-    :type axis:
+    :type weights:
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-    :type centered:
+    :type axis:
     :param centered: None | 0 | 1
         default value = 1 removes the mean first. Set to 0 or None for
         uncentered.
-    :type biased:
+    :type centered:
     :param biased: None | 0 | 1
         default value = 1 returns biased statistic. If want to compute an
         unbiased statistic pass anything but 1.
-    :type max_pct_missing:
+    :type biased:
     :param max_pct_missing:
         default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
         Set to a percentage between 0 and 100%.
         Set to 0. to mask results if any data is masked.
         Set to 100. to calculate result if any data is not masked
+    :type max_pct_missing:
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.corelation")
     x,y,weights,axis,ax=__checker(x,y,weights,axis)
@@ -875,29 +874,29 @@ def rms(x,y,weights=None,axis=0,centered=0,biased=1,max_pct_missing=100.):
             >>> result = rms(x, y, weights=weightoptions, axis = axisoptions,
                      centered=centeredoptions, biased = biasedoptions,
                      max_pct_missing=max_pct_missingoptions)
-    :type weights:
     :param weights:
             default = None returns equally weighted statistic. If you want to
             compute the weighted statistic, provide weights here.
-    :type axis:
+    :type weights:
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-    :type centered:
+    :type axis:
     :param centered: None | 0 | 1
         default value = 0 returns uncentered statistic (same as None). To
         remove the mean first (i.e centered statistic) set to 1. NOTE: Most
         other statistic functions return a centered statistic by default.
-    :type biased:
+    :type centered:
     :param biased: None | 0 | 1
         default value = 1 If want to compute an unbiased variance pass
         anything but 1.
-    :type max_pct_missing:
+    :type biased:
     :param max_pct_missing:
         default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
         Set to a percentage between 0 and 100%.
         Set to 0. to mask results if any data is masked.
         Set to 100. to calculate result if any data is not masked
+    :type max_pct_missing:
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.rms")
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -925,32 +924,32 @@ def laggedcovariance(x,y,lag=None,axis=0,centered=1,partial=1,noloop=0,max_pct_m
 
         Returns value for x lags y by lag (integer)
         
-    :type lag:
     :param lag: None | n | (n1, n2, n3...) | [n1, n2, n3 ....]
             default value = None  the maximum possible lags for specified axis
             is used.You can pass an integer, list of integers, or tuple of
-            integers. 
-    :type axis:
+            integers.
+    :type lag:
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-    :type centered:
+    :type axis:
     :param centered:
         default value = 1 removes the mean first. Set to 0 or None for
         uncentered
-    :type partial:
+    :type centered:
     :param partial: None | 0 | 1
         default value = 1 uses only common time for means.
-    :type noloop:
+    :type partial:
     :param noloop: None | 0 | 1
         default value = 0 computes statistic at all lags upto 'lag'. If you
         set noloop=1 statistic is computed at lag only (not up to lag).
-    :type max_pct_missing:
+    :type noloop:
     :param max_pct_missing:
         default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
         Set to a percentage between 0 and 100%.
         Set to 0. to mask results if any data is masked.
         Set to 100. to calculate result if any data is not masked
+    :type max_pct_missing:
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.laggedcovariance")
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -1005,35 +1004,35 @@ def laggedcorrelation(x,y,lag=None,axis=0,centered=1,partial=1,biased=1,noloop=0
 
         Returns value for x lags y by lag
         
-    :type lag:
     :param lag: None | n | (n1, n2, n3...) | [n1, n2, n3 ....]
             default value = None  the maximum possible lags for specified axis
-            is used.You can pass an integer, list of integers, or tuple of integers. 
-    :type axis:
+            is used.You can pass an integer, list of integers, or tuple of integers.
+    :type lag:
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-    :type centered:
+    :type axis:
     :param centered:
         default value = 1 removes the mean first. Set to 0 or None for
         uncentered
-    :type partial:
+    :type centered:
     :param partial: None | 0 | 1
         default value = 1 uses only common time for means.
-    :type biased:
+    :type partial:
     :param biased: None | 0 | 1
         default value = 1 If want to compute an unbiased variance pass
         anything but 1.
-    :type noloop:
+    :type biased:
     :param noloop: None | 0 | 1
         default value = 0 computes statistic at all lags upto 'lag'. If you
         set noloop=1 statistic is computed at lag only (not up to lag).
-    :type max_pct_missing:
+    :type noloop:
     :param max_pct_missing:
         default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
         Set to a percentage between 0 and 100%.
         Set to 0. to mask results if any data is masked.
         Set to 100. to calculate result if any data is not masked
+    :type max_pct_missing:
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.laggedcorrelation")
     x,y,w,axis,ax=__checker(x,y,None,axis)
@@ -1081,31 +1080,31 @@ def autocovariance(x,lag=None,axis=0,centered=1,partial=1,noloop=0,max_pct_missi
             >>> result = autocovariance(x, lag=lagoptions, axis=axisoptions,
                                 centered=centeredoptions,
                                 partial=partialoptions, noloop=noloopoptions)
-    :type lag:
     :param lag: None | n | (n1, n2, n3...) | [n1, n2, n3 ....]
             default value = None  the maximum possible lags for specified axis
-            is used.You can pass an integer, list of integers, or tuple of integers. 
-    :type axis:
+            is used.You can pass an integer, list of integers, or tuple of integers.
+    :type lag:
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-    :type centered:
+    :type axis:
     :param centered: None | 0 | 1
         default value = 1 removes the mean first. Set to 0 or None for
         uncentered statistic.
-    :type partial:
+    :type centered:
     :param partial: None | 0 | 1
         default value = 1 uses only common time for means.
-    :type noloop:
+    :type partial:
     :param noloop: None | 0 | 1
         default value = 0 computes statistic at all lags upto 'lag'. If you
         set noloop=1 statistic is computed at lag only (not up to lag).
-    :type max_pct_missing:
+    :type noloop:
     :param max_pct_missing:
         default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
         Set to a percentage between 0 and 100%.
         Set to 0. to mask results if any data is masked.
         Set to 100. to calculate result if any data is not masked
+    :type max_pct_missing:
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.autocovariance")
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -1152,35 +1151,35 @@ def autocorrelation(x,lag=None,axis=0,centered=1,partial=1,biased=1,noloop=0,max
             >>> result = autocorrelation(x, lag=lagoptions, axis=axisoptions,
                                centered=centeredoptions, partial=partialoptions,
                                biased=biasedoptions, noloop=noloopoptions)
-    :type lag:
     :param lag: None | n | (n1, n2, n3...) | [n1, n2, n3 ....]
             default value = None  the maximum possible lags for specified axis is
-            used.You can pass an integer, list of integers, or tuple of integers. 
-    :type axis:
+            used.You can pass an integer, list of integers, or tuple of integers.
+    :type lag:
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-    :type centered:
+    :type axis:
     :param centered: None | 0 | 1
         default value = 1 removes the mean first. Set to 0 or None for
         uncentered statistic.
-    :type partial:
+    :type centered:
     :param partial: None | 0 | 1
         default value = 1 uses only common time for means.
-    :type biased:
+    :type partial:
     :param biased: None | 0 | 1
         default value = 1 computes the biased statistic. If want to compute
         an unbiased statistic pass anything but 1.
-    :type noloop:
+    :type biased:
     :param noloop: None | 0 | 1
         default value = 0 computes statistic at all lags upto 'lag'. If you
         set noloop=1 statistic is computed at lag only (not up to lag).
-    :type max_pct_missing:
+    :type noloop:
     :param max_pct_missing:
         default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
         Set to a percentage between 0 and 100%.
         Set to 0. to mask results if any data is masked.
         Set to 100. to calculate result if any data is not masked
+    :type max_pct_missing:
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.autocorrelation")
     x,dum,dum,axis,ax=__checker(x,None,None,axis)
@@ -1226,23 +1225,23 @@ def meanabsdiff(x,y,weights=None,axis=0,centered=1,max_pct_missing=100.):
 
             >>> result = meanabsdiff(x, y, weights=weightoptions, axis = axisoptions,
                              centered=centeredoptions)
-    :type weights:
     :param weights:
             default = None returns equally weighted statistic. If you want to
             compute the weighted statistic, provide weights here.
-    :type axis:
+    :type weights:
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-    :type centered:
+    :type axis:
     :param centered: None | 0 | 1
         default value = 1 removes the mean first. Set to 0 or None for uncentered.
-    :type max_pct_missing:
+    :type centered:
     :param max_pct_missing:
         default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
         Set to a percentage between 0 and 100%.
         Set to 0. to mask results if any data is masked.
         Set to 100. to calculate result if any data is not masked
+    :type max_pct_missing:
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.meanabsdiff")
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -1274,21 +1273,20 @@ def linearregression(y,axis=None,x=None,error=None,probability=None,nointercept=
                     error=erroroptions, probability=probabilityoptions, \
                     nointercept=nointerceptoptions, noslope=noslopeoptions)
 
-    :type axis:
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
             default value = 0. You can pass the name of the dimension or index
             (integer value 0...n) over which you want to treat the array as the
             dependent variable.
-    :type nointercept:
+    :type axis:
     :param nointercept: None | 0 | 1
         default = None. Setting to 0 or None means intercept calculations
         are returned. To turn OFF the intercept computations set
         nointercept = 1.
-    :type noslope:
+    :type nointercept:
     :param noslope: None | 0 | 1
         default = None. Setting to None or 0 means slope calculations are
         returned. To turn OFF the slope computations set noslope to 1.
-    :type error:
+    :type noslope:
     :param error: None | 0 | 1 | 2 | 3
         default = None. If set to 0 or None, no associated errors are
         returned.
@@ -1297,7 +1295,7 @@ def linearregression(y,axis=None,x=None,error=None,probability=None,nointercept=
             adjusted using the centered autocorrelation of the residual.
         If set to 3, standard error returned. The standard error here is
             adjusted using the centered autocorrelation of the raw data (y).
-    :type probability:
+    :type error:
     :param probability: None | 0 | 1
         default = None. If set to 0 or None, no associated probabilities are
             returned. Set this to 1to compute probabilities.
@@ -1307,6 +1305,7 @@ def linearregression(y,axis=None,x=None,error=None,probability=None,nointercept=
             Probabilities are returned only if erroroptions are set to one
             of 1, 2, or 3. If it is set to None or 0, then setting
             probabilityoptions has no meaning.
+    :type probability:
 
     What is returned?
         The returned values depend on the combination of options you select. If
@@ -1379,7 +1378,7 @@ def linearregression(y,axis=None,x=None,error=None,probability=None,nointercept=
         >>> intercept,intercept_error,pt1,pt2,pf1,pf2 = \
                   linearregression(y, error=2,probability=1,noslope=1)
                   
-"""
+    """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.linearregression")
     yisV=cdms2.isVariable(y)
     if yisV : yatt=y.attributes
@@ -1530,17 +1529,17 @@ def geometricmean(x,axis=0,max_pct_missing=100.):
 
             >>> result = geometricmean(x, axis=axisoptions)
 
-    :type axis:
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
             default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.    
+            (integer value 0...n) over which you want to compute the statistic.
+    :type axis:
 
-    :type max_pct_missing:
     :param max_pct_missing:
             default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
             Set to a percentage between 0 and 100%.
             Set to 0. to mask results if any data is masked.
             Set to 100. to calculate result if any data is not masked
+    :type max_pct_missing:
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.geometricmean")
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -1611,13 +1610,14 @@ def percentiles(x,percentiles=[50.],axis=0):
 
             >>> result = percentiles(x, percentiles=percentilesoptions, axis=axisoptions)
 
-    :type percentilesoptions:
-    :param percentilesoptions: A python list of values
+    :param percentiles: A python list of values
             Default = [50.] (the 50th percentile i.e the median value)
-    :type axis:
+    :type percentiles:
+
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
             default value = 0. You can pass the name of the dimension or index
             (integer value 0...n) over which you want to compute the statistic.
+    :type axis:
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.percentiles")
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -1643,11 +1643,13 @@ def median(x,axis=0):
 
             >>> result = median(x, axis=axisoptions)
         
-    :type axisoptions:
-    :type axisoptions:
-    :param axisoptions: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
+    :param x:
+    :type x:
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
             default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.            
+            (integer value 0...n) over which you want to compute the statistic.
+    :type axis: str or int
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.median")
     tmp=percentiles(x,percentiles=[50.],axis=axis)
@@ -1665,12 +1667,11 @@ def rank(x,axis=0):
         .. doctest::
 
             >>> result = median(x, axis=axisoptions)
-        
-    :type axis:
-    :type axis:
+
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
             default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.            
+            (integer value 0...n) over which you want to compute the statistic.
+    :type axis:
     """
 
     # preprocessing

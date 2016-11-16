@@ -6,10 +6,24 @@ import numpy.ma,cdms2,genutil
 def get(Array,Indices,axis=0):
     """
     Arrayrrayindexing returns Array[Indices], indices are taken along dimension given with axis
-    
-    Usage:
-    C=get(Array,Indices,axis=0) # i.e. C=Array[Indices]
-    Indices accepts negative value ,e.g: -1 is last element
+
+    :Example:
+
+        .. doctest:: arrayindexing_get
+
+            >>> import numpy as np
+            >>> Array=np.array([2,3,1,0,1,2,3])
+            >>> Indices=[0,-1, len(Array)-2] # get the first, last, and second-to-last indices of the array
+            >>> C=get(Array,Indices,axis=0) # i.e. C=Array[Indices]
+
+    :param Array: A cdms2 variable, or numpy array, to access the indices of
+    :type Array: cdms.tvariable.TransientVariable or numpy.array
+
+    :param Indices: List of integers specifying the indices of Array to access and return
+    :type Indices: list
+
+    :param axis: Axis of a cdms variable
+    :type axis: int or str
     """
     ## First some checks
 
@@ -28,11 +42,11 @@ def get(Array,Indices,axis=0):
         if isinstance(Indices,int):
             return Array[Indices]
         if Indices.shape!=Array.shape[1:]:
-            raise "Error uncompatible shapes: "+str(Array.shape)+" and "+str(Indices.shape)
+            raise "Error incompatible shapes: "+str(Array.shape)+" and "+str(Indices.shape)
     else:
         Array,Indices,weights,axis,ax=statistics.__checker(Array,Indices,None,axis)
         if Indices.shape!=Array.shape:
-            raise "Error uncompatible shapes: "+str(Array.shape)+" and "+str(Indices.shape)
+            raise "Error incompatible shapes: "+str(Array.shape)+" and "+str(Indices.shape)
 
     m=Array.mask
     if not isinstance(Indices,int): Indices=Indices.data.astype('i') # Sometihng happened with masking of y by x mask
@@ -57,6 +71,15 @@ def set(Array,Indices,Values,axis=0):
     Array=set(Array,Indices,Values,axis=0) # i.e. Array[Indices]=Values
 
     Indices accepts negative value ,e.g: -1 is last element
+
+    :param Array: A cdms2 variable, or numpy array, to set the indices of
+    :type Array: cdms.tvariable.TransientVariable or numpy.array
+
+    :param Indices: List of integers specifying the indices of Array to access and set
+    :type Indices: list
+
+    :param axis: Axis of a cdms variable
+    :type axis: int or str
     """
 ##     if numpy.rank(Indices)==0:
 ##         Array[Indices]=Values

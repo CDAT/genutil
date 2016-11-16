@@ -3,34 +3,36 @@ class StringConstructor:
     """
     This class aims at spotting keywords in a string and replacing them
 
-    Usage
-    Filler=StringConstructor(template)
-    or
-    Filler=StringConstructor()
-    Filler.template=template
+    :Usage:
+
+        .. code-block:: python
+
+            >>> template = "templates are strings containing any number of %(keywords) using %(this_format)"
+            >>> Filler=StringConstructor(template)
+            # or
+            >>> Filler=StringConstructor()
+            >>> Filler.template=template
+            # In order to construct the string (i.e. replace keywords with some values):
+            >>> str=Filler(keywords='keywdstr',this_format='')
+            # or
+            >>> Filler.keyword='kwstr'
+            >>> Filler.this_format=''
+            >>> str=Filler()
+
+
 
     template is a string of form: 'my string here with %(keywords) in it'
 
-    You can have has many 'keyword' as you want, and use them as many times as you want
-    keywords are delimited on the left by %( and ) on the right
-    
-    In order to construct the string (i.e. replace keywords with some values:
-
-    str=Filler(keyword='kwstr')
-    or
-    Filler.keyword='kwstr'
-    str=Filler()
-
-    Example:
-        structure='/pcmdi/amip/mo/%(variable)/%(model)/%(variable)_%(model).xml'
-        Filler=StringConstructor(structure)
-        Filler.variable='tas'
-        myfilename=Filler.construct(structure,model='ugamp-98a')
-
-        print myfilename # '/pcmdi/amip/mo/tas/ugamp-98a/tas_ugamp-98a.xml'
-    
+    You can have has many keywords as you want, and use them as many times as you want.
+    Keywords are delimited on the left by %( and on the right by ).
     """
     def __init__(self,template=None):
+        """
+        Instantiates a StringConstructor object.
+        :param template: A string used by StringConstructor for keyword replacement.
+                template is a string of form: 'my string here with %(keywords) in it'.
+                There can be an unlimited number of keywords, delimited by %( on the left and ) on the right.
+        """
         cdat_info.pingPCMDIdb("cdat","genutil.StringConstructor")
         self.template=template
         ## ok we need to generate the keys and set them to empty it seems like a better idea
@@ -60,16 +62,29 @@ class StringConstructor:
 
     def construct(self,template=None,**kw):
         """
-        Accepts a string with a unlimited number of keyword to replace
-        keyword to replace must be in the format %(keyword) within the string
-        keyword value are either passed as keyword to the construct function or preset
-        Example:
-        structure='/pcmdi/amip/mo/%(variable)/%(model)/%(variable)_%(model).xml'
-        Filler=StringConstructor()
-        Filler.variable='tas'
-        myfilename=Filler.construct(structure,model='ugamp-98a')
+        Accepts a string with an unlimited number of keywords to replace.
+        Keywords to replace must be in the format %(keyword) within the string.
+        Keyword values are either passed as keyword to the construct function or preset.
 
-        print myfilename
+        :Example:
+
+            .. doctest:: Filler_construct
+
+                >>> structure='/pcmdi/amip/mo/%(variable)/%(model)/%(variable)_%(model).xml'
+                >>> Filler=StringConstructor()
+                >>> Filler.variable='tas'
+                >>> myfilename=Filler.construct(structure,model='ugamp-98a')
+                >>> print myfilename
+                '/pcmdi/amip/mo/tas/ugamp-98a/tas_ugamp-98a.xml'
+
+        :param template: A string used by StringConstructor for keyword replacement.
+                template is a string of form: 'my string here with %(keywords) in it'.
+                There can be an unlimited number of keywords, delimited by %( on the left and ) on the right.
+        :type template: str
+
+        :param kw: Comma-delimited list of keyword to string value mappings, i.e.:
+                    keyword1='kwd1 string',keyword2='kwd2 string', ...
+        :type kw: list
         """
         if template is None:
             template=self.template
@@ -83,6 +98,31 @@ class StringConstructor:
         return template
 
     def reverse(self,name,debug=False):
+        """
+        The reverse function attempts to take a template and derive its keyword values based on name parameter.
+
+        :Example:
+
+            .. doctest:: Filler_reverse
+
+                >>> Filler=StringConstructor(template="%(a).%(b)")
+                >>> Filler.reverse("A.B")
+                {a:"A", b:"B"}
+
+        :param name: String to test the template's keyword values.
+        :type name: str
+
+        :param debug: Boolean flag to indicate whether or not to print debug output.
+        :type debug: bool
+
+        :returns: A dictionary mapping the StringConstructor's template's keywords to the corresponding values,
+            according to the format of the name parameter.
+        :rtype: dict
+
+        .. warning::
+
+            reverse makes its best effort at deriving keyword values from a string, but it is not guaranteed to work.
+        """
         out={}
         template = self.template
         for k in self.keys():
@@ -122,11 +162,6 @@ class StringConstructor:
     def __call__(self,*args,**kw):
         """default call is construct function"""
         return self.construct(*args,**kw)
-    
-Filler=StringConstructor()
 
-if __name__=='__main__':
-    Filler.variable='tas'
-    structure='/pcmdi/amip/mo/%(variable)/%(model)/%(variable)_%(model).xml'
-    myfilename=Filler.construct(structure,model='*')    
-    print myfilename
+
+Filler=StringConstructor()
