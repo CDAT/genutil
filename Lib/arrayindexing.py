@@ -20,6 +20,11 @@ def get(Array,Indices,axis=0):
     :type Array: cdms.tvariable.TransientVariable or numpy.array
 
     :param Indices: List of integers specifying the indices of Array to access and return
+
+        .. note::
+
+            Negative index value will access indices starting from the end of the array.
+            i.e. -1 will be the last item.
     :type Indices: list
 
     :param axis: Axis of a cdms variable
@@ -66,16 +71,27 @@ def get(Array,Indices,axis=0):
 def set(Array,Indices,Values,axis=0):
     """
     Arrayrrayindexing set Array[Indices] with Values, indices are taken along dimension given with axis
-    
-    Usage:
-    Array=set(Array,Indices,Values,axis=0) # i.e. Array[Indices]=Values
 
-    Indices accepts negative value ,e.g: -1 is last element
+    :Example:
+
+        .. doctest:: arrayindexing_set
+
+            >>> import numpy as np
+            >>> Array=np.array([2,3,1,0,1,2,3])
+            >>> Indices=[0,-1, len(Array)-2] # get the first, last, and second-to-last indices of the array
+            >>> Values = [5, 7, 9]
+            >>> Array=set(Array,Indices,Values,axis=0) # i.e. Array[Indices]=Values
+
 
     :param Array: A cdms2 variable, or numpy array, to set the indices of
     :type Array: cdms.tvariable.TransientVariable or numpy.array
 
-    :param Indices: List of integers specifying the indices of Array to access and set
+    :param Indices: List of integers specifying the indices of Array to access and set.
+
+        .. note::
+
+            Negative index value will access indices starting from the end of the array.
+            i.e. -1 will be the last item.
     :type Indices: list
 
     :param axis: Axis of a cdms variable

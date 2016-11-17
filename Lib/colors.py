@@ -710,6 +710,15 @@ def rgb2str(r,g=None,b=None):
 
             >>> print rgb2str([0,0,0])
             'black'
+
+    :param r: Either a list of size 3 with r, g, and b values, or an integer representing r value.
+    :type r: list or int
+
+    :param g: Integer representing g value.
+    :type g: int
+
+    :param b: Integer representing b value.
+    :type b: int
     """
     import string
     if g is None and len(r)==3:

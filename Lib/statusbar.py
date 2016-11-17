@@ -35,8 +35,6 @@ def statusbar(status,total=1.,prev=-1,title='Done',tk=None):
         prevj=statusbar(float(j)/nj,prev=prevj,tk=1)
         prevall=statusbar([float(i)/ni,float(j)/nj],prev=prevall,tk=1,title='Test')
         prevtxt=statusbar(float(j)/nj,prev=prevtxt,tk=None,title='Test')
-
-
     """
     import sys,string
     chardic={

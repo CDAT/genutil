@@ -727,11 +727,10 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
 
         .. code-block:: python
 
-            from cdutil import averager
-            averager(V, axis='axisoptions', weights=weightoptions, action='average',
-                      returned='0')
-
-
+            >>> import numpy as np
+            >>> V=np.array([1,2,3,4,5])
+            >>> averager(V, returned=1)
+            3
 
     :param V: an array of numpy, numpy.ma or MV2 type
     :type V: numpy.array or numpy.ma or MV2

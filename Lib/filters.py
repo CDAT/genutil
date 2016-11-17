@@ -86,6 +86,9 @@ def smooth121(x,axis=0):
             >>> unfiltered=f('clt')
             >>> filtered = smooth121(unfiltered) # filter over axis at index 0
 
+    :param x: A CDMS TransientVariable
+    :type x: cdms.tvariable.TransientVariable
+
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
             default value = 0. You can pass the name of the dimension or index
             (integer value 0...n) over which you want to compute the statistic.
@@ -109,8 +112,8 @@ def runningaverage(x,N,axis=0):
             >>> x=f('clt')
             >>> smooth = runningaverage(x,12)
 
-    :param x:
-    :type x:
+    :param x: A CDMS TransientVariable
+    :type x: cdms.tvariable.TransientVariable
 
     :param N: length of the running average
     :type N: int
