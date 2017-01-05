@@ -21,6 +21,8 @@ def make_var(lap,id=None,shape=None):
         lap.id=id
     return lap
 
+
+# TODO: need an actual 'vars.txt' file for the doctests
 def readAscii( text_file ,header=0, ids=None, shape=None, next='------',separators=[';',',',':']):
     """
     Reads data from an ascii file to generate a list of transient(s)/varable(s)
@@ -46,8 +48,10 @@ def readAscii( text_file ,header=0, ids=None, shape=None, next='------',separato
     :param next: character string marking separation between variables (i.e. '------')
     :type next: str
 
-    :param separators: List of characters recognized as column separators (i.e. [';',',',':'])
-    :type separators: list
+    :param separators: ([';',',', ':']) List of characters recognized as column
+        separators. Can be represented as a list or a string.
+        If it is a string, separator characters must be space-delimited.
+    :type separators: list or str
 
     :returns: List containing transient(s) variable(s) possibly named after ids and reshaped from the 'shape' option.
     :rtype: list
@@ -96,7 +100,8 @@ def readAscii( text_file ,header=0, ids=None, shape=None, next='------',separato
         return vars[0]
 
 
-def read_col( text_file ,header=0, cskip=0, cskip_type='columns', axis=False, ids=None, idrow=0, separators=[';',',', ':']):
+def read_col( text_file ,header=0, cskip=0, cskip_type='columns', axis=False, ids=None, idrow=0,
+              separators=[';',',', ':']):
     """
     Reads column-stored data from ASCII files
 
@@ -129,12 +134,14 @@ def read_col( text_file ,header=0, cskip=0, cskip_type='columns', axis=False, id
     :param ids: (None) use the values in this list as variable ids (1 per column returned)
     :type ids:
 
-    :param separators: ([';',',', ':']) List of character recognized as column separator
-    :type separators:
+    :param separators: ([';',',', ':']) List of characters recognized as column
+        separator. Can be represented as a list or a string.
+        If it is a string, separator characters must be space-delimited.
+    :type separators: list or str
 
     :returns: List containing 1 transient variable per column in the files.
-                Variable ids are optionaly determined by first row.
-                Variable axis may be the first column.
+        Variable ids are optionally determined by first row.
+        Variable axis may be the first column.
     :rtype: list
     """
 
@@ -144,9 +151,9 @@ def read_col( text_file ,header=0, cskip=0, cskip_type='columns', axis=False, id
     for s in separators:
         sep.append(s)
         
-    f=open( text_file )
-    lst = f.readlines( )
-    f.close( )
+    f=open(text_file)
+    lst = f.readlines()
+    f.close()
     lst=lst[header:]
     if not isinstance(ids,(tuple,list)):
         ids=[ids]        

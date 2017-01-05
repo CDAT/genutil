@@ -779,25 +779,27 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
     :type weights: str
 
     :param action: One of 'average' or 'sum'. Specifies whether to return the weighted average or weighted sum of data.
-            Default: 'average'
+        Default: 'average'
     :type action: str
 
     :param returned: Integer flag indicating whether or not the weighted average should be returned.
-            * 0 implies sum of weights are not returned after averaging operation.
-            * 1 implies the sum of weights after the average operation is returned.
+        *0:* implies sum of weights are not returned after averaging operation.
+        *1:* implies the sum of weights after the average operation is returned.
     :type returned: int
 
     :param combinewts: Integer flag indicating whether or not weights passed in for axes should be combined.
-            * 0 implies weights passed for individual axes are not combined into one
-                weight array for the full variable V before performing operation.
-            * 1 implies weights passed for individual axes are combined into one
-                weight array for the full variable before performing average or sum
-                operations. One-dimensional weight arrays or key words of 'weighted' or
-                'unweighted' must be passed for the axes over which the operation is
-                to be performed. Additionally, weights for axes that are not being
-                averaged or summed may also bepassed in the order in which they appear.
-                If the weights for the other axes are not passed, they  are assumed to
-                be equally weighted.
+
+        *0:* implies weights passed for individual axes are not combined into one
+        weight array for the full variable V before performing operation.
+
+        *1:* implies weights passed for individual axes are combined into one
+        weight array for the full variable before performing average or sum
+        operations. One-dimensional weight arrays or key words of 'weighted' or
+        'unweighted' must be passed for the axes over which the operation is
+        to be performed. Additionally, weights for axes that are not being
+        averaged or summed may also bepassed in the order in which they appear.
+        If the weights for the other axes are not passed, they  are assumed to
+        be equally weighted.
 
     :Examples:
 

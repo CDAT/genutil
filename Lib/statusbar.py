@@ -95,7 +95,7 @@ def statusbar(status,total=1.,prev=-1,title='Done',tk=None):
         wsave=10.
         if prev==[0,0] :
             master=Tkinter.Toplevel()
-            #Pmw.Blt._checkForBlt(master)
+            # Pmw.Blt._checkForBlt(master)
             master.geometry('200x'+sheigth)
             master.resizable(0,0)
             master.update()

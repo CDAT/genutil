@@ -762,6 +762,7 @@ def variance(x,weights=None,axis=0,centered=1,biased=1,max_pct_missing=100.):
 
             Weighted covariance is inherently biased. Passing a value for weights but
             specifying an unbiased variance will cause an error
+
     :type weights: list
 
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
@@ -824,6 +825,7 @@ def std(x,weights=None,axis=0,centered=1,biased=1,max_pct_missing=100.):
 
             Use of weights is inherently biased. Passing a value for weights but
             specifying a non-biased calculation will cause an error.
+
     :type weights: list
 
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
@@ -883,6 +885,7 @@ def correlation(x,y,weights=None,axis=0,centered=1,biased=1,max_pct_missing=100.
 
             Use of weights is inherently biased. Passing a value for weights but
             specifying a non-biased calculation will cause an error.
+
     :type weights: list
 
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
@@ -941,6 +944,7 @@ def rms(x,y,weights=None,axis=0,centered=0,biased=1,max_pct_missing=100.):
 
             Use of weights is inherently biased. Passing a value for weights but
             specifying a non-biased calculation will cause an error.
+
     :type weights: list
 
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n

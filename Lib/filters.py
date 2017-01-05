@@ -16,8 +16,8 @@ def custom1D(x,filter,axis=0):
     :type filter: array
 
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
-            default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.
+        default value = 0. You can pass the name of the dimension or index
+        (integer value 0...n) over which you want to compute the statistic.
     :type axis: str or int
     """
     cdat_info.pingPCMDIdb("cdat","genutil.filters.custom1D")
@@ -90,8 +90,8 @@ def smooth121(x,axis=0):
     :type x: cdms.tvariable.TransientVariable
 
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
-            default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.
+        default value = 0. You can pass the name of the dimension or index
+        (integer value 0...n) over which you want to compute the statistic.
     :type axis: str or int
     """
     cdat_info.pingPCMDIdb("cdat","genutil.filters.smooth121")
@@ -119,8 +119,8 @@ def runningaverage(x,N,axis=0):
     :type N: int
 
     :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
-            default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.
+        default value = 0. You can pass the name of the dimension or index
+        (integer value 0...n) over which you want to compute the statistic.
     :type axis: str or int
     """
     filter=numpy.ma.ones((N,),dtype='f')

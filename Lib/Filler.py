@@ -29,9 +29,11 @@ class StringConstructor:
     def __init__(self,template=None):
         """
         Instantiates a StringConstructor object.
-        :param template: A string used by StringConstructor for keyword replacement.
-                template is a string of form: 'my string here with %(keywords) in it'.
-                There can be an unlimited number of keywords, delimited by %( on the left and ) on the right.
+        :param template: A string used by StringConstructor for keyword
+            replacement. template is a string of form:
+            'my string here with %(keywords) in it'.
+            There can be an unlimited number of keywords, delimited by %( on
+            the left and ) on the right.
         """
         cdat_info.pingPCMDIdb("cdat","genutil.StringConstructor")
         self.template=template
@@ -78,12 +80,12 @@ class StringConstructor:
                 '/pcmdi/amip/mo/tas/ugamp-98a/tas_ugamp-98a.xml'
 
         :param template: A string used by StringConstructor for keyword replacement.
-                template is a string of form: 'my string here with %(keywords) in it'.
-                There can be an unlimited number of keywords, delimited by %( on the left and ) on the right.
+            template is a string of form: 'my string here with %(keywords) in it'.
+            There can be an unlimited number of keywords, delimited by %( on the left and ) on the right.
         :type template: str
 
         :param kw: Comma-delimited list of keyword to string value mappings, i.e.:
-                    keyword1='kwd1 string',keyword2='kwd2 string', ...
+            keyword1='kwd1 string',keyword2='kwd2 string', ...
         :type kw: list
         """
         if template is None:
