@@ -8,7 +8,7 @@ import numpy
 
 class GENUTIL(unittest.TestCase):
     def assertArraysEqual(self,A,B):
-        self.assertTrue(numpy.all(numpy.equal(A,B)))
+        self.assertTrue(numpy.ma.allclose(A,B))
 
     def testStatisitcs(self):
         f=cdms2.open(os.path.join(cdat_info.get_sampledata_path(),'clt.nc'))
@@ -34,6 +34,8 @@ class GENUTIL(unittest.TestCase):
 
         print 'Auto correlation'
         nm = "auto_corr"
+        print genutil.statistics.autocorrelation(u,axis=0) -  f(nm+"_1")
+        print numpy.ma.equal(genutil.statistics.autocorrelation(u,axis=0), f(nm+"_1"))
         self.assertArraysEqual(genutil.statistics.autocorrelation(u,axis=0), f(nm+"_1"))
         self.assertArraysEqual(genutil.statistics.autocorrelation(u,axis=0,lag=4), f(nm+"_2"))
         self.assertArraysEqual(genutil.statistics.autocorrelation(u,axis=0,lag=4,noloop=1), f(nm+"_3"))
