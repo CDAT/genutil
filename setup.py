@@ -20,6 +20,7 @@ setup (name = "genutil",
               ['Src/array_indexing.c',]
               ),
     
-    ]
+    ],
+      data_files=[('share/genutil', ('share/test_data_files.txt',))]
       )
 
