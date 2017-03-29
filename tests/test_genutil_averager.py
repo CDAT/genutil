@@ -3,7 +3,6 @@
 import cdms2, MV2, numpy, numpy.ma, cdtime, os, sys, cdat_info
 from genutil import averager, AveragerError
 cdms2.setAutoBounds('on')
-from cdutil import area_weights
 import unittest
 
 class GENUTIL(unittest.TestCase):
