@@ -19,6 +19,17 @@ setup (name = "genutil",
     Extension('genutil.array_indexing',
               ['Src/array_indexing.c',]
               ),
+    Extension('genutil.udunits_wrap',
+        ['Src/udunits_wrap.c',
+            ## 'Src/utparse.c',
+            ## 'Src/utlib.c',
+            ## 'Src/utscan.c',
+            ],
+        include_dirs = [os.path.join(sys.prefix,'include')],
+        library_dirs = [os.path.join(sys.prefix,'lib')],
+        libraries=['udunits2','expat']
+        )
+
     
     ],
       data_files=[('share/genutil', ('share/test_data_files.txt',))]
