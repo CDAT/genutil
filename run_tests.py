@@ -5,7 +5,6 @@ import os
 import argparse
 import multiprocessing
 import subprocess
-import image_compare
 import codecs
 import time
 import webbrowser
@@ -188,7 +187,7 @@ if args.html or args.package or args.dropbox:
         os.makedirs("tests_html")
     os.chdir("tests_html")
 
-    js = image_compare.script_data()
+    js = ""
 
     fi = open("index.html", "w")
     print>>fi, "<!DOCTYPE html>"
