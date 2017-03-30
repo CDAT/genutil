@@ -9,11 +9,11 @@ except:
     Version="???"
 setup (name = "genutil",
        version=Version,
-       author='PCMDI',
+       author='LLNL',
        description = "General utilities for scientific computing",
-       url = "http://www-pcmdi.llnl.gov/software",
-       packages = ['genutil'],
-       package_dir = {'genutil': 'Lib'},
+       url = "http://uvcdat.llnl.gov/software",
+       packages = ['genutil','unidata'],
+       package_dir = {'genutil': 'Lib', 'unidata':"unidata"},
        include_dirs = [numpy.lib.utils.get_include()],
        ext_modules = [
     Extension('genutil.array_indexing',
@@ -34,4 +34,3 @@ setup (name = "genutil",
     ],
       data_files=[('share/genutil', ('share/test_data_files.txt',))]
       )
-
