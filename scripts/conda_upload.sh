@@ -23,8 +23,10 @@ cd conda-recipes
 # uvcdat creates issues for build -c uvcdat confises package and channel
 rm -rf uvcdat
 python ./prep_for_build.py -v `date +%Y.%m.%d`
-echo "Building now"
-conda build -c conda-forge -c uvcdat/label/nightly -c uvcdat ${PKG_NAME}
-echo "Uploading"
-anaconda -t $CONDA_UPLOAD_TOKEN upload -u $USER -l nightly $CONDA_BLD_PATH/$OS/$PKG_NAME-`date +%Y.%m.%d`-py27_0.tar.bz2 --force
-
+echo "Building and uploading now"
+conda build -c conda-forge -c uvcdat/label/nightly -c uvcdat ${PKG_NAME} --numpy=1.11
+anaconda -t $CONDA_UPLOAD_TOKEN upload -u $USER -l nightly $CONDA_BLD_PATH/$OS/$PKG_NAME-`date +%Y.%m.%d`-np111py27_0.tar.bz2 --force
+conda build -c conda-forge -c uvcdat/label/nightly -c uvcdat ${PKG_NAME} --numpy=1.10
+anaconda -t $CONDA_UPLOAD_TOKEN upload -u $USER -l nightly $CONDA_BLD_PATH/$OS/$PKG_NAME-`date +%Y.%m.%d`-np110py27_0.tar.bz2 --force
+conda build -c conda-forge -c uvcdat/label/nightly -c uvcdat ${PKG_NAME} --numpy=1.9
+anaconda -t $CONDA_UPLOAD_TOKEN upload -u $USER -l nightly $CONDA_BLD_PATH/$OS/$PKG_NAME-`date +%Y.%m.%d`-np19py27_0.tar.bz2 --force
