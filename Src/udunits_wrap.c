@@ -99,7 +99,7 @@ addOffsettedUnit(self,args)
   int MAX_STRING=256;
   double offset;
   ut_unit *offsettedunit=NULL,*originalunit;
-  ut_status myutstatus;
+  ut_status myutstatus=UT_SUCCESS;
 
   /* read in unit name */
   if (!PyArg_ParseTuple(args,"sds",&newunit,&offset,&oldunit))
@@ -137,7 +137,7 @@ addScaledUnit(self,args)
   int MAX_STRING=256;
   double scale;
   ut_unit *scaledunit=NULL,*originalunit;
-  ut_status myutstatus;
+  ut_status myutstatus=UT_SUCCESS;
 
   /* read in unit name */
   if (!PyArg_ParseTuple(args,"sds",&newunit,&scale,&oldunit))
@@ -175,7 +175,7 @@ addMultipliedUnits(self,args)
   char msg[256],*newunit, *unit1, *unit2, err[256];
   int MAX_STRING=256;
   ut_unit *outunit=NULL,*uunit1,*uunit2;
-  ut_status myutstatus;
+  ut_status myutstatus=UT_SUCCESS;
 
   /* read in unit name */
   if (!PyArg_ParseTuple(args,"sss",&newunit,&unit1,&unit2))
@@ -218,7 +218,7 @@ addDividedUnits(self,args)
   char msg[256],*newunit, *unit1, *unit2, err[256];
   int MAX_STRING=256;
   ut_unit *outunit=NULL,*uunit1,*uunit2;
-  ut_status myutstatus;
+  ut_status myutstatus=UT_SUCCESS;
 
   /* read in unit name */
   if (!PyArg_ParseTuple(args,"sss",&newunit,&unit1,&unit2))
@@ -261,7 +261,7 @@ addInvertedUnit(self,args)
   char msg[256],*newunit, *oldunit, err[256];
   int MAX_STRING=256;
   ut_unit *invertedunit=NULL,*originalunit;
-  ut_status myutstatus;
+  ut_status myutstatus=UT_SUCCESS;
 
   /* read in unit name */
   if (!PyArg_ParseTuple(args,"ss",&newunit,&oldunit))
@@ -349,6 +349,7 @@ term(self,args)
   extern ut_system *ut_read;
   ut_free_system(ut_read);
   ut_read = NULL;
+  Py_INCREF ((PyObject *)Py_None); return Py_None;
 }
 static PyMethodDef MyUdunitsMethods[]= {
   {"init", init , METH_VARARGS},
