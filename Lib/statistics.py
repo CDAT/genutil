@@ -79,16 +79,16 @@ def __betai1(a, b, x):
 
 def __probnd1(x):
     """
-    c     FUNCTION PROBND1.
-    c
-    c     Calculates the area under a normal curve (mean=0.0, variance=1.0)
-    c     to the right of x. The accuracy is better than 7.5 * 10.**-8.
-    c
-    c     REFERENCE:
-    c
-    c     M. Abramowitz and I.A. Stegun.
-    c     Handbook of Mathematical Functions.
-    c     Dover, 1970, pages 931-932 (26.2.1 and 26.2.17).
+    FUNCTION PROBND1.
+
+    Calculates the area under a normal curve (mean=0.0, variance=1.0)
+    to the right of x. The accuracy is better than 7.5 * 10.**-8.
+
+    REFERENCE:
+
+    M. Abramowitz and I.A. Stegun.
+    Handbook of Mathematical Functions.
+    Dover, 1970, pages 931-932 (26.2.1 and 26.2.17).
 """
     b1 =  0.319381530
     b2 = -0.356563782
@@ -106,36 +106,36 @@ def __probnd1(x):
 
 def __probf1(y, n1, n2, id):
     """
-c     FUNCTION PROBF1.
-c
-c     The output is either the one- or two-tailed test area: i.e., the
-c     area under an F-curve (with N1 and N2 degrees of freedom) to the
-c     right of X if X exceeds 1.0 (one-tailed test) or twice this area
-c     (two-tailed test).
-c
-c     Note: if X is less than 1.0, this function gives the area to the
-c     right of 1/X with reversed order for the degrees of freedom. This
-c     ensures the accuracy of the numerical algorithm.
-c
-c     REFERENCE:
-c
-c     M. Abramowitz and I.A. Stegun.
-c     Handbook of Mathematical Functions. 
-c     Dover, 1970, page 947 (26.6.15).
+    FUNCTION PROBF1.
 
-c     ** INPUT **
-c     real y            Calculated F-value
-c     real x            Inverse of Y if Y is less than 1.0
-c     integer n1, n2    Degrees of freedom
-c     integer id        Identifier for one- or two-tailed test
-c
-c     ** OUTPUT **
-c     real probf1       Significance level (p-value) for F-value
-c
-c     EXTERNALS:
-c
-c     function PROBND1 - Calculates the area under a normal curve.
-"""
+    The output is either the one- or two-tailed test area: i.e., the
+    area under an F-curve (with N1 and N2 degrees of freedom) to the
+    right of X if X exceeds 1.0 (one-tailed test) or twice this area
+    (two-tailed test).
+
+    Note: if X is less than 1.0, this function gives the area to the
+    right of 1/X with reversed order for the degrees of freedom. This
+    ensures the accuracy of the numerical algorithm.
+
+    REFERENCE:
+
+    M. Abramowitz and I.A. Stegun.
+    Handbook of Mathematical Functions.
+    Dover, 1970, page 947 (26.6.15).
+
+    ** INPUT **
+    real y            Calculated F-value
+    real x            Inverse of Y if Y is less than 1.0
+    integer n1, n2    Degrees of freedom
+    integer id        Identifier for one- or two-tailed test
+
+    ** OUTPUT **
+    real probf1       Significance level (p-value) for F-value
+
+    EXTERNALS:
+
+    function PROBND1 - Calculates the area under a normal curve.
+    """
     ly=numpy.ma.less(y,1.)
     x=numpy.ma.where(ly,1./numpy.ma.array(y),y)
     n=numpy.ma.where(ly,n1,n2)
@@ -253,6 +253,7 @@ def __correlation(x,y,weights=None,centered=1,biased=1):
     sy=__std(y,weights=weights,centered=centered,biased=biased)
     return cov/(sx*sy)
 
+
 def __rms(x,y,weights=None,centered=0,biased=1):
     """
     Function: __rms
@@ -263,6 +264,7 @@ def __rms(x,y,weights=None,centered=0,biased=1):
     """
     
     return __std(x-y,centered=centered,biased=biased,weights=weights)
+
 
 def __laggedcovariance(x,y,lag=1,centered=1,partial=1):
     """
@@ -302,6 +304,7 @@ def __laggedcovariance(x,y,lag=1,centered=1,partial=1):
         else:
             tmp=x[:-lag]*y[lag:]
     return numpy.ma.sum(tmp, axis=0)/numpy.ma.count(x*y,axis=0)
+
 
 def __laggedcorrelation(x,y,lag,centered=1,partial=1,biased=1):
     """
@@ -674,33 +677,49 @@ def __checker(x,y,w,axes,smally=0):
     
 def covariance(x,y,weights=None,axis=0,centered=1,biased=1,max_pct_missing=100.):
     """
-    Function: covariance
-     
-    Description of function:
-        Returns the covariance between 2 slabs. By default on the first dimension,
-        centered and biased by default.
-    Usage:
-        cov = covariance(x, y, weights=weightoptions, axis=axisoptions,
-                         centered=centeredoptions, biased=biasedoptions,
-                         max_pct_missing=max_pct_missingoptions)
-    Options:
-        weightoptions
-            default = None. If you want to compute the weighted covariance,
-            provide the weights here.
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
-            default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.
-        centeredoptions None | 0 | 1
-            default value = 1 removes the mean first. Set to 0 or None for
-            uncentered.
-        biasedoptions None | 0 | 1
-            default value = 1 If want to compute an unbiased variance pass
-            anything but 1.
-        max_pct_missingoptions
-            default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
-            Set to a percentage between 0 and 100%.
-            Set to 0. to mask results if any data is masked.
-            Set to 100. to calculate result if any data is not masked
+    Returns the covariance between 2 slabs. By default on the first dimension,
+    centered and biased by default.
+
+    :Example:
+
+        .. doctest:: statistics_covariance
+
+            >>> import vcs, cdms2, os
+            >>> try:
+            ...    os.listdir(vcs.sample_data)
+            >>> except:
+            ...    vcs.download_sample_data_files()
+            >>> f=cdms2.open(vcs.sample_data + 'clt.nc')
+            >>> x=f('u')
+            >>> y=f('v')
+            >>> cov = covariance(x, y) # default covariance of x and y
+
+    :param x: The first slab.
+    :type x: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param y: The second slab
+    :type y: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param weights: list of weights for assessing the weighted covariance
+
+        .. note::
+
+            Weighted covariance is inherently biased. Passing a value for weights but
+            specifying an unbiased variance will cause an error
+
+    :type weights: list
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
+        default value = 0. You can pass the name of the dimension or index
+        (integer value 0...n) over which you want to compute the statistic.
+    :type axis: int or str
+    :param centered: Integer flag for whether the covariance should be centered.
+        0 or None means don't center, 1 means center.
+    :type centered: int
+    :param biased: Flag indicating whether covariance should be calculated with bias. A value of 1 indicates covariance
+        should be biased, while any other value indicates that it should not.
+    :type biased: int
+    :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
+    :type max_pct_missing: float
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.covariance")
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -717,32 +736,49 @@ def covariance(x,y,weights=None,axis=0,centered=1,biased=1,max_pct_missing=100.)
 
 def variance(x,weights=None,axis=0,centered=1,biased=1,max_pct_missing=100.):
     """
-    Function: variance
-    
-    Description of function:
-        Returns the variance from a slab. By default  on first dimension,
-        centered, and biased.
-    Usage:
-        result = variance(x, weights=weightoptions, axis = axisoptions,
-                          centered=centeredoptions, biased = biasedoptions,
-                          max_pct_missing=max_pct_missingoptions)
-    Options:
-        weightoptions 
-            If you want to compute the weighted variance, provide weights here.
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
-            default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.
-        centeredoptions None | 0 | 1
-            default value = 1 removes the mean first. Set to 0 or None for
-            uncentered.
-        biasedoptions None | 0 | 1
-            default value = 1 If want to compute an unbiased variance pass
-            anything but 1.
-        max_pct_missingoptions
-            default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
-            Set to a percentage between 0 and 100%.
-            Set to 0. to mask results if any data is masked.
-            Set to 100. to calculate result if any data is not masked
+    Returns the variance from a slab. By default  on first dimension,
+    centered, and biased.
+
+    :Example:
+
+        .. doctest:: statistics_variance
+
+            >>> import vcs, cdms2, os
+            >>> try:
+            ...    os.listdir(vcs.sample_data)
+            >>> except:
+            ...    vcs.download_sample_data_files()
+            >>> f=cdms2.open(vcs.sample_data + 'clt.nc')
+            >>> x=f('u')
+            >>> result = variance(x) # default variance of x
+
+    :param x: Slab to compute variance of.
+    :type x: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param weights: list of weights(floats) for assessing the weighted variance
+
+        .. note::
+
+            Weighted covariance is inherently biased. Passing a value for weights but
+            specifying an unbiased variance will cause an error
+
+    :type weights: list
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
+        default value = 0. You can pass the name of the dimension or index
+        (integer value 0...n) over which you want to compute the statistic.
+    :type axis: int or str
+
+    :param centered: Integer flag for whether the variance should be centered.
+        0 or None means don't center, 1 means center.
+    :type centered: int
+
+    :param biased: Flag indicating whether variance should be calculated with bias. A value of 1 indicates variance
+        should be biased, while any other value indicates that it should not.
+    :type biased: int
+
+    :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
+    :type max_pct_missing: float
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.variance")
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -763,32 +799,49 @@ def checker(x,weights=None,axis=0,centered=1):
 
 def std(x,weights=None,axis=0,centered=1,biased=1,max_pct_missing=100.):
     """
-    Function: std
-     
-    Description of function:
-        Returns the standard deviation from a slab. By default  on first
-        dimension, centered, and biased.
-    Usage:
-        result = std(x, weights=weightoptions, axis = axisoptions,
-                     centered=centeredoptions, biased = biasedoptions,
-                     max_pct_missing=max_pct_missingoptions)
-    Options:
-        weightoptions 
-            If you want to compute the weighted statistic, provide weights here.
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
-            default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.
-        centeredoptions None | 0 | 1
-            default value = 1 removes the mean first. Set to 0 or None for
-            uncentered.
-        biasedoptions None | 0 | 1
-            default value = 1 If want to compute an unbiased variance pass
-            anything but 1.
-        max_pct_missingoptions
-            default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
-            Set to a percentage between 0 and 100%.
-            Set to 0. to mask results if any data is masked.
-            Set to 100. to calculate result if any data is not masked
+    Returns the standard deviation from a slab. By default  on first
+    dimension, centered, and biased.
+
+    :Example:
+
+        .. doctest:: statistics_std
+
+            >>> import vcs, cdms2, os
+            >>> try:
+            ...    os.listdir(vcs.sample_data)
+            >>> except:
+            ...    vcs.download_sample_data_files()
+            >>> f=cdms2.open(vcs.sample_data + 'clt.nc')
+            >>> x=f('u')
+            >>> result = std(x) # default standard deviation of x
+
+    :param x: Slab to compute std of.
+    :type x: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param weights: list of weights(floats) for assessing the weighted calculation
+
+        .. note::
+
+            Use of weights is inherently biased. Passing a value for weights but
+            specifying a non-biased calculation will cause an error.
+
+    :type weights: list
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
+        default value = 0. You can pass the name of the dimension or index
+        (integer value 0...n) over which you want to compute the statistic.
+    :type axis: int or str
+
+    :param centered: Integer flag for whether the calculation should be centered.
+        0 or None means don't center, 1 means center.
+    :type centered: int
+
+    :param biased: Flag indicating whether std should be calculated with bias. A value of 1 indicates calculation
+        should be biased, while any other value indicates that it should not.
+    :type biased: int
+
+    :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
+    :type max_pct_missing: float
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.std")
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -803,33 +856,52 @@ def std(x,weights=None,axis=0,centered=1,biased=1,max_pct_missing=100.):
 
 def correlation(x,y,weights=None,axis=0,centered=1,biased=1,max_pct_missing=100.):
     """
-    Function: correlation
-     
-    Description of function:
-        Returns the correlation between 2 slabs. By default on the first
-        dimension, centered and biased by default.
-    Usage:
-        result = correlation(x, y, weights=weightoptions, axis=axisoptions,
-                             centered=centeredoptions, biased=biasedoptions,
-                             max_pct_missing=max_pct_missingoptions)
-    Options:
-        weightoptions
-            default = None. If you want to compute the weighted correlation,
-            provide the weights here.
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
-            default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.
-        centeredoptions None | 0 | 1
-            default value = 1 removes the mean first. Set to 0 or None for
-            uncentered.
-        biasedoptions None | 0 | 1
-            default value = 1 returns biased statistic. If want to compute an
-            unbiased statistic pass anything but 1.
-        max_pct_missingoptions
-            default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
-            Set to a percentage between 0 and 100%.
-            Set to 0. to mask results if any data is masked.
-            Set to 100. to calculate result if any data is not masked
+    Returns the correlation between 2 slabs. By default on the first
+    dimension, centered and biased by default.
+
+    :Example:
+
+        .. doctest:: statistics_correlation
+
+            >>> import vcs, cdms2, os
+            >>> try:
+            ...    os.listdir(vcs.sample_data)
+            >>> except:
+            ...    vcs.download_sample_data_files()
+            >>> f=cdms2.open(vcs.sample_data + 'clt.nc')
+            >>> x=f('u')
+            >>> y=f('v')
+            >>> result = correlation(x, y) # calculate the default correlation
+    :param x: First slab.
+    :type x: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param y: Second slab.
+    :type y: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param weights: list of weights(floats) for assessing the weighted calculation
+
+        .. note::
+
+            Use of weights is inherently biased. Passing a value for weights but
+            specifying a non-biased calculation will cause an error.
+
+    :type weights: list
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
+        default value = 0. You can pass the name of the dimension or index
+        (integer value 0...n) over which you want to compute the statistic.
+    :type axis: int or str
+
+    :param centered: Integer flag for whether the calculation should be centered.
+        0 or None means don't center, 1 means center.
+    :type centered: int
+
+    :param biased: Flag indicating whether calculation should be biased. A value of 1 indicates calculation
+        should be biased, while any other value indicates that it should not.
+    :type biased: int
+
+    :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
+    :type max_pct_missing: float
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.corelation")
     x,y,weights,axis,ax=__checker(x,y,weights,axis)
@@ -843,34 +915,52 @@ def correlation(x,y,weights=None,axis=0,centered=1,biased=1,max_pct_missing=100.
 
 def rms(x,y,weights=None,axis=0,centered=0,biased=1,max_pct_missing=100.):
     """
-    Function: rms
-     
-    Description of function:
-        Returns the root mean square difference between 2 slabs. By default from
-        a slab (on first dimension) "uncentered" and "biased" by default.
-    Usage:
-        result = rms(x, y, weights=weightoptions, axis = axisoptions,
-                     centered=centeredoptions, biased = biasedoptions,
-                     max_pct_missing=max_pct_missingoptions)
-    Options:
-        weightoptions 
-            default = None returns equally weighted statistic. If you want to
-            compute the weighted statistic, provide weights here.
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
-            default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.
-        centeredoptions None | 0 | 1
-            default value = 0 returns uncentered statistic (same as None). To
-            remove the mean first (i.e centered statistic) set to 1. NOTE: Most
-            other statistic functions return a centered statistic by default.
-        biasedoptions None | 0 | 1
-            default value = 1 If want to compute an unbiased variance pass
-            anything but 1.
-        max_pct_missingoptions
-            default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
-            Set to a percentage between 0 and 100%.
-            Set to 0. to mask results if any data is masked.
-            Set to 100. to calculate result if any data is not masked
+    Returns the root mean square difference between 2 slabs. By default from
+    a slab (on first dimension) "uncentered" and "biased" by default.
+
+    :Example:
+
+        .. doctest:: statistics_rms
+
+            >>> import vcs, cdms2, os
+            >>> try:
+            ...    os.listdir(vcs.sample_data)
+            >>> except:
+            ...    vcs.download_sample_data_files()
+            >>> f=cdms2.open(vcs.sample_data + 'clt.nc')
+            >>> x=f('u')
+            >>> y=f('v')
+            >>> result = rms(x, y) # default rms calculation
+    :param x: First slab.
+    :type x: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param y: Second slab.
+    :type y: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param weights: list of weights(floats) for assessing the weighted calculation
+
+        .. note::
+
+            Use of weights is inherently biased. Passing a value for weights but
+            specifying a non-biased calculation will cause an error.
+
+    :type weights: list
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
+        default value = 0. You can pass the name of the dimension or index
+        (integer value 0...n) over which you want to compute the statistic.
+    :type axis: int or str
+
+    :param centered: Integer flag for whether the calculation should be centered.
+        0 or None means don't center, 1 means center.
+    :type centered: int
+
+    :param biased: Flag indicating whether calculation should be biased. A value of 1 indicates calculation
+        should be biased, while any other value indicates that it should not.
+    :type biased: int
+
+    :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
+    :type max_pct_missing: float
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.rms")
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -885,39 +975,54 @@ def rms(x,y,weights=None,axis=0,centered=0,biased=1,max_pct_missing=100.):
 
 def laggedcovariance(x,y,lag=None,axis=0,centered=1,partial=1,noloop=0,max_pct_missing=100.):
     """
-    Function: laggedcovariance
-     
-    Description of function:
-        Returns the covariance between 2 slabs at lag k centered and partial by
-        default.
-    Usage: 
-        result = laggedcovariance(x, y, lag=lagoptions, axis=axisoptions,
-                                  centered=centeredoptions,
-                                  partial=partialoptions, noloop=noloopoptions)
+    Returns the covariance between 2 slabs at lag k centered and partial by
+    default.
 
-        Returns value for x lags y by lag (integer)
-        
-    Options:
-        lagoptions None | n | (n1, n2, n3...) | [n1, n2, n3 ....]
-            default value = None  the maximum possible lags for specified axis
-            is used.You can pass an integer, list of integers, or tuple of
-            integers. 
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
-            default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.
-        centeredoptions
-            default value = 1 removes the mean first. Set to 0 or None for
-            uncentered
-        partialoptions None | 0 | 1
-            default value = 1 uses only common time for means.
-        noloopoptions None | 0 | 1
-            default value = 0 computes statistic at all lags upto 'lag'. If you
-            set noloop=1 statistic is computed at lag only (not up to lag). 
-        max_pct_missingoptions
-            default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
-            Set to a percentage between 0 and 100%.
-            Set to 0. to mask results if any data is masked.
-            Set to 100. to calculate result if any data is not masked
+    :Example:
+
+        .. doctest:: statistics_laggedcovariance
+
+            >>> import vcs, cdms2, os, os
+            >>> try:
+            ...    os.listdir(vcs.sample_data)
+            >>> except:
+            ...    vcs.download_sample_data_files()
+            >>> f=cdms2.open(vcs.sample_data + '/clt.nc')
+            >>> x=f('u')
+            >>> y=f('v')
+            >>> result = laggedcovariance(x, y) # default laggedcovariance calculation, with max. number of lags
+
+    :param x: First slab.
+    :type x: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param y: Second slab.
+    :type y: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param lag: Integer, list of integers, tuple of integers, or None. If None, maximum possible lags for specified axis
+            are used.
+    :type lag: int or list or tuple or None
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
+        default value = 0. You can pass the name of the dimension or index
+        (integer value 0...n) over which you want to compute the statistic.
+    :type axis: int or str
+
+    :param centered: Integer flag for whether the calculation should be centered.
+        0 or None means don't center, 1 means center.
+    :type centered: int
+
+    :param centered: Integer flag for whether the calculation should be centered.
+        0 or None means don't center, 1 means center.
+    :type centered: int
+    :param partial: Integer flag. If 1, uses only common time for means.
+    :type partial: int or None
+    :param noloop: None | 0 | 1
+        default value = 0 computes statistic at all lags upto 'lag'. If you
+        set noloop=1 statistic is computed at lag only (not up to lag).
+    :type noloop: int or None
+
+    :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
+    :type max_pct_missing: float
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.laggedcovariance")
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -957,42 +1062,56 @@ def laggedcovariance(x,y,lag=None,axis=0,centered=1,partial=1,noloop=0,max_pct_m
 
 def laggedcorrelation(x,y,lag=None,axis=0,centered=1,partial=1,biased=1,noloop=0,max_pct_missing=100.):
     """
-    Function: laggedcorrelation
-     
-    Description of function:
-        Returns the correlation between 2 slabs at lag k centered, partial and
-        "biased" by default.
-    Usage:
-        result = laggedcorrelation(x, y, lag=lagoptions, axis=axisoptions,
-                                   centered=centeredoptions,
-                                   partial=partialoptions,
-                                   biased=biasedoptions, noloop=noloopoptions)
 
-        Returns value for x lags y by lag
+    Returns the correlation between 2 slabs at lag k centered, partial and
+    "biased" by default.
+
+    :Example:
+
+        .. doctest:: statistics_laggedcorrelation
+
+            >>> import vcs, cdms2, os
+            >>> try:
+            ...    os.listdir(vcs.sample_data)
+            >>> except:
+            ...    vcs.download_sample_data_files()
+            >>> f=cdms2.open(vcs.sample_data + 'clt.nc')
+            >>> x=f('u')
+            >>> y=f('v')
+            >>> result = laggedcorrelation(x, y) # default laggedcorrelation, with max. number of lags
+
         
-    Options:
-        lagoptions None | n | (n1, n2, n3...) | [n1, n2, n3 ....]
-            default value = None  the maximum possible lags for specified axis
-            is used.You can pass an integer, list of integers, or tuple of integers. 
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
-            default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.
-        centeredoptions
-            default value = 1 removes the mean first. Set to 0 or None for
-            uncentered
-        partialoptions None | 0 | 1
-            default value = 1 uses only common time for means.
-        biasedoptions None | 0 | 1
-            default value = 1 If want to compute an unbiased variance pass
-            anything but 1.
-        noloopoptions None | 0 | 1
-            default value = 0 computes statistic at all lags upto 'lag'. If you
-            set noloop=1 statistic is computed at lag only (not up to lag). 
-        max_pct_missingoptions
-            default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
-            Set to a percentage between 0 and 100%.
-            Set to 0. to mask results if any data is masked.
-            Set to 100. to calculate result if any data is not masked
+    :param x: First slab.
+    :type x: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param y: Second slab.
+    :type y: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param lag: Integer, list of integers, tuple of integers, or None.
+        If None, maximum possible lags for specified axis are used.
+    :type lag: int or list or tuple or None
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
+        default value = 0. You can pass the name of the dimension or index
+        (integer value 0...n) over which you want to compute the statistic.
+    :type axis: int or str
+
+    :param centered: Integer flag for whether the calculation should be centered.
+        0 or None means don't center, 1 means center.
+    :type centered: int
+
+    :param centered: Integer flag for whether the calculation should be centered.
+        0 or None means don't center, 1 means center.
+    :type centered: int
+    :param partial: Integer flag. If 1, uses only common time for means.
+    :type partial: int or None
+    :param noloop: None | 0 | 1
+        default value = 0 computes statistic at all lags upto 'lag'. If you
+        set noloop=1 statistic is computed at lag only (not up to lag).
+    :type noloop: int or None
+
+    :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
+    :type max_pct_missing: float
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.laggedcorrelation")
     x,y,w,axis,ax=__checker(x,y,None,axis)
@@ -1031,34 +1150,51 @@ def laggedcorrelation(x,y,lag=None,axis=0,centered=1,partial=1,biased=1,noloop=0
 
 def autocovariance(x,lag=None,axis=0,centered=1,partial=1,noloop=0,max_pct_missing=100.):
     """
-    Function: autocovariance
-     
-    Description of function:
-        Returns the autocovariance of a slab. By default over the first dimension,  centered, and partial.
-    Usage:
-        result = autocovariance(x, lag=lagoptions, axis=axisoptions,
-                                centered=centeredoptions,
-                                partial=partialoptions, noloop=noloopoptions)
-    Options:
-        lagoptions None | n | (n1, n2, n3...) | [n1, n2, n3 ....]
-            default value = None  the maximum possible lags for specified axis
-            is used.You can pass an integer, list of integers, or tuple of integers. 
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
-            default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.
-        centeredoptions None | 0 | 1
-            default value = 1 removes the mean first. Set to 0 or None for
-            uncentered statistic.
-        partialoptions None | 0 | 1
-            default value = 1 uses only common time for means.
-        noloopoptions None | 0 | 1
-            default value = 0 computes statistic at all lags upto 'lag'. If you
-            set noloop=1 statistic is computed at lag only (not up to lag). 
-        max_pct_missingoptions
-            default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
-            Set to a percentage between 0 and 100%.
-            Set to 0. to mask results if any data is masked.
-            Set to 100. to calculate result if any data is not masked
+    Returns the autocovariance of a slab. By default over the first dimension,  centered, and partial.
+
+    :Example:
+
+        .. doctest:: statistics_autocovariance
+
+            >>> import vcs, cdms2, os
+            >>> try:
+            ...    os.listdir(vcs.sample_data)
+            >>> except:
+            ...    vcs.download_sample_data_files()
+            >>> f=cdms2.open(vcs.sample_data + 'clt.nc')
+            >>> x=f('u')
+            >>> result = autocovariance(x) # default autocovariance
+
+    :param x: First slab.
+    :type x: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param lag: Integer, list of integers, tuple of integers, or None.
+        If None, maximum possible lags for specified axis are used.
+    :type lag: int or list or tuple or None
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
+        default value = 0. You can pass the name of the dimension or index
+        (integer value 0...n) over which you want to compute the statistic.
+    :type axis: int or str
+
+    :param centered: Integer flag for whether the calculation should be centered.
+        0 or None means don't center, 1 means center.
+    :type centered: int
+
+    :param centered: Integer flag for whether the calculation should be centered.
+        0 or None means don't center, 1 means center.
+    :type centered: int
+
+    :param partial: Integer flag. If 1, uses only common time for means.
+    :type partial: int or None
+
+    :param noloop: None | 0 | 1
+        default value = 0 computes statistic at all lags upto 'lag'. If you
+        set noloop=1 statistic is computed at lag only (not up to lag).
+    :type noloop: int or None
+
+    :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
+    :type max_pct_missing: float
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.autocovariance")
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -1095,39 +1231,51 @@ def autocovariance(x,lag=None,axis=0,centered=1,partial=1,noloop=0,max_pct_missi
 
 def autocorrelation(x,lag=None,axis=0,centered=1,partial=1,biased=1,noloop=0,max_pct_missing=100.):
     """
-    Function: autocorrelation
-     
-    Description of function:
-      Returns the autocorrelation of a slab at lag k centered,partial and
-      "biased" by default
+    Returns the autocorrelation of a slab at lag k centered,partial and
+    "biased" by default
       
-    Usage:
-      result = autocorrelation(x, lag=lagoptions, axis=axisoptions,
-                               centered=centeredoptions, partial=partialoptions,
-                               biased=biasedoptions, noloop=noloopoptions)
-    Options:
-        lagoptions None | n | (n1, n2, n3...) | [n1, n2, n3 ....]
-            default value = None  the maximum possible lags for specified axis is
-            used.You can pass an integer, list of integers, or tuple of integers. 
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n  
-            default value = 0. You can pass the name of the dimension or index 
-            (integer value 0...n) over which you want to compute the statistic. 
-        centeredoptions None | 0 | 1
-            default value = 1 removes the mean first. Set to 0 or None for
-            uncentered statistic.
-        partialoptions None | 0 | 1
-            default value = 1 uses only common time for means.
-        biasedoptions None | 0 | 1
-            default value = 1 computes the biased statistic. If want to compute 
-            an unbiased statistic pass anything but 1.
-        noloopoptions None | 0 | 1
-            default value = 0 computes statistic at all lags upto 'lag'. If you 
-            set noloop=1 statistic is computed at lag only (not up to lag). 
-        max_pct_missingoptions
-            default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
-            Set to a percentage between 0 and 100%.
-            Set to 0. to mask results if any data is masked.
-            Set to 100. to calculate result if any data is not masked
+    :Example:
+
+        .. doctest:: statistics_autocorrelation
+
+            >>> import vcs, cdms2, os
+            >>> try:
+            ...    os.listdir(vcs.sample_data)
+            >>> except:
+            ...    vcs.download_sample_data_files()
+            >>> f=cdms2.open(vcs.sample_data + 'clt.nc')
+            >>> x=f('u')
+            >>> result = autocorrelation(x)
+    :param x: First slab.
+    :type x: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param lag: Integer, list of integers, tuple of integers, or None.
+        If None, maximum possible lags for specified axis are used.
+    :type lag: int or list or tuple or None
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
+        default value = 0. You can pass the name of the dimension or index
+        (integer value 0...n) over which you want to compute the statistic.
+    :type axis: int or str
+
+    :param centered: Integer flag for whether the calculation should be centered.
+        0 or None means don't center, 1 means center.
+    :type centered: int
+
+    :param centered: Integer flag for whether the calculation should be centered.
+        0 or None means don't center, 1 means center.
+    :type centered: int
+
+    :param partial: Integer flag. If 1, uses only common time for means.
+    :type partial: int or None
+
+    :param noloop: None | 0 | 1
+        default value = 0 computes statistic at all lags upto 'lag'. If you
+        set noloop=1 statistic is computed at lag only (not up to lag).
+    :type noloop: int or None
+
+    :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
+    :type max_pct_missing: float
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.autocorrelation")
     x,dum,dum,axis,ax=__checker(x,None,None,axis)
@@ -1164,28 +1312,43 @@ def autocorrelation(x,lag=None,axis=0,centered=1,partial=1,biased=1,noloop=0,max
         
 def meanabsdiff(x,y,weights=None,axis=0,centered=1,max_pct_missing=100.):
     """
-    Function: meanabsdiff
-     
-    Description of function:
-        Returns the mean absolute difference between 2 slabs x and y. By default
-        on the first dimension and centered
-    Usage:
-        result = meanabsdiff(x, y, weights=weightoptions, axis = axisoptions,
-                             centered=centeredoptions)
-    Options:
-        weightoptions 
-            default = None returns equally weighted statistic. If you want to
-            compute the weighted statistic, provide weights here.
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
-            default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.
-        centeredoptions None | 0 | 1
-            default value = 1 removes the mean first. Set to 0 or None for uncentered.
-        max_pct_missingoptions
-            default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
-            Set to a percentage between 0 and 100%.
-            Set to 0. to mask results if any data is masked.
-            Set to 100. to calculate result if any data is not masked
+    Returns the mean absolute difference between 2 slabs x and y. By default
+    on the first dimension and centered
+
+    :Example:
+
+        .. doctest:: statistics_meanabsdiff
+
+            >>> import vcs, cdms2, os
+            >>> try:
+            ...    os.listdir(vcs.sample_data)
+            >>> except:
+            ...    vcs.download_sample_data_files()
+            >>> f=cdms2.open(vcs.sample_data + 'clt.nc')
+            >>> x=f('u')
+            >>> y=f('v')
+            >>> result = meanabsdiff(x, y) # default mean absolute difference calculation
+
+    :param x: First slab.
+    :type x: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param y: Second slab.
+    :type y: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param weights: list of weights for assessing the weighted calculation
+    :type weights: list
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
+        default value = 0. You can pass the name of the dimension or index
+        (integer value 0...n) over which you want to compute the statistic.
+    :type axis: int or str
+
+    :param centered: Integer flag for whether the calculation should be centered.
+        0 or None means don't center, 1 means center.
+    :type centered: int
+
+    :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
+    :type max_pct_missing: float
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.meanabsdiff")
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -1209,49 +1372,67 @@ def linearregression(y,axis=None,x=None,error=None,probability=None,nointercept=
     details, refer to 'Statistical Methods in Atmospheric Sciences' by
     Daniel S. Wilks, Academic Press, 1995.
     
-    Usage:
-    result = linearregression(y, axis=axisoptions, x=xoptions, \
-                    error=erroroptions, probability=probabilityoptions, \
-                    nointercept=nointerceptoptions, noslope=noslopeoptions)
+    :Example:
 
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
-            default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to treat the array as the
-            dependent variable.
-        xvalues
-            default = None. You can pass an array of values that are to be used
-            as the independent axis x
-        nointerceptoptions None | 0 | 1
-            default = None. Setting to 0 or None means intercept calculations
-            are returned. To turn OFF the intercept computations set
-            nointercept = 1.
-        noslopeoptions None | 0 | 1
-            default = None. Setting to None or 0 means slope calculations are
-            returned. To turn OFF the slope computations set noslope to 1.
-        erroroptions None | 0 | 1 | 2 | 3
-            default = None. If set to 0 or None, no associated errors are
-            returned. 
-            If set to 1, the unadjusted standard error is returned. 
-            If set to 2, standard error returned. This standard error is
-                adjusted using the centered autocorrelation of the residual.
-            If set to 3, standard error returned. The standard error here is
-                adjusted using the centered autocorrelation of the raw data (y).
-        probabilityoptions None | 0 | 1
-            default = None. If set to 0 or None, no associated probabilities are
-                returned. Set this to 1to compute probabilities.
-            Note: Probabilities are returned only if erroroptions are set to one
-                  of 1, 2, or 3. If it is set to None or 0, then setting
-                  probabilityoptions has no meaning.
+        .. doctest:: statistics_linearregression
 
-    What is returned?
+            >>> import vcs, cdms2, os
+            >>> try:
+            ...    os.listdir(vcs.sample_data)
+            >>> except:
+            ...    vcs.download_sample_data_files()
+            >>> f=cdms2.open(vcs.sample_data + 'clt.nc')
+            >>> y=f('v')
+            >>> result = linearregression(y, axis='x') # default linearregression over x axis
+
+    :param y: Slab to compute linear regression of
+    :type y: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
+        default value = 0. You can pass the name of the dimension or index
+        (integer value 0...n) over which you want to compute the statistic.
+    :type axis: int or str
+
+    :param x: Slab over which linear regression of y will be computed
+    :type x: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param nointercept: Setting to 0 or None means intercept calculations
+        are returned. To turn OFF the intercept computations set
+        nointercept = 1.
+    :type nointercept: int or None
+
+    :param noslope: Setting to None or 0 means slope calculations are
+        returned. To turn OFF the slope computations set noslope to 1.
+    :type noslope: int or None
+
+    :param error: If set to 0 or None, no associated errors are
+        returned.
+        If set to 1, the unadjusted standard error is returned.
+        If set to 2, standard error returned. This standard error is
+            adjusted using the centered autocorrelation of the residual.
+        If set to 3, standard error returned. The standard error here is
+            adjusted using the centered autocorrelation of the raw data (y).
+    :type error: int or None
+
+    :param probability: If set to 0 or None, no associated probabilities are
+            returned. Set this to 1 to compute probabilities.
+
+        .. note::
+
+            Probabilities are returned only if erroroptions are set to one
+            of 1, 2, or 3. If it is set to None or 0, then setting
+            probabilityoptions has no meaning.
+    :type probability: int or None
+
+    :Return Values:
+
         The returned values depend on the combination of options you select. If
         both slope and intercept are required, a tuple is returned for both Value
         and optionally Error (or optionally associated Probabilities), but single
         values (not tuples) are returned if only one set (slope OR intercept) is
         required. See examples below for more details.
-        
-        When erroroption = 1 (from description above for erroroptions you know
+
+        * When erroroption = 1 (from description above for erroroptions you know
             that means unadjusted standard error) and probabilityoption=1, then
             the following are returned:
             pt1 : The p-value for regression coefficient t-value. (With no
@@ -1260,10 +1441,10 @@ def linearregression(y,axis=None,x=None,error=None,probability=None,nointercept=
                   returned to keep the length of the returned values consistent.
             pf1 : The p-value for regression coefficient F-value (one-tailed).
             pf2 : The p-value for regression coefficient F-value (two-tailed).
-            
-        When erroroption = 2 or 3 (implying error adjustment using the residual
+
+        * When erroroption = 2 or 3 (implying error adjustment using the residual
             or the raw data and probabilityoption = 1, then the following are
-            returned: 
+            returned:
             pt1 : The p-value for regression coefficient t-value.(With effective
                   sample size adjustment for standard error of slope.
             pt2 : The p-value for regression coefficient t-value.(With effective
@@ -1271,51 +1452,53 @@ def linearregression(y,axis=None,x=None,error=None,probability=None,nointercept=
                   t-value.)
             pf1 : The p-value for regression coefficient F-value (one-tailed).
             pf2 : The p-value for regression coefficient F-value (two-tailed).
-            
-        The values pt1 and pt2 are used to test the null hypothesis that b = 0
+
+        * The values pt1 and pt2 are used to test the null hypothesis that b = 0
             (i.e., y is independent of x).
-        The values pf1 and pf2 are used to test the null hypothesis that the
+        * The values pf1 and pf2 are used to test the null hypothesis that the
             regression is linear (goodness of linear fit). For non-replicated
             values of y, the degrees of freedom are 1 and n-2.
 
             
-        Examples:
+        :Examples:
 
-        Let us first examine the default behaviour of the linearregression
-        function.
-        >>> Values = statistics.linearregression(y)
-        
-        #The returned "Values" is actually a tuple consisting of the slope and
-        #intercept. They can also be accessed as follows:
-        >>> slope, intercept = statistics.linearregression(y)
+            .. code-block:: python
 
-        If error estimates are also required, then:
-        >>> Values, Errors = linearregression(y, error=1)
-        
-        #where "Values" and "Errors" are tuples containing answer for
-        #slope AND intercept. You can break them as follows.
-        #slope, intercept = Value and slope_error, intercept_error = Errors. i.e.
-        >>> (slope, intercept), (slo_error, int_error) = \
-                            linearregression(y, error=1)
-        
-        #WARNING: The following will not work.
-        >>> slope, intercept, slo_error, int_error = linearregression(y, error=1)
-        
-        #To get the standard error non adjusted result for slope only
-        >>> slope, slope_error = linearregression(y, error=1, nointercept=1)
-        
-        #In the line below all the returned values are tuples. 
-        >>> Values,Errors,Pt1,Pt2,Pf1,Pf2 = \
-                     linearregression(y, error=2,probability=1)
-        #That means in the above statement is returning tuples ordered so:
-        #(slope, intercept), (slo_error, int_error), (pt1_slo, pt1_int),\
-                     (pt2_slo, pt2_int), (pf1_slo, pf1_int), (pf2_slo, pf2_int)
+                # Let us first examine the default behaviour of the linearregression
+                # function.
+                >>> Values = statistics.linearregression(y)
 
-        #If we want results returned for the intercept only.
-        >>> intercept,intercept_error,pt1,pt2,pf1,pf2 = \
-                  linearregression(y, error=2,probability=1,noslope=1)
+                # The returned "Values" is actually a tuple consisting of the slope and
+                # intercept. They can also be accessed as follows:
+                >>> slope, intercept = statistics.linearregression(y)
+
+                # If error estimates are also required, then:
+                >>> Values, Errors = linearregression(y, error=1)
+
+                # where "Values" and "Errors" are tuples containing answer for
+                # slope AND intercept. You can break them as follows.
+                # slope, intercept = Value and slope_error, intercept_error = Errors. i.e.
+                >>> (slope, intercept), (slo_error, int_error) = \
+                                    linearregression(y, error=1)
+
+                # WARNING: The following will not work.
+                >>> slope, intercept, slo_error, int_error = linearregression(y, error=1)
+
+                # To get the standard error non adjusted result for slope only
+                >>> slope, slope_error = linearregression(y, error=1, nointercept=1)
+
+                # In the line below all the returned values are tuples.
+                >>> Values,Errors,Pt1,Pt2,Pf1,Pf2 = \
+                             linearregression(y, error=2,probability=1)
+                # That means in the above statement is returning tuples ordered so:
+                # (slope, intercept), (slo_error, int_error), (pt1_slo, pt1_int),\
+                             (pt2_slo, pt2_int), (pf1_slo, pf1_int), (pf2_slo, pf2_int)
+
+                # If we want results returned for the intercept only.
+                >>> intercept,intercept_error,pt1,pt2,pf1,pf2 = \
+                          linearregression(y, error=2,probability=1,noslope=1)
                   
-"""
+    """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.linearregression")
     yisV=cdms2.isVariable(y)
     if yisV : yatt=y.attributes
@@ -1458,22 +1641,31 @@ def linearregression(y,axis=None,x=None,error=None,probability=None,nointercept=
         
 def geometricmean(x,axis=0,max_pct_missing=100.):
     """
-    Function: geometricmean
-     
-    Description of function:
-        Returns the geometric mean over a specified axis.
+    Returns the geometric mean over a specified axis.
 
-    Usage:
-        result = geometricmean(x, axis=axisoptions)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
-            default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.    
-        max_pct_missingoptions
-            default value = 100. Maximum fraction of cell which is allowed to be masked (missing).
-            Set to a percentage between 0 and 100%.
-            Set to 0. to mask results if any data is masked.
-            Set to 100. to calculate result if any data is not masked
+    :Example:
+
+        .. doctest:: statistics_geometricmean
+
+            >>> import vcs, cdms2, os
+            >>> try:
+            ...    os.listdir(vcs.sample_data)
+            >>> except:
+            ...    vcs.download_sample_data_files()
+            >>> f=cdms2.open(vcs.sample_data + 'clt.nc')
+            >>> x=f('v')
+            >>> result = geometricmean(x, axis='x')
+
+    :param x: Slab to compute geometric mean for
+    :type x: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
+        default value = 0. You can pass the name of the dimension or index
+        (integer value 0...n) over which you want to compute the statistic.
+    :type axis: int or str
+
+    :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
+    :type max_pct_missing: float
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.geometricmean")
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -1536,20 +1728,32 @@ def _percentiles(out,percent):
 
 def percentiles(x,percentiles=[50.],axis=0):
     """
-    Function: percentiles
-
-    Description of function:
-        Returns values at the defined percentiles for an array.
+    Returns values at the defined percentiles for an array.
         
-    Usage:
-        result = percentiles(x, percentiles=percentilesoptions, axis=axisoptions)
+    :Example:
 
-    Options:
-        percentilesoptions A python list of values
-              Default = [50.] (the 50th percentile i.e the median value)             
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
-            default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.    
+        .. doctest:: statistics_percentiles
+
+            >>> import vcs, cdms2, os
+            >>> try:
+            ...    os.listdir(vcs.sample_data)
+            >>> except:
+            ...    vcs.download_sample_data_files()
+            >>> f=cdms2.open(vcs.sample_data + 'clt.nc')
+            >>> x=f('v')
+            >>> result = percentiles(x, percentiles=[25.,50.,75.,100.]) # percentiles across default axis
+
+    :param x: Slab to compute statistics for
+    :type x: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param percentiles: A python list of values
+            Default = [50.] (the 50th percentile i.e the median value)
+    :type percentiles: list
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
+        default value = 0. You can pass the name of the dimension or index
+        (integer value 0...n) over which you want to compute the statistic.
+    :type axis: int or str
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.percentiles")
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -1567,18 +1771,28 @@ def percentiles(x,percentiles=[50.],axis=0):
 
 def median(x,axis=0):
     """
-    Function: median
+    Returns the median value of an array.
+        
+    :Example:
 
-    Description of function:
-        Returns the median value of an array.
+        .. doctest:: statistics_median
+
+            >>> import vcs, cdms2, os
+            >>> try:
+            ...    os.listdir(vcs.sample_data)
+            >>> except:
+            ...    vcs.download_sample_data_files()
+            >>> f=cdms2.open(vcs.sample_data + 'clt.nc')
+            >>> x=f('v')
+            >>> result = median(x, axis='x')
         
-    Usage:
-        result = median(x, axis=axisoptions)
-        
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+    :param x: Slab to compute statistics for
+    :type x: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
             default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.            
+            (integer value 0...n) over which you want to compute the statistic.
+    :type axis: str or int
     """
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.median")
     tmp=percentiles(x,percentiles=[50.],axis=axis)
@@ -1588,19 +1802,29 @@ def median(x,axis=0):
 
 def rank(x,axis=0):
     """
-    Function: rank
+    Returns the rank of each element along the specified axis
+    where 0 is lowest value, 100 is maximum value. Handles missing values correctly
+        
+    :Example:
 
-    Description of function:
-        Returns the rank of each element along the specified axis
-        where 0 is lowest value, 100 is maximum value. Handles missing values correctly
-        
-    Usage:
-        result = median(x, axis=axisoptions)
-        
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+        .. doctest:: statistics_rank
+
+            >>> import vcs, cdms2, os
+            >>> try:
+            ...    os.listdir(vcs.sample_data)
+            >>> except:
+            ...    vcs.download_sample_data_files()
+            >>> f=cdms2.open(vcs.sample_data + 'clt.nc')
+            >>> x=f('v')
+            >>> result = median(x, axis='x')
+
+    :param x: Slab to compute statistics for
+    :type x: cdms2.tvariable.TransientVariable or numpy.array
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
             default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.            
+            (integer value 0...n) over which you want to compute the statistic.
+    :type axis: str or int
     """
 
     # preprocessing

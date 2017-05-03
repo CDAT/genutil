@@ -3,16 +3,22 @@ from cdms2.selectors import SelectorComponent
 import MV2,numpy,cdtime
 import cdat_info
 class PickComponent(SelectorComponent):
-    '''
+    """
     Let the user pick non contiguous values along an axis
-    keyword "match" is reserved for handling of inexisting values
+    keyword "match" is reserved for handling of non-existing values
     match=1 : (default): raise an exception if one of the select-values does not exist
     match=0 : replace inexistince selcet-values with missing
     match=-1: skip inexisting select-values
-    '''
+    """
     
     def __init__(self,*args,**kargs):
-        ''' initialise some value such as tolerances for equality'''
+        """Initialise some values such as tolerances for equality
+
+        :param kargs: match is the most relevant keyword argument. There is a
+            match=1 : (default): raise an exception if one of the select-values does not exist
+            match=0 : replace inexistence select-values with missing
+            match=-1: skip inexistent select-values
+        """
         self.args=args
         self.kargs=kargs
         self.match=kargs.get('match',1)
@@ -34,7 +40,7 @@ class PickComponent(SelectorComponent):
         return s
     
     def specify(self,slab,axes,specification,confined_by,aux):
-        ''' First part: confine the slab within a Domain wide enough to do the exact in post'''
+        """ First part: confine the slab within a Domain wide enough to do the exact in post"""
         import string,copy
         from numpy.ma import minimum,maximum
         # myconfined is for later, we can't confine a dimension twice with an argument plus a keyword or 2 keywords
@@ -111,7 +117,7 @@ class PickComponent(SelectorComponent):
         return 0
         
     def post(self,fetched,slab,axes,specifications,confined_by,aux,axismap):
-        ''' Post processing retouches the bounds and later will deal with the mask'''
+        """ Post processing retouches the bounds and later will deal with the mask"""
         import cdms2 as cdms
         fetched=cdms.createVariable(fetched,copy=1)
         faxes=fetched.getAxisList()
@@ -177,25 +183,23 @@ def picker(*args, **kargs):
     Let the user pick non contiguous values along an axis
     Usage:
     picker(dim2=list1,dim2=list2)
-    keyword 'match' is reserved for handling of inexisting values
+    keyword 'match' is reserved for handling of inexistent values
     match=1 : (default): raise an exception if one of the select-values does not exist
-    match=0 : replace inexistince selcet-values with missing
+    match=0 : replace inexistince select-values with missing
     match=-1: skip inexisting select-values
 
-    Example:
-    f=cdms.open('/pcmdi/obs/mo/ta/rnl_ncep/ta.rnl_ncep.ctl')
-    #f first levels are 1000.00, 925.00, 850.00, 700.00
-    s=f('ta,picker(level=[1000,850,700]))
-    #or
-    s=f('ta,picker(level=[1000,700,850]) # different order from first example
-    #or 
-    s=f('ta,picker(level=[1000,700,800]) # raise an exception since 800 doesn't exist
-    #or 
-    s=f('ta,picker(level=[1000,700,800],match=0) # replace 800 level with missing values
-    #or 
-    s=f('ta,picker(level=[1000,700,800],match=-1) # skip 800 level
-    # or
-    s=f('ta',genutil.picker(time=['1987-7','1988-3',cdtime.comptime(1989,3)],level=[1000,700,850]))
+    :Example:
+
+        .. doctest:: selval_picker
+
+            # The following examples show numerous ways of specifying a picker
+            >>> f=cdms.open('/pcmdi/obs/mo/ta/rnl_ncep/ta.rnl_ncep.ctl')
+            >>> s=f('ta',picker(level=[1000,850,700])) # f first levels are 1000.00, 925.00, 850.00, 700.00
+            >>> s=f('ta',picker(level=[1000,700,850]) # different order from first example
+            >>> s=f('ta',picker(level=[1000,700,800]) # raise an exception since 800 doesn't exist
+            >>> s=f('ta',picker(level=[1000,700,800],match=0) # replace 800 level with missing values
+            >>> s=f('ta',picker(level=[1000,700,800],match=-1) # skip 800 level
+            >>> s=f('ta',genutil.picker(time=['1987-7','1988-3',cdtime.comptime(1989,3)],level=[1000,700,850]))
 
     """
     cdat_info.pingPCMDIdb("cdat","genutil.picker")

@@ -5,19 +5,35 @@ import cdms2 as cdms
 
 def grower(x, y, singleton=0):
     """
-    Function: grower
-
-    Description of function:
-        This function takes 2 transient variables and grows them to
-        match their axes.
+    This function takes 2 transient variables and grows them to
+    match their axes.
+    The final order will be the order of the first variables
+    followed by all/any dimension(s) from the second variable not present in the first variable.
     
-    Usage:
-        x, y = grower(x, y, singleton=singletonoption)
+    :Example:
 
-    Options:
-        singletonoption 0 | 1
-        Default = 0 If singletonoption is set to 1 then an error is
-        raised if one of the dims is not a singleton dimension.    
+        .. doctest:: genutil_grower
+
+            >>> import cdms2, vcs
+            >>> vcs.download_sample_data_files()
+            >>> f=cdms2.open(vcs.sampledata + '/clt.nc')
+            >>> x=f('clt')
+            >>> y=f('v')
+            >>> x, y = grower(x, y, singleton=1)
+
+    :param x: First transient variable to grow
+    :type x: cdms.tvariable.TransientVariable
+
+    :param y: Second transient variable to grow
+    :type y: cdms.tvariable.Transientvariable
+
+    :param singleton: Integer flag to indicate whether to raise an error if either dimension is not a singleton.
+        Default = 0
+        If singletonoption is set to 1 then an error is raised if one of the dims is not a singleton dimension.
+    :type singleton: int
+
+    :returns: x and y, adjusted such that their axes match.
+    :rtype: cdms.tvariable.TransientVariable
     """
     # Parse the x axes
     xorder=x.getOrder(ids=1)

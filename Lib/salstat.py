@@ -1,7 +1,8 @@
-# Adapted for numpy/ma/cdms2 by convertcdms.py
-# stats.py - reworked module for statistical analysis
 """
-This module has been written specifically for the SalStat statistics package. 
+Adapted for numpy/ma/cdms2 by convertcdms.py
+stats.py - reworked module for statistical analysis
+
+This module has been written specifically for the SalStat statistics package.
 It is an object oriented (and more limited) version of Gary Strangmans 
 stats.y module, and much code has been taken from there. The classes and 
 methods are usable from the command line, and some may prefer the OO style 
@@ -13,7 +14,8 @@ See the enclosed file COPYING for the full text of the licence.
 
 Other parts of this code were taken from stats.py by Gary Strangman of
 Harvard University (c) Not sure what year, Gary Strangman, released under the 
-GNU General Public License."""
+GNU General Public License.
+"""
 
 import numpy.ma,cdms2,array_indexing_emulate as array_indexing
 from statistics import __checker
@@ -25,6 +27,7 @@ multiply=numpy.ma.multiply
 sum=numpy.ma.sum
 mean=numpy.ma.average # Shortcut
 
+
 def _fixScalar(a):
     if isinstance(a,(float,int)) or a.shape==():
         a=numpy.ma.array([a,],copy=0)
@@ -32,8 +35,11 @@ def _fixScalar(a):
     else:
         return a
     
-## Diference Squared
+
+# Diference Squared
 def _diffsquared(a,b): return numpy.ma.power(a-b,2)
+
+
 def differencesquared(x,y,axis=0):
     """Computes the Squared differecne between 2 datasets
     Usage:
@@ -62,7 +68,8 @@ def differencesquared(x,y,axis=0):
         diff=diff.filled(1.e20)
     return diff
 
-## No need to make it user available
+
+# No need to make it user available
 def _shellsort(inlist):
     """ _shellsort algorithm.  Sorts a 1D-list.
 
@@ -71,10 +78,11 @@ def _shellsort(inlist):
         """
     return numpy.ma.sort(inlist,axis=0),numpy.ma.argsort(inlist,axis=0)
 
-## Rankdata
+
+# Rankdata
 def _rankdata(inlist):
     """
-    Ranks the data in inlist, dealing with ties appropritely.
+    Ranks the data in inlist, dealing with ties appropriately.
     Adapted from Gary Perlman's |Stat ranksort.
 
     Usage:   _rankdata(inlist)
@@ -103,21 +111,33 @@ def _rankdata(inlist):
             sumranks = numpy.ma.where(c1,0.,sumranks)
             dupcount = numpy.ma.where(c1,0,dupcount)
     for i in range(n):
-        newlist2=array_indexing.set(newlist2,ivec[i],newlist[i])  
+        newlist2=array_indexing.set(newlist2,ivec[i],newlist[i])
     return newlist2
+
+
 def rankdata(x,axis=0):
     """
-    Ranks the data, dealing with ties appropritely.
+    Ranks the data, dealing with ties appropriately.
     Adapted from Gary Perlman's |Stat ranksort.
     Further adapted to numpy.ma/numpy by PCMDI's team
 
-    Usage:   rankdata(array, axis=axisoptions)
-    Returns: a list of length equal to inlist, containing rank scores
-    Option:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
-            default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.
-            even: 'xy': to do over 2 dimensions at once
+    :Example:
+
+        .. doctest:: genutil_salstat_rankdata
+
+            >>> rankdata(array, axis=axisoptions)
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
+        default value = 0. You can pass the name of the dimension or index
+        (integer value 0...n) over which you want to compute the statistic.
+        even: 'xy': to do over 2 dimensions at once
+    :type axis: str or int
+
+    :param x:
+    :type x:
+
+    :returns: A list of length containing rank scores
+    :rtype: list
     """
     x = _fixScalar(x)
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -139,7 +159,7 @@ def _tiecorrect(rankvals):
     Corrects for ties in Mann Whitney U and Kruskal Wallis H tests.  See
     Siegel, S. (1956) Nonparametric Statistics for the Behavioral Sciences.
     New York: McGraw-Hill.  Code adapted from |Stat rankind.c code.
-    
+
     Usage:   _tiecorrect(rankvals)
     Returns: T correction factor for U or H
     """
@@ -171,13 +191,21 @@ def tiecorrect(x,axis=0):
     Corrects for ties in Mann Whitney U and Kruskal Wallis H tests.  See
     Siegel, S. (1956) Nonparametric Statistics for the Behavioral Sciences.
     New York: McGraw-Hill.  Code adapted from |Stat rankind.c code.
-    
-    Usage:   T = tiecorrect(rankvals,axis=axisoptions)
-    Option:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
-            default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.
-            even: 'xy': to do over 2 dimensions at once
+
+    :Example:
+
+        .. doctest:: genutil_salstat_tiecorrect
+
+            >>> T = tiecorrect(rankvals,axis=axisoptions)
+
+    :param x:
+    :type x:
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
+        default value = 0. You can pass the name of the dimension or index
+        (integer value 0...n) over which you want to compute the statistic.
+        even: 'xy': to do over 2 dimensions at once
+    :type axis:
     """
     x = _fixScalar(x)
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -199,12 +227,12 @@ def tiecorrect(x,axis=0):
 ###########################
 ## Probability functions ##
 ###########################
-    
+
 def _chisqprob(chisq,df,Z_MAX=6.0):
     """
     Returns the (1-tailed) probability value associated with the provided
     chi-square value and df.  Adapted from chisq.c in Gary Perlman's |Stat.
-    
+
     Usage:   _chisqprob(chisq,df,Z_MAX=6.0)
     """
     BIG = 20.0
@@ -256,10 +284,21 @@ def chisqprob(chisq,df,Z_MAX=6.0):
     """
     Returns the (1-tailed) probability value associated with the provided
     chi-square value and df.  Adapted from chisq.c in Gary Perlman's |Stat.
-    
-    Usage:   prob = chisqprob(chisq,df)
-    Options:
-    Z_MAX: Maximum meaningfull value for z probability (default=6.0)
+
+    :Example:
+
+        .. doctest:: genutil_salstat_chisqprob
+
+            >>> csprob = chisqprob(chisq,df)
+
+    :param chisq:
+    :type chisq:
+
+    :param df:
+    :type df:
+
+    :param Z_MAX: Maximum meaningful value for z probability (default=6.0)
+    :type Z_MAX: float
     """
     chisq = _fixScalar(chisq)
     df = _fixScalar(df)
@@ -277,9 +316,9 @@ def chisqprob(chisq,df,Z_MAX=6.0):
 
 def _inversechi(prob, df):
     """This function calculates the inverse of the chi square function. Given
-    a p-value and a df, it should approximate the critical value needed to 
+    a p-value and a df, it should approximate the critical value needed to
     achieve these functions. Adapted from Gary Perlmans critchi function in
-    C. Apologies if this breaks copyright, but no copyright notice was 
+    C. Apologies if this breaks copyright, but no copyright notice was
     attached to the relevant file.
     """
     minchisq = numpy.ma.zeros(df.shape)
@@ -303,12 +342,24 @@ def _inversechi(prob, df):
     return chisqval
 
 def inversechi(prob, df):
-    """This function calculates the inverse of the chi square function. Given
-    a p-value and a df, it should approximate the critical value needed to 
+    """
+    This function calculates the inverse of the chi square function. Given
+    a p-value and a df, it should approximate the critical value needed to
     achieve these functions. Adapted from Gary Perlmans critchi function in
-    C. Apologies if this breaks copyright, but no copyright notice was 
+    C. Apologies if this breaks copyright, but no copyright notice was
     attached to the relevant file.
-    Usage invchi = inversechi(prob,df,axis=axisoptions)
+
+    :Example:
+
+        .. doctest:: genutil_salstat_inversechi
+
+            >>> invchi = inversechi(prob,df,axis=axisoptions)
+
+    :param prob:
+    :type prob:
+
+    :param df:
+    :type df:
     """
     prob = _fixScalar(prob)
     df = _fixScalar(df)
@@ -328,7 +379,7 @@ def _erfcc(x):
     """
     Returns the complementary error function erfc(x) with fractional
     error everywhere less than 1.2e-7.  Adapted from MAal Recipies.
-    
+
     Usage:   _erfcc(x)
     """
     z = numpy.ma.absolute(x)
@@ -345,13 +396,18 @@ def erfcc(x):
     """
     Returns the complementary error function erfc(x) with fractional
     error everywhere less than 1.2e-7.  Adapted from MAal Recipies.
-    
-    Usage:   err = erfcc(x)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
-        default value = 0. You can pass the name of the dimension or index
-        (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+
+    :Example:
+
+        .. doctest:: genutil_salstat_erfcc
+
+            >>> err = erfcc(x)
+
+    :param x:
+    :type x:
+
+    :returns:
+    :rtype: cdms.tvariable.TransientVariable
     """
     x = _fixScalar(x)
     isvar=0
@@ -366,16 +422,16 @@ def erfcc(x):
         err=err.filled(1.e20)
     return err
 
-    
+
 def _zprob(z,Z_MAX = 6.0):
     """
     Returns the area under the normal curve 'to the left of' the given z value.
-    Thus, 
+    Thus,
     for z<0, _zprob(z) = 1-tail probability
     for z>0, 1.0-_zprob(z) = 1-tail probability
     for any z, 2.0*(1.0-_zprob(abs(z))) = 2-tail probability
     Adapted from z.c in Gary Perlman's |Stat.
-    
+
     Usage:  z =  _zprob(z,Z_MAX = 6.0)
     """
 
@@ -407,15 +463,26 @@ def _zprob(z,Z_MAX = 6.0):
 def zprob(z,Z_MAX = 6.0):
     """
     Returns the area under the normal curve 'to the left of' the given z value.
-    Thus, 
+    Thus,
     for z<0, zprob(z) = 1-tail probability
     for z>0, 1.0-zprob(z) = 1-tail probability
     for any z, 2.0*(1.0-zprob(abs(z))) = 2-tail probability
     Adapted from z.c in Gary Perlman's |Stat.
 
-    Z_MAX: Maximum meaningfull value  for z probability (default = 6)
-    
-    Usage:   z = zprob(z,Z_MAX=6.0 )
+    :Example:
+
+        .. doctest:: genutil_salstat_zprob
+
+            >>> z = zprob(z,Z_MAX=4.0)
+
+    :param z: The Z-value
+    :type z: float
+
+    :param Z_MAX: Maximum meaningful value  for z probability (default = 6)
+    :type Z_MAX: float
+
+    :returns: The area under the normal curve to the left of the given z value.
+    :rtype: float
     """
     z = _fixScalar(z)
     isvar=0
@@ -470,7 +537,17 @@ def ksprob(x):
     Computes a Kolmolgorov-Smirnov t-test significance level.  Adapted from
     MAal Recipies.
 
-    Usage:   ks = ksprob(x)
+    :Example:
+
+        .. doctest:: genutil_salstat_ksprob
+
+            >>> ks = ksprob(x)
+
+    :param x:
+    :type x:
+
+    :returns:
+    :rtype:
     """
     x = _fixScalar(x)
     isvar=0
@@ -490,18 +567,34 @@ def _fprob (dfnum, dfden, F):
     Returns the (1-tailed) significance level (p-value) of an F
     statistic given the degrees of freedom for the numerator (dfR-dfF) and
     the degrees of freedom for the denominator (dfF).
-    
+
     Usage:   _fprob(dfnum, dfden, F)   where usually dfnum=dfbn, dfden=dfwn
     """
     return _betai(0.5*dfden, 0.5*dfnum, dfden/(dfden+dfnum*F))
-    
+
 def fprob (dfnum, dfden, F):
     """
-    Returns the (1-tailed) significance level (p-value) of an F
+    Calculates the (1-tailed) significance level (p-value) of an F
     statistic given the degrees of freedom for the numerator (dfR-dfF) and
     the degrees of freedom for the denominator (dfF).
-    
-    Usage:   prob = fprob(dfnum, dfden, F)   where usually dfnum=dfbn, dfden=dfwn
+
+    :Example:
+
+        .. doctest:: genutil_salstat_fprob
+
+            >>> prob = fprob(dfnum, dfden, F) # where usually dfnum=dfbn, dfden=dfwn
+
+    :param dfnum:
+    :type dfnum:
+
+    :param dfden:
+    :type dfden:
+
+    :param F:
+    :type F:
+
+    :returns: The p-value of an F statistic.
+    :rtype: float
     """
     dfnum = _fixScalar(dfnum)
     dfden = _fixScalar(dfden)
@@ -522,8 +615,23 @@ def _tprob(df, t):
     return _betai(0.5*df,numpy.ma.ones(df.shape)*0.5,df/(1.*df+t*t))
 
 def tprob(df, t):
-    """Returns t probabilty given degree of freedom and T statistic
-    Usage: prob = tprob(df,t)
+    """
+    Calculates t probabilty given degree of freedom and T statistic
+
+    :Example:
+
+        .. doctest:: genutil_salstat_tprob
+
+            >>> prob = tprob(df,t)
+
+    :param df:
+    :type df:
+
+    :param t:
+    :type t:
+
+    :returns: The t probability of a T statistic
+    :rtype: float
     """
     df = _fixScalar(df)
     t = _fixScalar(t)
@@ -538,11 +646,11 @@ def tprob(df, t):
     if not numpy.ma.isMA(t):
         prob=prob.filled(1.e20)
     return prob
-    
+
 def _inversef(prob, df1, df2):
     """This function returns the f value for a given probability and 2 given
     degrees of freedom. It is an approximation using the fprob function.
-    Adapted from Gary Perlmans critf function - apologies if copyright is 
+    Adapted from Gary Perlmans critf function - apologies if copyright is
     broken, but no copyright notice was attached """
     f_epsilon = 0.000001
     maxf = numpy.ma.ones(prob.shape)*9999.0
@@ -562,16 +670,29 @@ def _inversef(prob, df1, df2):
     return fval
 
 def inversef(prob, df1, df2):
-    """This function returns the f value for a given probability and 2 given
+    """
+    This function returns the f value for a given probability and 2 given
     degrees of freedom. It is an approximation using the fprob function.
-    Adapted from Gary Perlmans critf function - apologies if copyright is 
+    Adapted from Gary Perlmans critf function - apologies if copyright is
     broken, but no copyright notice was attached
-    Usage: fval = inversef(prob, df1, df2)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
-        default value = 0. You can pass the name of the dimension or index
-        (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+
+    :Example:
+
+        .. doctest:: genutil_salstat_inversef
+
+            >>> fval = inversef(prob, df1, df2)
+
+    :param prob: The probability
+    :type prob:
+
+    :param df1: Degree of freedom
+    :type df1:
+
+    :param df2: Degree of freedom
+    :type df2:
+
+    :returns: The f value for a given probability with 2 degrees of freedom
+    :rtype:
     """
     prob = _fixScalar(prob)
     df1 = _fixScalar(df1)
@@ -592,7 +713,7 @@ def _betacf(a,b,x,ITMAX=200,EPS=3.0E-7):
     """
     This function evaluates the continued fraction form of the incomplete
     Beta function, betai.  (Adapted from: MAal Recipies in C.)
-    
+
     Usage:   _betacf(a,b,x,ITMAX=200,EPS=3.0E-7)
     ITMAX: Maximum number of iteration
     EPS: Epsilon number
@@ -633,10 +754,19 @@ def betacf(a,b,x,ITMAX=200,EPS=3.0E-7):
     """
     This function evaluates the continued fraction form of the incomplete
     Beta function, betai.  (Adapted from: MAal Recipies in C.)
-    
-    Usage:   beta = betacf(a,b,x,ITMAX=200,EPS=3.0E-7)
-    ITMAX: Maximum number of iteration
-    EPS: Epsilon number
+
+    :Example:
+
+        .. doctest:: salstat_betacf
+
+            >>> beta = betacf(a,b,x,ITMAX=200,EPS=3.0E-7)
+
+    :param ITMAX: Maximum number of iterations
+    :type ITMAX: int
+
+    :param EPS: Epsilon number
+    :type EPS: float
+
     """
     a = _fixScalar(a)
     b = _fixScalar(b)
@@ -682,7 +812,16 @@ def gamma(x):
     Gamma(z) = Integral(0,infinity) of t^(z-1)exp(-t) dt.
     (Adapted from: MAal Recipies in C.)
 
-    Usage:   _gammaln(xx)
+    :Example:
+
+        .. doctest:: salstat_gamma
+
+            _gammaln(xx)
+
+    :param x:
+    :type x:
+
+    :returns:
     """
     x = _fixScalar(x)
     isvar=0
@@ -740,8 +879,12 @@ def betai(a,b,x,ITMAX=200,EPS=3.0E-7):
     using the betacf function.  (Adapted from: MAal Recipies in C.)
 
     Usage:  beta = betai(a,b,x,ITMAX=200,EPS=3.0E-7)
-    ITMAX: Maximum number of iteration for betacf
-    EPS: Epsilon number
+
+    :param ITMAX: Maximum number of iterations
+    :type ITMAX: int
+
+    :param EPS: Epsilon number
+    :type EPS: float
     """
     a = _fixScalar(a)
     b = _fixScalar(b)
@@ -781,11 +924,11 @@ def sumsquares(x,axis=0):
     """Return the sum of the squares
     Usage:
         sq=sumsquare(data,axis=axisoptions)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+        You can also pass 'xy': to do over 2 dimensions at once
+    :type axis: str or int
     """
     x = _fixScalar(x)
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -811,11 +954,12 @@ def Range(x,axis=0):
     """Returns the range of the data
     Usage:
         rg=Range(data,axis=axisoptions)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+        You can also pass 'xy': to do over 2 dimensions at once
+    :type axis: str or int
     """
     x = _fixScalar(x)
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -834,11 +978,12 @@ def harmonicmean(x,axis=0):
     """Returns the harmonicmean of the data
     Usage:
     h=harmonicmean(data,axis=axisoptions)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+        You can also pass 'xy': to do over 2 dimensions at once
+    :type axis: str or int
     """
     x = _fixScalar(x)
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -878,11 +1023,12 @@ def median(x,axis=0):
     Not to use with missing values
     Usage:
     med=_median(data,axis=axisoptions)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+        You can also pass 'xy': to do over 2 dimensions at once
+    :type axis: str or int
     """
     x = _fixScalar(x)
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -908,11 +1054,12 @@ def medianranks(x,axis=0):
     """ Return the ranks of the median
     Usage:
     medrk=medianranks(data,axis=axisoptions)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+        You can also pass 'xy': to do over 2 dimensions at once
+    :type axis: str or int
     """
     x = _fixScalar(x)
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -938,11 +1085,12 @@ def mad(x,axis=0):
     """ return the sum of the deviation from the median
     Usage:
     md=_mad(data,axis=axisoptions)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+        You can also pass 'xy': to do over 2 dimensions at once
+    :type axis: str or int
     """
     x = _fixScalar(x)
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -976,11 +1124,12 @@ def numberuniques(x,axis=0):
     """Return the number of unique values
     Usage:
     uniques=numberuniques(data,axis=axisoptions)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+        You can also pass 'xy': to do over 2 dimensions at once
+    :type axis: str or int
    """
     x = _fixScalar(x)
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -1006,11 +1155,12 @@ def center(x,axis=0):
     """Returns the deviation from the mean
     Usage:
     centered=center(data) # returns deviation from mean
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+        You can also pass 'xy': to do over 2 dimensions at once
+    :type axis: str or int
     """
     x = _fixScalar(x)
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -1036,11 +1186,12 @@ def ssdevs(x,axis=0):
     """Return the sum of the square of the deviation from mean
     Usage:
     ss=_ssdevs(data,axis=axisoptions)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+        You can also pass 'xy': to do over 2 dimensions at once
+    :type axis: str or int
     """
     x = _fixScalar(x)
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -1095,11 +1246,12 @@ def unbiasedvariance(x,axis=0):
     """Return the variance (Ssq/(N-1))
     Usage:
     svar=unbiasedvariance(x,axis=axisoptions)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+        You can also pass 'xy': to do over 2 dimensions at once
+    :type axis: str or int
     """
     x = _fixScalar(x)
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -1125,11 +1277,12 @@ def variance(x,axis=0):
     """Return the variance of data
     Usage:
     V=variance(data,axis=axisoptions)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+        You can also pass 'xy': to do over 2 dimensions at once
+    :type axis: str or int
     """
     x = _fixScalar(x)
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -1155,11 +1308,12 @@ def standarddeviation(x,axis=0):
     """Returns stadard deviation of data
     Usage:
     std=standarddeviation(data,axis=axisoptions)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+        You can also pass 'xy': to do over 2 dimensions at once
+    :type axis: str or int
     """
     x = _fixScalar(x)
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -1186,11 +1340,12 @@ def coefficentvariance(x,axis=0):
     """Returns the coefficents variance of data
     Usage:
     coefvar=coefficentvariance(data,axis=axisoptions)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+        You can also pass 'xy': to do over 2 dimensions at once
+    :type axis: str or int
     """
     x = _fixScalar(x)
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -1218,11 +1373,12 @@ def skewness(x,axis=0):
     """Return the skewness of data
     Usage:
     skew=skewness(data, axis=axisoptions)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+        You can also pass 'xy': to do over 2 dimensions at once
+    :type axis: str or int
     """
     x = _fixScalar(x)
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -1250,11 +1406,12 @@ def kurtosis(x,axis=0):
     """Return kurtosis value from dataset
     Usage:
     k=kurtosis(data, axis=axisoptions)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+        You can also pass 'xy': to do over 2 dimensions at once
+    :type axis: str or int
     """
     x = _fixScalar(x)
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -1279,11 +1436,12 @@ def standarderror(x,axis=0):
     """Returns the standard error from dataset
     Usage:
     stderr=standarderror(data,axis=axisoptions)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+        You can also pass 'xy': to do over 2 dimensions at once
+    :type axis: str or int
     """
     x = _fixScalar(x)
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -1320,11 +1478,12 @@ def mode(x,axis=0):
     """returns the mode of the data
     Usage:
     md=mode(data, axis=axisoptions)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+        You can also pass 'xy': to do over 2 dimensions at once
+    :type axis: str or int
     """
     x = _fixScalar(x)
     if cdms2.isVariable(x) : xatt=x.attributes
@@ -1355,14 +1514,21 @@ def OneSampleTTest(x,y,axis=0,df=1):
     """
     This performs a single factor t test for a set of data and a user
     hypothesised mean value.
-    Usage: t, prob [,df] = OneSampleTTest(data, usermean, axis=axisoptions, df=1)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+    :Example:
+
+        .. doctest::
+
+            t, prob [,df] = OneSampleTTest(data, usermean, axis=axisoptions, df=1)
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+        You can also pass 'xy': to do over 2 dimensions at once
+    :type axis: str or int
                 
-        df=1 : If set to 1 then the degrees of freedom are returned
+    :param df: An integer flag indicating whether to return degrees of freedom.
+        If 1, degrees of freedom are returned. If set to 0, they are not.
+    :type df: int
         
     """
     x = _fixScalar(x)
@@ -1411,11 +1577,12 @@ def OneSampleSignTest(x,y,axis=0):
     Usage:
     nplus, nminus, z, prob = OneSampleSignTest(data, usermean, axis=axisoptions)
     Returns: nplus, nminus, z, prob.
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+        You can also pass 'xy': to do over 2 dimensions at once
+    :type axis: str or int
     """
     x = _fixScalar(x)
     y = _fixScalar(y)
@@ -1453,11 +1620,12 @@ def ChiSquareVariance(x,y,axis=0, df=1):
     Usage:
        chisquare, prob, [df] = ChiSquareVariance(data, usermean, axis=axisoptions, df=1)
     Returns: chisquare, prob, [df] = 
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+        You can also pass 'xy': to do over 2 dimensions at once
+    :type axis: str or int
     """
     x = _fixScalar(x)
     y = _fixScalar(y)
@@ -1503,15 +1671,22 @@ def _TTestUnpaired(data1, data2):
 def TTestUnpaired(x,y,axis=0,df=1):
     """
     This performs an unpaired t-test.
-    Usage: t, prob, [df] = TTestUnpaired(data1, data2,axis=axisoptions, df=1)
+    :Example:
+
+        .. doctest::
+
+            t, prob, [df] = TTestUnpaired(data1, data2,axis=axisoptions, df=1)
     Returns: t, df, prob
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
-        you can also pass 'xy' to work on both axes at once
+        You can also pass 'xy': to do over 2 dimensions at once
+    :type axis: str or int
 
-        df =0: if set to 1 returns degrees of freedom
+    :param df: An integer flag indicating whether to return degrees of freedom.
+        If 1, degrees of freedom are returned. If set to 0, they are not.
+    :type df: int
     """
     x = _fixScalar(x)
     y = _fixScalar(y)
@@ -1554,14 +1729,20 @@ def _TTestPaired(data1, data2):
 def TTestPaired(x,y,axis=0,df=1):
     """
     This performs an paired t-test.
-    Usage: t, prob, [df] = TTestUnpaired(data1, data2,axis=axisoptions, df=1)
+    :Example:
+
+        .. doctest::
+
+            t, prob, [df] = TTestUnpaired(data1, data2,axis=axisoptions, df=1)
     Options:
         axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
         you can also pass 'xy' to work on both axes at once
 
-        df =0: if set to 1 returns degrees of freedom
+    :param df: An integer flag indicating whether to return degrees of freedom.
+        If 1, degrees of freedom are returned. If set to 0, they are not.
+    :type df: int
     """
     x = _fixScalar(x)
     y = _fixScalar(y)
@@ -1608,14 +1789,27 @@ def _PearsonsCorrelation(data1, data2):
 def PearsonsCorrelation(x,y,axis=0,df=1):
     """
     This method performs a Pearsons correlation upon two sets of data
-    Usage: r, t, prob, [df] = PearsonsCorrelation(data1, data2,axis=0,df=1)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+    :Example:
+
+        .. doctest::
+
+            >>> r, t, prob, [df] = PearsonsCorrelation(data1, data2,axis=0,df=1)
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
         you can also pass 'xy' to work on both axes at once
+    :type axis: str or int
 
-        df =0: if set to 1 returns degrees of freedom
+    :param x:
+    :type x:
+
+    :param y:
+    :type y:
+
+    :param df: An integer flag indicating whether to return degrees of freedom.
+        If 1, degrees of freedom are returned. If set to 0, they are not.
+    :type df: int
     """
     x = _fixScalar(x)
     y = _fixScalar(y)
@@ -1657,14 +1851,22 @@ def FTest(data1, data2, uservar, axis=0, df=1):
     """
     This method performs a F test for variance ratio and needs a user 
     hypothesised variance to be supplied.
-    Usage: f, prob [,df1, df2] = FTest(data1, data2, uservar, axis=axisoptions, df=1)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+
+    :Example:
+
+        .. doctest::
+
+            f, prob [,df1, df2] = FTest(data1, data2, uservar, axis=axisoptions, df=1)
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
         you can also pass 'xy' to work on both axes at once
+    :type axis: str or int
 
-        df =0: if set to 1 returns degrees of freedom
+    :param df: An integer flag indicating whether to return degrees of freedom.
+        If 1, degrees of freedom are returned. If set to 0, they are not.
+    :type df: int
     """
     data1 = _fixScalar(data2)
     data2 = _fixScalar(data2)
@@ -1714,12 +1916,17 @@ def TwoSampleSignTest(x,y,axis=0):
     """
     This method performs a 2 sample sign test for matched samples on 2 
     supplied data sets
-    Usage: nplus, nminus, ntotal, z, prob = TwoSampleSignTest(data1, data2)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+    :Example:
+
+        .. doctest::
+
+            nplus, nminus, ntotal, z, prob = TwoSampleSignTest(data1, data2)
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
         you can also pass 'xy' to work on both axes at once
+    :type axis: str or int
 
     """
     x = _fixScalar(x)
@@ -1781,12 +1988,17 @@ def _KendallsTau(data1, data2):
 def KendallsTau(x,y,axis=0):
     """
     This method performs a Kendalls tau correlation upon 2 data sets.
-    Usage: tau, z, prob = KendallsTau(data1, data2)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+    :Example:
+
+        .. doctest::
+
+            tau, z, prob = KendallsTau(data1, data2)
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
         you can also pass 'xy' to work on both axes at once
+    :type axis: str or int
 
     """
     x = _fixScalar(x)
@@ -1853,12 +2065,17 @@ def KolmogorovSmirnov(x,y,axis=0):
     """
     This method performs a Kolmogorov-Smirnov test for unmatched samples
     upon 2 data vectors.
-    Usage: ks, prob = KolmogorovSmirnov(data1, data2)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+    :Example:
+
+        .. doctest::
+
+            ks, prob = KolmogorovSmirnov(data1, data2)
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
         you can also pass 'xy' to work on both axes at once
+    :type axis: str or int
 
     """
     x = _fixScalar(x)
@@ -1896,12 +2113,17 @@ def _SpearmansCorrelation(data1, data2):
 def SpearmansCorrelation(x,y,axis=0,df=1):
     """
     This method performs a Spearmans correlation upon 2 data sets
-    Usage: rho, t, df, prob = SpearmansCorrelation(data1, data2, axis=0, df=1)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+    :Example:
+
+        .. doctest::
+
+            rho, t, df, prob = SpearmansCorrelation(data1, data2, axis=0, df=1)
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
         you can also pass 'xy' to work on both axes at once
+    :type axis: str or int
 
         df=1 : If set to 1 returns the degrees of freedom
     """
@@ -1951,9 +2173,12 @@ def WilcoxonRankSums(x,y, Z_MAX = 6.0, axis=0):
     """
     This method performs a Wilcoxon rank sums test for unpaired designs 
     upon 2 data vectors.
-    Usage: z, prob = WilcoxonRankSums(data1, data2, Z_MAX = 6.0, axis=axisoption)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+    :Example:
+
+        .. doctest::
+
+            z, prob = WilcoxonRankSums(data1, data2, Z_MAX = 6.0, axis=axisoption)
+    :param axis:  'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
         you can also pass 'xy' to work on both axes at once
@@ -2009,9 +2234,12 @@ def WilcoxonSignedRanks(x,y, Z_MAX=6., axis=0):
     """
     This method performs a Wilcoxon Signed Ranks test for matched samples 
     upon 2 data set.
-    Usage: wt, z, prob = WilcoxonSignedRanks(data1, data2, Z_MAX = 6.0, axis=0)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+    :Example:
+
+        .. doctest::
+
+            wt, z, prob = WilcoxonSignedRanks(data1, data2, Z_MAX = 6.0, axis=0)
+    :param axis:  'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
         you can also pass 'xy' to work on both axes at once
@@ -2063,9 +2291,12 @@ def MannWhitneyU(x, y, Z_MAX=6.0, axis=0):
     """
     This method performs a Mann Whitney U test for unmatched samples on
     2 data vectors.
-    Usage: bigu, smallu, z, prob = MannWhitneyU(data1, data2, Z_MAX=6.0, axis=axisoptions)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+    :Example:
+
+        .. doctest::
+
+            bigu, smallu, z, prob = MannWhitneyU(data1, data2, Z_MAX=6.0, axis=axisoptions)
+    :param axis:  'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
         you can also pass 'xy' to work on both axes at once
@@ -2123,8 +2354,7 @@ def LinearRegression(x, y, df=1, axis=0):
     """
     This method performs a linear regression upon 2 data vectors.
     Usage:  r, t, prob, slope, intercept, sterrest [,df] = LinearRegression(x,y,df=1,axis=axisoptions)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+    :param axis:  'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
         you can also pass 'xy' to work on both axes at once
@@ -2188,9 +2418,12 @@ def PairedPermutation(x, y, nperm=None, axis=0):
     """
     This method performs a permutation test for matched samples upon 2 set
      This code was modified from Segal and further modifed by C. Doutriaux
-    Usage: utail, crit, prob = PairedPermutation(x,y,nperm=None)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+    :Example:
+
+        .. doctest::
+
+            utail, crit, prob = PairedPermutation(x,y,nperm=None)
+    :param axis:  'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
         you can also pass 'xy' to work on both axes at once
@@ -2250,9 +2483,12 @@ def _ChiSquare(x, y):
 def ChiSquare(x, y, axis=0, df=1):
     """
     This method performs a chi square on 2 data set.
-    Usage: chisq, df, prob = ChiSquare(x,y)
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+    :Example:
+
+        .. doctest::
+
+            chisq, df, prob = ChiSquare(x,y)
+    :param axis:  'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
         you can also pass 'xy' to work on both axes at once
@@ -2343,14 +2579,15 @@ def anovaWithin( *inlist,**kw):
     Usage:
     SSint, SSres, SSbet, SStot, MSbet, MSwit, MSres, F, prob [, dfbet, dfwit, dfres, dftot]  = anovaWithin(*inlist,axis=axisoptions).
     inlist, being as many arrays as you  wish
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+    :param axis:  'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
         you can also pass 'xy' to work on both axes at once
         df=1 : if 1 then degrees of freedom are retuned
         
-        WARNING: axis and df MUST be passed as keyword, as all arguments are considered as arrays
+        .. warning::
+
+            axis and df MUST be passed as keyword, as all arguments are considered as arrays
     """
     if len(inlist)<2:
         raise 'Error must have at least 2 arrays!'
@@ -2428,16 +2665,21 @@ def anovaBetween(*inlist,**kw):
     This method performs a univariate single factor between-subjects
     analysis of variance on a list of lists (or a numpy matrix). It is
     specialised for SalStat and best left alone.
-    Usage: SSbet, SSwit, SStot, MSbet, MSerr, F, prob [, dfbet, dferr, dftot] = anovaBetween(*arrays,axis=axisoptions).
+    :Example:
+
+        .. doctest::
+
+            SSbet, SSwit, SStot, MSbet, MSerr, F, prob [, dfbet, dferr, dftot] = anovaBetween(*arrays,axis=axisoptions).
     inlist, being as many arrays as you  wish
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+    :param axis:  'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
         you can also pass 'xy' to work on both axes at once
         df=1 : if 1 then degrees of freedom are retuned
         
-        WARNING: axis and df MUST be passed as keyword, as all arguments are considered as arrays
+        .. warning::
+
+            axis and df MUST be passed as keyword, as all arguments are considered as arrays
     """
     if len(inlist)<2:
         raise 'Error must have at least 2 arrays!'
@@ -2514,16 +2756,21 @@ def KruskalWallisH(*inlist,**kw):
     """
     This method performs a Kruskal Wallis test (like a nonparametric 
     between subjects anova) on a serie of arrays.
-    Usage: h, df, prob = KruskalWallisH(*args,axis=axispoptions, df=1).
+    :Example:
+
+        .. doctest::
+
+            h, df, prob = KruskalWallisH(*args,axis=axispoptions, df=1).
     inlist, being as many arrays as you  wish
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+    :param axis:  'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
         you can also pass 'xy' to work on both axes at once
         df=1 : if 1 then degrees of freedom are retuned
         
-        WARNING: axis and df MUST be passed as keyword, as all arguments are considered as arrays
+        .. warning::
+
+            axis and df MUST be passed as keyword, as all arguments are considered as arrays
     """
     if len(inlist)<2:
         raise 'Error must have at least 2 arrays!'
@@ -2586,16 +2833,21 @@ def FriedmanChiSquare( *inlist, **kw):
     """
     This method performs a Friedman chi square (like a nonparametric 
     within subjects anova) on a list of lists.
-    Usage: sumranks, chisq, df, prob = FriedmanChiSqure(*args, axis=axisoptions, df=1).
+    :Example:
+
+        .. doctest::
+
+            sumranks, chisq, df, prob = FriedmanChiSqure(*args, axis=axisoptions, df=1).
     inlist, being as many arrays as you  wish
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+    :param axis:  'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
         you can also pass 'xy' to work on both axes at once
         df=1 : if 1 then degrees of freedom are retuned
         
-        WARNING: axis and df MUST be passed as keyword, as all arguments are considered as arrays
+        .. warning::
+
+            axis and df MUST be passed as keyword, as all arguments are considered as arrays
     """
     if len(inlist)<2:
         raise 'Error must have at least 2 arrays!'
@@ -2650,16 +2902,22 @@ def _CochranesQ( *inlist):
 def CochranesQ( *inlist,**kw):
     """
     This method performs a Cochrances Q test upon a list of lists.
-    Usage: q, df, prob = CochranesQ(*inlist)
+
+    :Example:
+
+        .. doctest::
+
+            q, df, prob = CochranesQ(*inlist)
     inlist, being as many arrays as you  wish
-    Options:
-        axisoptions 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
+    :param axis:  'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
         default value = 0. You can pass the name of the dimension or index
         (integer value 0...n) over which you want to compute the statistic.
         you can also pass 'xy' to work on both axes at once
         df=1 : if 1 then degrees of freedom are retuned
         
-        WARNING: axis and df MUST be passed as keyword, as all arguments are considered as arrays
+    .. warning::
+
+        axis and df MUST be passed as keyword, as all arguments are considered as arrays
     """
     if len(inlist)<2:
         raise 'Error must have at least 2 arrays!'

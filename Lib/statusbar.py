@@ -1,5 +1,5 @@
 def statusbar(status,total=1.,prev=-1,title='Done',tk=None):
-    '''
+    """
     # Create the illusion of a progressing bar
     # Date: August 1st, 2000
     # Author: Charles Doutriaux
@@ -35,9 +35,7 @@ def statusbar(status,total=1.,prev=-1,title='Done',tk=None):
         prevj=statusbar(float(j)/nj,prev=prevj,tk=1)
         prevall=statusbar([float(i)/ni,float(j)/nj],prev=prevall,tk=1,title='Test')
         prevtxt=statusbar(float(j)/nj,prev=prevtxt,tk=None,title='Test')
-
-
-    '''
+    """
     import sys,string
     chardic={
       0:'|',
@@ -97,7 +95,7 @@ def statusbar(status,total=1.,prev=-1,title='Done',tk=None):
         wsave=10.
         if prev==[0,0] :
             master=Tkinter.Toplevel()
-            #Pmw.Blt._checkForBlt(master)
+            # Pmw.Blt._checkForBlt(master)
             master.geometry('200x'+sheigth)
             master.resizable(0,0)
             master.update()

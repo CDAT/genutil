@@ -3,19 +3,22 @@
 import numpy,cdms2,MV2,genutil
 import cdat_info
 
+
 def custom1D(x,filter,axis=0):
     """
-    Function: custom(x,filter,axis=0)
-     
-    Description of function:
-        Apply a custom 1 dimensional filter to an array over a specified axis
-        filter can be a list of numbers or a 1D array
-    Usage:
-        filtered = custom1D(x,filter)
-    Options:
-        axisoptions: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
-            default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.
+    Apply a custom 1 dimensional filter to an array over a specified axis
+    filter can be a list of numbers or a 1D array
+
+    :param x: A CDMS TransientVariable
+    :type x: cdms.tvariable.TransientVariable
+
+    :param filter: numpy or MV array
+    :type filter: array
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
+        default value = 0. You can pass the name of the dimension or index
+        (integer value 0...n) over which you want to compute the statistic.
+    :type axis: str or int
     """
     cdat_info.pingPCMDIdb("cdat","genutil.filters.custom1D")
     isMV2=cdms2.isVariable(x)
@@ -71,33 +74,54 @@ def custom1D(x,filter,axis=0):
 
 def smooth121(x,axis=0):
     """
-    Function smooth121(x,axis=0)
-     
-    Description of function:
-        Apply a 121 filter to an array over a specified axis 
-    Usage:
-        filtered = smooth121(unfiltered)
-    Options:
-        axisoptions: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
-            default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.
+    Apply a 121 filter to an array over a specified axis
+
+    :Example:
+
+        .. doctest:: genutil_filters_smooth121
+
+            >>> import cdms2, vcs
+            >>> vcs.download_sample_data()
+            >>> f=cdms2.open(vcs.sample_data + 'clt.nc')
+            >>> unfiltered=f('clt')
+            >>> filtered = smooth121(unfiltered) # filter over axis at index 0
+
+    :param x: A CDMS TransientVariable
+    :type x: cdms.tvariable.TransientVariable
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
+        default value = 0. You can pass the name of the dimension or index
+        (integer value 0...n) over which you want to compute the statistic.
+    :type axis: str or int
     """
     cdat_info.pingPCMDIdb("cdat","genutil.filters.smooth121")
     return custom1D(x,[1.,2.,1.],axis=axis)
     
+
 def runningaverage(x,N,axis=0):
     """
-    Function runningaverage(x,N,axis=0)
-     
-    Description of function:
-        Apply a running average of length N to an array over a specified axis 
-    Usage:
-        smooth = runningaverage(x,12)
-    Options:
-        N: length of the running average
-        axisoptions: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n 
-            default value = 0. You can pass the name of the dimension or index
-            (integer value 0...n) over which you want to compute the statistic.
+    Apply a running average of length N to an array over a specified axis
+
+    :Example:
+
+        .. doctest:: genutil_filters_runningaverage
+
+            >>> import cdms2, vcs
+            >>> vcs.download_sample_data()
+            >>> f=cdms2.open(vcs.sample_data + 'clt.nc')
+            >>> x=f('clt')
+            >>> smooth = runningaverage(x,12)
+
+    :param x: A CDMS TransientVariable
+    :type x: cdms.tvariable.TransientVariable
+
+    :param N: length of the running average
+    :type N: int
+
+    :param axis: 'x' | 'y' | 'z' | 't' | '(dimension_name)' | 0 | 1 ... | n
+        default value = 0. You can pass the name of the dimension or index
+        (integer value 0...n) over which you want to compute the statistic.
+    :type axis: str or int
     """
     filter=numpy.ma.ones((N,),dtype='f')
     cdat_info.pingPCMDIdb("cdat","genutil.filters.runningaverage(%i)" % N)

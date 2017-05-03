@@ -1,6 +1,7 @@
 import Pmw, Tkinter
 class Statusbar(Pmw.MegaWidget):
-    """ Megawidget containing a scale and an indicator.
+    """
+    Megawidget containing a scale and an indicator.
     """
 
     def show(self,value):

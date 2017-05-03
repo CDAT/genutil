@@ -653,20 +653,28 @@ cols={
     }
 def str2rgb(col):
     """
-    Function: str2rgb
+    Given a string representing a color name, this function returns the
+    corresponding r,g,b values (between 0 and 255). If the color
+    name is unknown, the function returns None,None,None.
 
-    Description of function:
-        Given a string representing a color name, this function the
-        corresponding r,g,b values (between 0 and 255). If the color
-        name is unknown, the function returns None,None,None
+    This is accomplished by looking in the /usr/X11R6/lib/X11/rgb.txt
+    file. If the file does not exist, then looks into the builtin
+    dictionary.
         
-        This is accomplished by looking in the /usr/X11R6/lib/X11/rgb.txt
-        file. If the file does not exist, then looks into the builtin
-        dictionary
-        
-    Examples:
-        >>> r, g, b = str2rgb('pink2') # returns: (238 , 169 , 184 )
-        >>> r, g, b = str2rgb('crapy') # returns: (None, None, None)
+    :Example:
+
+        .. doctest:: genutil_colors_str2rgb
+
+            >>> str2rgb('pink2')
+            238, 169, 184
+            >>> str2rgb('cray')
+            None, None, None
+
+    :param col: String name of a color.
+    :type col: str
+
+    :returns: A three-tuple with red, green, and blue values of the specified color, or None, None, None if the color
+            does not exist.
     """
     import string
     ret=[]
@@ -694,14 +702,23 @@ def str2rgb(col):
             
 def rgb2str(r,g=None,b=None):
     """
-    Function: rgb2str
-
-    Description of function:
-        Given r,g,b values, this function returns the closest 'name'
+    Given r,g,b values, this function returns the closest 'name'.
         
-    Example:
-    >>> print rgb2str([0,0,0])
-    'black'
+    :Example:
+
+        .. doctest:: genutil_colors_rgb2str
+
+            >>> print rgb2str([0,0,0])
+            'black'
+
+    :param r: Either a list of size 3 with r, g, and b values, or an integer representing r value.
+    :type r: list or int
+
+    :param g: Integer representing g value.
+    :type g: int
+
+    :param b: Integer representing b value.
+    :type b: int
     """
     import string
     if g is None and len(r)==3:
@@ -735,14 +752,3 @@ def rgb2str(r,g=None,b=None):
             if rms==0.:
                 return ret
         return ret
-
-
-if __name__=='__main__':
-    print str2rgb('pink2')
-    print str2rgb('black')
-    print str2rgb('crap')
-    print rgb2str(255,255,255)
-    print rgb2str([0,0,0])
-    print rgb2str(str2rgb('pink2'))
-    print rgb2str([241,255,255])
-    print rgb2str(69,184,67)
