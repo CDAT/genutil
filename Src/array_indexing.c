@@ -359,6 +359,7 @@ int set_function_short(int n1, int n2 ,
     input[l]=output[j];
 /*     printf("assigned  %i, to %f, %f\n",l,output[j],input[l]); */
     }
+ return 0;
 }
 
 int set_function_int(int n1, int n2 , 
