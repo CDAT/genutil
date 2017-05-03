@@ -55,7 +55,7 @@ def get(Array,Indices,axis=0):
 
     m=Array.mask
     if not isinstance(Indices,int): Indices=Indices.data.astype('i') # Sometihng happened with masking of y by x mask
-    print Array.data.dtype.char,Indices.dtype.char
+    #print Array.data.dtype.char,Indices.dtype.char
     C=genutil.array_indexing.extract(Array.data,Indices)
     if m is not numpy.ma.nomask:
         M=genutil.array_indexing.extract(m.astype('i'),Indices)
@@ -97,7 +97,7 @@ def set(Array,Indices,Values,axis=0):
     :param axis: Axis of a cdms variable
     :type axis: int or str
     """
-##     if numpy.rank(Indices)==0:
+##     if Indices.ndim==0:
 ##         Array[Indices]=Values
     ## First some checks
     #isma=numpy.ma.isMA(Array)
@@ -119,10 +119,10 @@ def set(Array,Indices,Values,axis=0):
 
     m=numpy.ma.getmask(Array)
     mv=numpy.ma.getmask(Values)
-    if numpy.rank(Indices)>0:
-        Indices=Indices.raw_data() # Something happened with masking of y by x mask
-        Values=Values.raw_data()
-    genutil.array_indexing_emulate.set(Array.raw_data(),Indices.astype('i'),Values)
+    if Indices.ndim>0:
+        Indices=Indices.data # Something happened with masking of y by x mask
+        Values=Values.data
+    genutil.array_indexing_emulate.set(Array.data,Indices.astype('i'),Values)
     if m is not numpy.ma.nomask:
         if mv is not numpy.ma.nomask:
             genutil.array_indexing_emulate.set(m,Indices,mv)

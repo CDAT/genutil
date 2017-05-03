@@ -783,8 +783,7 @@ void
 initarray_indexing()
 {
   (void) Py_InitModule("array_indexing", MyExtractMethods);
-  import_array()
-  
+  import_array();
 }
 
 int main(int argc,char **argv)

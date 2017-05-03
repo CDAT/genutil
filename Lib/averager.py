@@ -1,6 +1,6 @@
 # Adapted for numpy/ma/cdms2 by convertcdms.py
 # Adapted for numpy/ma/cdms2 by convertcdms.py
-import numpy, numpy.ma, cdms2, types, string, MV2, genutil
+import numpy, numpy.ma, cdms2, types, string, MV2
 import cdat_info
 
 class AveragerError (Exception):
@@ -919,7 +919,7 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
         #
         if isinstance(weights, types.StringType) and weights in ['weighted', 'generate']:
             if __DEBUG__: print 'VOILA!'
-            print 'cdutil.averager Warning: \n\tNot operating on a TransientVariable.'
+            print 'genutil.averager Warning: \n\tNot operating on a TransientVariable.'
             print '\tChanging default weights to \'unweighted\' (equally weighted)'
             weights = None
         # end of if weights == 'weighted':

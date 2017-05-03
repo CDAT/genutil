@@ -6,7 +6,7 @@ from grower import grower
 import numpy
 import cdat_info
 import arrayindexing,array_indexing_emulate as array_indexing
-
+from averager import __check_weightoptions
 class StatisticsError (Exception):
     def __init__ (self, args=None):
         """Create an exception"""
@@ -511,13 +511,12 @@ def __makeweights(x,w,axes):
     """
 
     # Now if weights is a list, uses Krishna's stuff to get the weights....
-    import cdutil
     tmpaxes=axes
     if type(axes)==type(1): tmpaxes=str(axes)
     # First make sure x and w have same dims if w is MV2
     if cdms2.isVariable(w) and cdms2.isVariable(x) and x.shape!=w.shape:
         x,w=grower(x,w)
-    w=cdutil.__check_weightoptions(x, tmpaxes, w)
+    w=__check_weightoptions(x, tmpaxes, w)
     if not numpy.ma.isarray(w):
         # Ok Krishna returned a list of 1D arrays.... Let's put it together
         axs=x.getAxisList()

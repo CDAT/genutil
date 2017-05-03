@@ -135,7 +135,7 @@ class PickComponent(SelectorComponent):
                         ax=tmp.getAxis(i)
                         #print ax
                         newaxvals.append(ax[0])
-			if ax.getBounds()!=None:
+			if ax.getBounds() is not None:
                    	     bounds.append(ax.getBounds()[0])
 			else:
 			     bounds=None
