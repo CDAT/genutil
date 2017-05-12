@@ -1,0 +1,135 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module Fmars 
+    interface  
+        subroutine marsgo(n,p,x,y,w,nk,ms,df,fv,mi,lx,it,xm,xs,az,tb,cm,sc,db,d,mm,mmWORK) 
+        !marsgo (n,p,x,y,w,nk,ms,df,fv,mi,lx,it,xm,xs,az,tb,cm,sc,db,d,mm, mmWORK)
+        !   integer n,p,nk,ms,mi,it,mm(n,p),lx(p)
+        !   logical elg,newbf
+        !   double precision x(n,p),y(n),w(n),xm(p),xs(p),tb(5,nk),cm(*),
+        !                    sc(n,*),vcst(3),tx(5),df,fv,az
+        !   double precision db(n,*),d(nk,*)
+        !   double precision yb,yv,sw,s,t,u,v,we,sy,a,b,xb,xx,xd,ssq,alr
+        !   double precision dx,wn,se,tt,txt,xt,st,su,yc,eps,rsq,dy,dv,asq0
+        !   character*28 hol
+        !   integer ix,nmin,k,jas,nnl,nst,nnr,j0,mj,mp,nli,kl,ll,
+        !           ja,jp,mm1,mn,me,mel,jd1,jd2,jft,nopt,kcp,l,nnord,
+        !           nnt,lbf,ict,nc,nop,k1,newb,nal,jn,mk,nep,j,mkp1,mkp2,i,
+        !           kcp0,m,mtot,kr,jq
+        !   double precision big,fln,alf,xa,h,sj,fjn,fkr,gcv,asm,tcsts,
+        !                    val,df1,cst,cfac,txi,txl,fvr,tx1,tcst,tcmx,txm,xk
+        !   double precision phi
+        !   integer jf,ibfext
+            integer, required, intent(in) :: n
+            integer, required, intent(in) :: p
+            double precision dimension(n,p), intent(in) :: x
+            double precision dimension(n),depend(n), intent(in) :: y
+            double precision dimension(n),depend(n), intent(in) :: w
+            integer, required, intent(in) :: nk
+            integer, intent(in) :: ms
+            double precision, intent(in)  :: df
+            double precision, intent(in)  :: fv
+            integer, intent(in) :: mi
+            integer dimension(p),depend(p), intent(in) :: lx
+            integer, intent(in) :: it
+            double precision dimension(p),depend(p), intent(in) :: xm
+            double precision dimension(p),depend(p), intent(in) :: xs
+            double precision, intent(in, out)  :: az
+            double precision dimension(5,nk), depend(nk), intent(in, out)  :: tb
+            double precision dimension(*), intent(in, out)  :: cm
+            double precision dimension(*), intent(in, out)  :: sc
+            double precision dimension(n,*), depend(n), intent(in, out)  :: db
+            double precision dimension(nk,*), depend(nk), intent(in, out)  :: d
+            integer dimension(n,p),depend(n),depend(p), intent(in) :: mm
+            integer dimension(*), intent(in, out) :: mmWORK !changed in csp
+        end subroutine marsgo
+        
+        subroutine mrsgo1(n, p, x, y, w, nk, lx, tb, cm, sc, db, d, m, mm, mmwork, mm1, ms, fv, fln, tx, txl, tx1, txi, txt, df, mk, mkp1, mkp2, nep, yb, sw, s, t, u, v, we, sy, ssq, rsq, se, xt, dy, kcp0, eps, big, nmin, alf, l, me, mel, mp, nop, jq, jp, ja, jas, lbf, nnt, kr, mn, nc, kcp, k1, k, j, i, b, a)
+        !implicit none
+        !integer n, p, nk, ms, mm(n,p), mmwork(*), lx(p)
+        !logical elg, newbf
+        !double precision x(n,p), y(n), w(n), tb(5,nk), cm(*)
+        !double precision sc(n,*), tx(5), df, fv
+        !double precision db(n,*), d(nk,*)
+        !double precision yb, sw, s, t, u, v, we, sy, a, b
+        !double precision se, txt, xt, eps, rsq, ssq, dy
+        !integer nmin, k, jas, mp, ja, jp
+        !integer mm1, mn, me, mel, kcp, l, nnt, lbf, nc, nop
+        !integer k1, mk, nep, j, mkp1, mkp2, i, kcp0, m, kr, jq
+        !double precision big, fln, alf, txi, txl, tx1
+        !integer jf
+            integer, required, intent(in) :: n
+            integer, required, intent(in) :: p
+            double precision dimension(n,p), intent(in) :: x
+            double precision dimension(n),depend(n), intent(in) :: y
+            double precision dimension(n),depend(n), intent(in) :: w
+            integer, required, intent(in) :: nk
+            integer dimension(p),depend(p), intent(in) :: lx
+            double precision dimension(5,nk), depend(nk), intent(in, out)  :: tb
+            double precision dimension(*), intent(in, out)  :: cm
+            double precision dimension(*), intent(in, out)  :: sc
+            double precision dimension(n,*), depend(n), intent(in, out)  :: db
+            double precision dimension(nk,*), depend(nk), intent(in, out)  :: d
+            integer, intent(in, out) :: m
+            integer dimension(n,p),depend(n),depend(p), intent(in, out) :: mm
+            integer dimension(*), intent(in, out) :: mmwork
+            integer, intent(in, out) :: mm1
+            integer, intent(in, out) :: ms
+            double precision, intent(in, out) :: fv
+            double precision, intent(in, out) :: fln
+            double precision, dimension(5), intent(in, out) :: tx
+            double precision, intent(in, out) :: txl
+            double precision, intent(in, out) :: tx1
+            double precision, intent(in, out) :: txi
+            double precision, intent(in, out) :: txt
+            double precision, intent(in, out) :: df
+            integer, intent(in, out) :: mk
+            integer, intent(in, out) :: mkp1
+            integer, intent(in, out) :: mkp2
+            integer, intent(in, out) :: nep
+            double precision, intent(in, out) :: yb
+            double precision, intent(in, out) :: sw
+            double precision, intent(in, out) :: s
+            double precision, intent(in, out) :: t
+            double precision, intent(in, out) :: u
+            double precision, intent(in, out) :: v
+            double precision, intent(in, out) :: we
+            double precision, intent(in, out) :: sy
+            double precision, intent(in, out) :: ssq
+            double precision, intent(in, out) :: rsq
+            double precision, intent(in, out) :: se
+            double precision, intent(in, out) :: xt
+            double precision, intent(in, out) :: dy
+            integer, intent(in, out) :: kcp0
+            double precision, intent(in, out) :: eps
+            double precision, intent(in, out) :: big
+            integer, intent(in, out) :: nmin
+            double precision, intent(in, out) :: alf
+            integer, intent(in, out) :: l
+            integer, intent(in, out) :: me
+            integer, intent(in, out) :: mel
+            integer, intent(in, out) :: mp
+            integer, intent(in, out) :: nop
+            integer, intent(in, out) :: jq
+            integer, intent(in, out) :: jp
+            integer, intent(in, out) :: ja
+            integer, intent(in, out) :: jas
+            integer, intent(in, out) :: lbf
+            integer, intent(in, out) :: nnt
+            integer, intent(in, out) :: kr
+            integer, intent(in, out) :: mn
+            integer, intent(in, out) :: nc
+            integer, intent(in, out) :: kcp
+            integer, intent(in, out) :: k1
+            integer, intent(in, out) :: k
+            integer, intent(in, out) :: j
+            integer, intent(in, out) :: i
+            double precision, intent(in, out) :: b
+            double precision, intent(in, out) :: a
+       end subroutine mrsgo1
+    end interface 
+end python module Fmars
+
+! This file was auto-generated with f2py (version:2_2522).
+! See http://cens.ioc.ee/projects/f2py2e/
