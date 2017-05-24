@@ -11,11 +11,13 @@ except:
     Version="???"
 #for mars install
 expand_sh = lambda path: expanduser(expandvars(path))
-FMARS = Extension('genutil.Fmars',
-        sources=['Src/mars/src/mars_nolog.f', 'Src/mars/src/mrsgo1.f', 'Src/mars/src/marsgo.f', 'Src/mars/src/Fmars.pyf'],
-            #include_dirs = [os.path.join(sys.prefix,'include')],
-            #library_dirs = [os.path.join(sys.prefix,'lib')],
-            #f2py_options = ['--build-src --inplace', '-c', '--verbose', '--build-dir mars/src/']#, '--debug-capi']
+
+#f2py_options = ['--build-src --inplace', '-c', '--verbose', '--build-dir mars/src/']#, '--debug-capi']
+MARS = Extension('genutil.mars',
+        sources=['Src/mars/src/mars.f', 'Src/mars/src/mars.pyf'],
+        #include_dirs = [os.path.join(sys.prefix,'include')],
+        #library_dirs = [os.path.join(sys.prefix,'lib')],
+        #f2py_options = ['--debug-capi']
             )
 setup (name = "genutil",
        version=Version,
@@ -39,7 +41,7 @@ setup (name = "genutil",
         library_dirs = [os.path.join(sys.prefix,'lib')],
         libraries=['udunits2','expat']
         ),
-    FMARS
+    MARS
     ],
       data_files=[('share/genutil', ('share/test_data_files.txt',))]
       )

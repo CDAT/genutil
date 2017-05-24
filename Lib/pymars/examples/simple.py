@@ -43,13 +43,13 @@ x = numpy.array([x,y]).T
 w = numpy.array(n*[1], dtype=numpy.float64)
 lx = numpy.array(p*[1], dtype=numpy.int32)    
 try:
-    from genutil import Fmars
-    from Fmars import logit as F_logit
-    from Fmars import setdf as F_setdf
-    from Fmars import xvalid as F_xvalid
-    from Fmars import mars as F_mars
-    from Fmars import fmod as F_fmod
-    from Fmars import setlog as F_setlog
+    #from genutil import mars as mars
+    from genutil.mars import logit as F_logit
+    from genutil.mars import setdf as F_setdf
+    from genutil.mars import xvalid as F_xvalid
+    from genutil.mars import mars as F_mars
+    from genutil.mars import fmod as F_fmod
+    from genutil.mars import setlog as F_setlog
 
     F_setlog(Flogfile)
     #logistic regression
@@ -64,7 +64,7 @@ try:
 
     #evaluate Friedman response surface at input variable values
     f = F_fmod(m, n, p, x, fm, im)
-    print F_fmod.__doc__
+    #print F_fmod.__doc__
     print 'fortran time=', end-start
 except:
     print 'mars is not installed'

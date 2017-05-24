@@ -83,7 +83,7 @@ c       as indicated in the subroutine's documentation below. All
 c       calling sequence arrays must be dimensioned in the calling
 c       program as indicated in the documentation below. This includes
 c       all workspace arrays. The leading dimensions of multidimensional
-c       arrays must match, whereas the last dimension and singly
+c       arrays must match, whereas the last dimension and singly 
 c       dimensioned arrays can be as large or larger than that indicated.
 c
 c       More detailed explanations for some of the quantities below can
@@ -161,7 +161,7 @@ c call xvalid(ix):
 c ix = control parameter for sample reuse technique used to automatically
 c    estimate smoothing parameter df (see above) from the data.
 c    ix = 0 => no effect (default). value used for df is set by user if
-c            setdf(df) is called (see above), otherwise default value
+c            setdf(df) is called (see above), otherwise default value 
 c            (df=3.0) is used.
 c    ix > 0 => ix - fold cross-validation.
 c    ix < 0 => single validation pass using every (-ix)th (randomly selected)
@@ -170,7 +170,7 @@ c    if ix.ne.0 then call setdf(df) (see above) has no effect. if ix > 0,
 c    computation increases roughly by a factor of ix over that for ix = 0.
 c    for ix < 0 computation increases approximately by a factor of two.
 c    (Ref[3] Sec. 2.3)
-c
+c 
 c call stseed(is):
 c is = seed for internal random number generator used to group observation
 c      subsets for validation (ix.ne.0). (default: is=987654321).
@@ -241,7 +241,7 @@ c       except that interactions with variables to which others are nested
 c       are ignored in applying the constraints.
 c
 c
-c call setms(ms):
+c call setms(ms): 
 c ms = minimum span (minimum number of observations between each knot).
 c      ms .le. 0 => default value (depending on n and p) is used.
 c      (default: ms=0). (Ref[2] Sec. 3.8)
@@ -294,7 +294,7 @@ c notes:
 c    (1) the value of the output quanity pn is less than or equal to 2*p.
 c        the other output quanities (arrays) should be dimensioned
 c        xn(n,2*p), lxn(2*p), xs(2*p) in the calling program to be safe.
-c    (2) if there are no missing values then the output quantities
+c    (2) if there are no missing values then the output quanities 
 c        pn,xn,lxn will be identical to p,x,lx respectively, and
 c        xs(j)=flg, j=1,p.
 c    (3) the corresponding quanities for input and output can be the same in
@@ -492,7 +492,7 @@ c mm(2*p) : integer.
 c
 c
 c
-c call fmod (m,n,p,x,fm,im,f,sp):
+c call fmod (m,n,x,fm,im,f,sp):
 c
 c calculates mars model response estimates for sets of covariate vectors.
 c
@@ -501,7 +501,6 @@ c m = model flag:
 c   = 1 => piecewise-linear mars model.
 c   = 2 => piecewise-cubic mars model. (Ref[2] Sec. 3.7)
 c n = number of covariate vectors.
-c p = number of predictor variables per observation
 c x(n,p) = covariate vectors.
 c fm,im = same as in mars (see above).
 c
@@ -514,7 +513,7 @@ c
 c
 c
 c call cvinfo (dfs,pse,nbf):
-c
+c 
 c returns results of sample reuse procedure for estimating optimal smoothing
 c parameter df (see above). can only be called if xvalid(ix) was called
 c before mars with ix.ne.0 (see above). (Ref[2] Sec 3.6, Ref[3] Sec. 2.3)
@@ -524,7 +523,7 @@ c dfs = optimal smoothing parameter estimate.
 c pse = estimate of corresponding predictive-squared-error.
 c nbf = estimate of associated number of (nonconstant) basis functions.
 c
-c
+c 
 c
       subroutine mars (n,p,x,y,w,nk,mi,lx,fm,im,sp,dp,mm)
       implicit none
@@ -533,8 +532,8 @@ c
       double precision x(*),y(*),w(*),fm(*),sp(*)
       real tstart,ttaken
       double precision dp(*)
-      tstart = secnds(0.0)
-c      open(99, file='mars.log')
+      tstart = (secnds(0.0))
+      open(99, file='mars.log')
       im(3)=n
       im(4)=p
       im(5)=nk
@@ -554,8 +553,8 @@ c      open(99, file='mars.log')
      1p,mm)
       im(1)=im(15)+lcm(p,nk,fm(im(12)),fm(im(15)))-1
       ttaken = secnds(tstart)
-c      write(99,100) ttaken
-c      close(99)
+      write(99,100) ttaken
+      close(99)
       return
   100 format(/,' MARS run time = ',f13.6, ' seconds')
       end
@@ -599,9 +598,9 @@ c      close(99)
      1n(im(10)),  fmn(im(13)),fmn(im(14)),sp,mm)
       return
       end
-      subroutine fmod (m,n,p,x,fm,im,f,sp)
+      subroutine fmod (m,n,x,fm,im,f,sp)      
       implicit none
-      integer m,n,p,im(*)
+      integer m,n,im(*)
       double precision x(*),fm(*),f(*),sp(*)
       if(m .ne. 1) go to 1
       call fmrs(n,x,im(5),fm(im(11)),fm(im(12)),fm(im(15)),f)
@@ -669,7 +668,7 @@ c      close(99)
       entry intlst(it)
       if(it.le.0) return
       if(il.eq.0) return
-c      write(it,'(/,'' interactions prohibited between:'')')
+      write(it,'(/,'' interactions prohibited between:'')')
 c     do 14 l=1,il
 c     write(it,'(''    var('',i3,'')  and  var('',i3,'')'')') m(1,l),m(2
 c    1,l)
@@ -697,11 +696,11 @@ c  14 continue
       double precision df,fv,sw,wn,ef,s,yh,gcv,val,t
       logical stelg,z00001
       data ms,df,il,fv,it,ic,ix /0,3.0,0,0.0,99,0,0/
-c      if(it.gt.0) write(it,11)
-c      if(it.gt.0) write(it,10) n,p,nk,ms,mi,df,il,fv,ic
-c      if(it.gt.0) write(it,12)
-c      if(it.gt.0) write(it,'('' var: '',5('' '',20i3,/))') (i,i=1,p)
-c      if(it.gt.0) write(it,'('' flag:'',5('' '',20i3,/))') (lx(i),i=1,p)
+      if(it.gt.0) write(it,11)
+      if(it.gt.0) write(it,10) n,p,nk,ms,mi,df,il,fv,ic
+      if(it.gt.0) write(it,12)
+      if(it.gt.0) write(it,'('' var: '',5('' '',20i3,/))') (i,i=1,p)
+      if(it.gt.0) write(it,'('' flag:'',5('' '',20i3,/))') (lx(i),i=1,p)
 c     print *, ' '
 c     do 321 i = 1, n
 c        print *,'M1 ',x(i,1),' ',x(i,2),' ',x(i,3),' ',x(i,4),
@@ -828,13 +827,13 @@ c     write(it,14) s,t
      1nh,nal,ngsq,nxs
       double precision big,d,dc,r,dl,fx,d1,d2
       data big,it /1.e30,6/
-c      if(it.gt.0) write(it,'(/'' mars graphics (piecewise-cubic):'',/)')
+      if(it.gt.0) write(it,'(/'' mars graphics (piecewise-cubic):'',/)')
       jnt=2
       go to 1
       entry plotl (n,p,x,nk,kp,kv,lp,lv,tb,cm,ngc,ngs,icx,nc,crv,ns,srf,
      1sp,mm)
-c      if(it.gt.0) write(it,'(/'' mars graphics (piecewise-linear):'',/)'
-c     1)
+      if(it.gt.0) write(it,'(/'' mars graphics (piecewise-linear):'',/)'
+     1)
       jnt=1
     1 ngsq=ngs**2
       iz=2*ngsq
@@ -853,10 +852,10 @@ c     1)
       k2=kp(2,ll)
       if(it .le. 0) go to 7
       if(k1 .ne. 0) go to 4
-c      write(it,'('' pure ordinal contribution:'')')
+      write(it,'('' pure ordinal contribution:'')')
       go to 7
     4 continue
-c      write(it,'('' categorical - ordinal interaction:'')')
+      write(it,'('' categorical - ordinal interaction:'')')
       do 6 i=1,k1
       jj=kv(1,k2+i-1)
       j=iabs(jj)
@@ -866,7 +865,7 @@ c      write(it,'('' categorical - ordinal interaction:'')')
       mm(l)=cm(k+l)+.1
       if(jj.lt.0) mm(l)=mod(mm(l)+1,2)
     5 continue
-c      write(it,'('' x('',i3,'') ='',70i1/80i1)') j,(mm(l),l=1,ncx)
+      write(it,'('' x('',i3,'') ='',70i1/80i1)') j,(mm(l),l=1,ncx)
     6 continue
     7 do 35 k=1,nf
       l=lp(1,k+k4)
@@ -911,7 +910,7 @@ c      write(it,'('' x('',i3,'') ='',70i1/80i1)') j,(mm(l),l=1,ncx)
       crv(i,2,nc)=crv(i,2,nc)-dl
       fx=dmax1(fx,crv(i,2,nc))
    16 continue
-c      if(it.gt.0) write(it,39) nc,jv,fx
+      if(it.gt.0) write(it,39) nc,jv,fx
       go to 35
    17 j=0
       mm(1)=lv(ko)
@@ -984,12 +983,12 @@ c     write(it,38) nxs
       fx=dmax1(fx,srf(i,j,ns))
    33 continue
    34 continue
-c      if(it.gt.0) write(it,40) ns,mm(1),mm(2),fx
+      if(it.gt.0) write(it,40) ns,mm(1),mm(2),fx
    35 continue
       ll=ll+1
       go to 2
    36 continue
-c      if(it.gt.0) write(it,37) nc,ns
+      if(it.gt.0) write(it,37) nc,ns
       return
       entry printg(nal)
       it=nal
@@ -1010,15 +1009,15 @@ c      if(it.gt.0) write(it,37) nc,ns
       if(it.le.0) return
       nc=ncat(kp)
       if(nc.eq.0) return
-c      write(it,'(/,'' there are'',i3,'' purely categorical basis functio
-c     1ns.'')') nc
-c      write(it,'('' purely additive and bivariate contributions follow''
-c     1)')
+      write(it,'(/,'' there are'',i3,'' purely categorical basis functio
+     1ns.'')') nc
+      write(it,'('' purely additive and bivariate contributions follow''
+     1)')
       if(m .ne. 1) go to 1
-c      write(it,'('' (piecewise-linear fit):'')')
+      write(it,'('' (piecewise-linear fit):'')')
       go to 2
     1 continue
-c      write(it,'('' (piecewise-cubic fit):'')')
+      write(it,'('' (piecewise-cubic fit):'')')
     2 call catv(1,kp,kv,nv,js)
       do 8 jj=1,nv
       j=js(jj)
@@ -1034,25 +1033,25 @@ c      write(it,'('' (piecewise-cubic fit):'')')
       if(nl.gt.26) px=9.0
       rx=xx-xm
       rxp=rx/px
-c      write(it,'(/,'' f( x('',i3,'') ) : scale ='',g12.4)') j,rxp
+      write(it,'(/,'' f( x('',i3,'') ) : scale ='',g12.4)') j,rxp
       if(rxp.le.0.0) go to 8
       do 4 i=1,nl
       js(i+nv)=(sc(i)-xm)/rxp+.5
     4 continue
       if(nl .gt. 26) go to 5
-c      write(it,28) (i,i=1,nl)
-c      write(it,28) (js(i+nv),i=1,nl)
+      write(it,28) (i,i=1,nl)
+      write(it,28) (js(i+nv),i=1,nl)
       go to 8
     5 if(nl .gt. 38) go to 6
-c      write(it,29) (i,i=1,nl)
-c      write(it,29) (js(i+nv),i=1,nl)
+      write(it,29) (i,i=1,nl)
+      write(it,29) (js(i+nv),i=1,nl)
       go to 8
     6 if(nl .gt. 78) go to 7
-c      write(it,30) (mod(i,10),i=1,nl)
-c      write(it,30) (js(i+nv),i=1,nl)
+      write(it,30) (mod(i,10),i=1,nl)
+      write(it,30) (js(i+nv),i=1,nl)
       go to 8
     7 continue
-c      write(it,37) 78
+      write(it,37) 78
     8 continue
       call catv(2,kp,kv,nv,js)
       do 27 jj=1,nv
@@ -1100,20 +1099,20 @@ c      write(it,37) 78
       if(na.gt.25) px=9.0
       rx=xx-xm
       rxp=rx/px
-c      write(it,'(/,'' f( x('',i3,''), x('',i3,'') ) : scale ='',g12.4)')
-c     1ja,jb,rxp
+      write(it,'(/,'' f( x('',i3,''), x('',i3,'') ) : scale ='',g12.4)')
+     1ja,jb,rxp
       if(rxp.le.0.0) go to 27
       if(na .le. 75) go to 17
-c      write(it,37) 75
+      write(it,37) 75
       go to 27
    17 if(na .gt. 25) go to 18
-c      write(it,34) (i,i=1,na)
+      write(it,34) (i,i=1,na)
       go to 20
    18 if(na .gt. 37) go to 19
-c      write(it,35) (i,i=1,na)
+      write(it,35) (i,i=1,na)
       go to 20
    19 continue
-c      write(it,36) (mod(i,10),i=1,na)
+      write(it,36) (mod(i,10),i=1,na)
    20 do 26 j=1,nb
       do 23 i=1,na
       if(na .ne. n1) go to 21
@@ -1123,13 +1122,13 @@ c      write(it,36) (mod(i,10),i=1,na)
    22 js(i+2*nv)=(sc(k)-xm)/rxp+.5
    23 continue
       if(na .gt. 25) go to 24
-c      write(it,31) j,(js(i+2*nv),i=1,na)
+      write(it,31) j,(js(i+2*nv),i=1,na)
       go to 26
    24 if(na .gt. 37) go to 25
-c      write(it,32) j,(js(i+2*nv),i=1,na)
+      write(it,32) j,(js(i+2*nv),i=1,na)
       go to 26
    25 continue
-c      write(it,33) j,(js(i+2*nv),i=1,na)
+      write(it,33) j,(js(i+2*nv),i=1,na)
    26 continue
    27 continue
       return
@@ -1208,7 +1207,7 @@ c     write(it,'('' x('',i3,'') ='',g12.4)') j,xs(j)
     9 continue
       azn=0.0
       bzn=azn
-c      if(it.gt.0) write(it,'('' sliced mars model = constant.'')')
+      if(it.gt.0) write(it,'('' sliced mars model = constant.'')')
       return
    10 if(it.gt.0) call slova(nk,it,tbn,ni,lpn,lvn)
       call ccoll(nk,tbn,cm,kpn,kvn,lpn,lvn,mm)
@@ -1312,7 +1311,7 @@ c      if(it.gt.0) write(it,'('' sliced mars model = constant.'')')
       ip=m
     1 if(ip.le.0) go to 11
       t=tb(2,ip)
-      j=dabs(t)+.1
+      j=abs(t)+.1
       if(cm(2*j) .le. 0.0) go to 8
       if(ifg .ne. 0) go to 2
       k=icat(x(i,j),j,cm)
@@ -1347,7 +1346,7 @@ c      if(it.gt.0) write(it,'('' sliced mars model = constant.'')')
       subroutine marsgo (n,p,x,y,w,nk,ms,df,fv,mi,lx,it,xm,xs,az,tb,cm,s
      1c,db,d,mm)
       implicit none
-      integer n,p,nk,ms,mi,it,mm(n,*),lx(p)
+      integer n,p,nk,ms,mi,it,mm(n,p),lx(p)
       logical elg,newbf
       double precision x(n,p),y(n),w(n),xm(p),xs(p),tb(5,nk),cm(*),sc(n,
      1*),vcst(3),tx(5),df,fv,az
@@ -1364,7 +1363,7 @@ c      if(it.gt.0) write(it,'('' sliced mars model = constant.'')')
       integer jf,ibfext
       data ix,alr,eps,big,fln,nmin,alf,vcst  /0,1.d-7,1.d-4,9.9e30,-1.0,
      15,.05,1.0,.666667,.333333/
-c      if(it.gt.0) write(it,97)
+      if(it.gt.0) write(it,97)
       mk=nk
       df1=0.0
       nep=0
@@ -1427,7 +1426,7 @@ c     if(it.gt.0) write(it,'('' no predictor variables.'')')
       rsq=yv*sw
       kr=0
       nopt=0
-c      if(it.gt.0) write(it,98) m,txm,0.0,1.0
+      if(it.gt.0) write(it,98) m,txm,0.0,1.0
       if(fln.lt.0.0) fln=1.0+4.0/wn
       call addpar(0)
     8 if(m.ge.mk.or.tcst.ge.tcmx) go to 69
@@ -1696,8 +1695,8 @@ c      if(it.gt.0) write(it,98) m,txm,0.0,1.0
       fkr=kr
       gcv=(rsq/sw)/(1.d0-tcst/wn)**2
       call holl(jn,cm,tb(3,m),hol)
-c      if(m.eq.mtot+1) write(it,100) m,gcv,fkr,tcst,fjn,hol,tb(4,m)
-c      if(m.eq.mtot+2) write(it,99) m,mp,gcv,fkr,tcst,fjn,hol,tb(4,m)
+      if(m.eq.mtot+1) write(it,100) m,gcv,fkr,tcst,fjn,hol,tb(4,m)
+      if(m.eq.mtot+2) write(it,99) m,mp,gcv,fkr,tcst,fjn,hol,tb(4,m)
    59 mtot=m
       m=m+1
       if(m.gt.mk) go to 69
@@ -1728,17 +1727,17 @@ c      if(m.eq.mtot+2) write(it,99) m,mp,gcv,fkr,tcst,fjn,hol,tb(4,m)
    66 tcst=nopt*df1+kr+1.0
       if(it .le. 0) go to 68
       mp=m-1
-      jp=dabs(tx(2))+.1
+      jp=abs(tx(2))+.1
       fkr=kr
       gcv=(rsq/sw)/(1.d0-tcst/wn)**2
       if(cm(2*jp) .le. 0.0) go to 67
       call holl(jp,cm,tx(3),hol)
-c      if(m.eq.mtot+1) write(it,100) m,gcv,fkr,tcst,tx(2),hol,tx(4)
-c      if(m.eq.mtot+2) write(it,99) m,mp,gcv,fkr,tcst,tx(2),hol,tx(4)
+      if(m.eq.mtot+1) write(it,100) m,gcv,fkr,tcst,tx(2),hol,tx(4)
+      if(m.eq.mtot+2) write(it,99) m,mp,gcv,fkr,tcst,tx(2),hol,tx(4)
       go to 68
    67 xk=xm(jp)+xs(jp)*tx(3)
-c      if(m.eq.mtot+1) write(it,93) m,gcv,fkr,tcst,tx(2),xk,tx(4)
-c      if(m.eq.mtot+2) write(it,94) m,mp,gcv,fkr,tcst,tx(2),xk,tx(4)
+      if(m.eq.mtot+1) write(it,93) m,gcv,fkr,tcst,tx(2),xk,tx(4)
+      if(m.eq.mtot+2) write(it,94) m,mp,gcv,fkr,tcst,tx(2),xk,tx(4)
    68 mtot=m
       go to 8
    69 mk=min0(m,mk)
@@ -1836,9 +1835,9 @@ c      if(m.eq.mtot+2) write(it,94) m,mp,gcv,fkr,tcst,tx(2),xk,tx(4)
       tb(1,i)=0.0
    90 continue
    91 if(it .le. 0) go to 92
-c      write(it,95)
+      write(it,95)
       call coefpr(it,mk,az,tb,cm,xs)
-c      write(it,96) asm,tcsts
+      write(it,96) asm,tcsts
    92 return
       entry setfln(val)
       fln=val
@@ -1888,7 +1887,7 @@ c      write(it,96) asm,tcsts
       integer lq,kp,itr,ktr,i,j,k,l,iarg,jq,mpr,mtr
       double precision big,arg,beta
       save mpr,mtr,ktr,big,beta,lq,kp,itr,jp,que,n,m
-      data big,mpr,mtr,beta /9.9d30,10,5,1.0/
+      data big,mpr,mtr,beta /9.9e30,10,5,1.0/
       if(ib .ne. 0) go to 1
       lq=1
       que(1,1)=big
@@ -1986,7 +1985,7 @@ c      write(it,96) asm,tcsts
       double precision freq(5)
       save lque,freq
       data lque /9999,20,20,10,5/
-      data freq /9.d30,9.d30,0.2,0.2,0.2/
+      data freq /9.e30,9.e30,0.2,0.2,0.2/
       j=is
       if(is.lt.1) j=1
       if(is.gt.5) j=5
@@ -2091,7 +2090,7 @@ c      write(it,96) asm,tcsts
       integer m,j,ip
       double precision scl
       do 1 m=1,nk
-      j=dabs(tb(2,m))+.1
+      j=abs(tb(2,m))+.1
       if(cm(2*j).gt.0.0) go to 1
       tb(3,m)=xm(j)+xs(j)*tb(3,m)
     1 continue
@@ -2100,7 +2099,7 @@ c      write(it,96) asm,tcsts
       scl=1.0
       ip=m
     2 if(ip.le.0) go to 3
-      j=dabs(tb(2,ip))+.1
+      j=abs(tb(2,ip))+.1
       if(cm(2*j).eq.0.0) scl=scl*xs(j)
       ip=tb(4,ip)+.1
       go to 2
@@ -2172,12 +2171,12 @@ c      write(it,96) asm,tcsts
       lv(ni)=m
     9 continue
       if(ni .ne. 0) go to 10
-c      write(it,26)
+      write(it,26)
       return
    10 do 11 m=1,ni
       t(m,1)=lv(m)
    11 continue
-c      write(it,24) ni
+      write(it,24) ni
       call coll(nk,tb,lp,lv,lp(1,nkp1))
       m=1
    12 if(lp(1,m).eq.0) go to 13
@@ -2192,7 +2191,7 @@ c      write(it,24) ni
       efm=eft-1.0
       u=yv/(1.d0-1.d0/wn)**2
       s=dsqrt(varf(nk,d,d(1,nkp2),sw,1,ni))
-c      write(it,25) m,s,u,lp(3,m),efm,(lv(i),i=k2,i2)
+      write(it,25) m,s,u,lp(3,m),efm,(lv(i),i=k2,i2)
       return
    14 do 23 m=1,na
       k2=lp(2,m)
@@ -2221,11 +2220,7 @@ c      write(it,25) m,s,u,lp(3,m),efm,(lv(i),i=k2,i2)
       do 21 i=1,nim1
       if(t(i,2) .le. t(i+1,2)) go to 21
       k=1
-      if(ni.lt.nkp2) then
-        call exch(nk,nkp2,i,d,t,t(1,2))
-      else
-        call exch(nk,ni,i,d,t,t(1,2))
-      end if
+      call exch(nk,ni,i,d,t,t(1,2))
    21 continue
       if(k.eq.0) go to 22
       go to 20
@@ -2233,7 +2228,7 @@ c      write(it,25) m,s,u,lp(3,m),efm,(lv(i),i=k2,i2)
       efm=efp(lp(1,m),lv(lp(2,m)),nk,tb)
       u=(u/sw+yv)/(1.d0-(eft-efm)/wn)**2
       s=dsqrt(varf(nk,d,d(1,nkp2),sw,np+1,ni))
-c      write(it,25) m,s,u,lp(3,m),efm,(lv(i),i=k2,i2)
+      write(it,25) m,s,u,lp(3,m),efm,(lv(i),i=k2,i2)
    23 continue
       return
    24 format(/' anova decomposition on',i3,' basis functions:',/  '  fun
@@ -2360,7 +2355,7 @@ c     write(it,13) m,u,lp(3,m),efm,(lv(i),i=k2,i2)
       ip=m
     3 if(ip.le.0) go to 6
       u=tb(2,ip)
-      j=dabs(u)+.1
+      j=abs(u)+.1
       if(cm(2*j) .eq. 0.0) go to 4
       ip=tb(4,ip)+.1
       go to 3
@@ -2543,7 +2538,7 @@ c     if(it.gt.0) write(it,34) ni,u
       ll=ll+1
       go to 28
    33 continue
-c      if(it.gt.0) write(it,34) lt,u
+      if(it.gt.0) write(it,34) lt,u
       return
    34 format(/' piecewise cubic fit on',i3,' basis functions, gcv =',g12
      1.4)
@@ -2778,7 +2773,7 @@ c      if(it.gt.0) write(it,34) lt,u
       sc(i,mkp2)=ww
       sw=sw+ww
       yb=yb+ww*sc(i,mkp3)
-      if(iter.gt.1) b=b+dabs(pp-sc(i,mkp1))
+      if(iter.gt.1) b=b+abs(pp-sc(i,mkp1))
       sc(i,mkp1)=pp
    29 continue
       if(iter.gt.niter.or.(iter.gt.1.and.b/n.lt.thr)) go to 37
@@ -2906,7 +2901,7 @@ c      if(it.gt.0) write(it,34) lt,u
    11 vip(j)=g
    12 continue
       if(it .le. 0) go to 13
-c      write(it,17)
+      write(it,17)
       call numprt(it,p,vip)
    13 a0=0.0
       do 14 j=1,p
@@ -2918,7 +2913,7 @@ c      write(it,17)
       vip(j)=100.0*vip(j)/a0
    15 continue
       if(it .le. 0) go to 16
-c      write(it,18)
+      write(it,18)
       call numprt(it,p,vip)
    16 return
    17 format(/,' -gcv removing each variable:')
@@ -2934,8 +2929,8 @@ c      write(it,18)
       i1=i2+1
       i2=i2+6
       if(i2.gt.n) i2=n
-c      write(it,'(/,'' '',6(''    '',i4,''    ''))') (i,i=i1,i2)
-c      write(it,'('' '',6g12.4)') (a(i),i=i1,i2)
+      write(it,'(/,'' '',6(''    '',i4,''    ''))') (i,i=i1,i2)
+      write(it,'('' '',6g12.4)') (a(i),i=i1,i2)
       go to 1
     2 return
       end
@@ -3088,7 +3083,7 @@ c      write(it,'('' '',6g12.4)') (a(i),i=i1,i2)
       if(nnord(l,tb).gt.0) return
     2 ip=l
     3 if(ip.le.0) go to 4
-      jl=dabs(tb(2,ip))+.1
+      jl=abs(tb(2,ip))+.1
       ip=tb(4,ip)+.1
       go to 3
     4 k=iabs(lx(jl))
@@ -3102,7 +3097,7 @@ c      write(it,'('' '',6g12.4)') (a(i),i=i1,i2)
       if(lx(jv).gt.0.and.nordc(1,l,tb,cm).ge.2) return
     6 ip=l
     7 if(ip.le.0) go to 8
-      jl=dabs(tb(2,ip))+.1
+      jl=abs(tb(2,ip))+.1
       call intalw(jv,jl,k)
       if(k.eq.0) return
       ip=tb(4,ip)+.1
@@ -3124,7 +3119,7 @@ c      write(it,'('' '',6g12.4)') (a(i),i=i1,i2)
       ip=m
     1 if(ip.le.0) go to 7
       t=tb(2,ip)
-      j=dabs(t)+.1
+      j=abs(t)+.1
       if(cm(2*j) .le. 0.0) go to 4
       u=cm(int(x(i,j)+.1)+int(tb(3,ip)+.1))
       if(t .ge. 0.0) go to 5
@@ -3165,7 +3160,7 @@ c      write(it,'('' '',6g12.4)') (a(i),i=i1,i2)
       ip=m
       jf=0
     1 if(ip.le.0) go to 2
-      jp=dabs(tb(2,ip))+.1
+      jp=abs(tb(2,ip))+.1
       if(jp.eq.j) jf=1
       ip=tb(4,ip)+.1
       go to 1
@@ -3269,7 +3264,7 @@ c      write(it,'('' '',6g12.4)') (a(i),i=i1,i2)
       j=0
     1 if(ip.le.0) go to 2
       j=j+1
-      jv(j)=dabs(tb(2,ip))+.1
+      jv(j)=abs(tb(2,ip))+.1
       ip=tb(4,ip)+.1
       go to 1
     2 if(j.eq.1) return
@@ -3392,7 +3387,7 @@ c      write(it,'('' '',6g12.4)') (a(i),i=i1,i2)
       kp=kr+1
       b=0.d0
       t=tb(2,m)
-      j=dabs(t)+.1
+      j=abs(t)+.1
       if(il .ne. 1) go to 3
       tk=tb(3,m)
       do 2 i=1,n
@@ -3592,12 +3587,12 @@ c      write(it,'('' '',6g12.4)') (a(i),i=i1,i2)
       integer m,j
       double precision tb(5,*)
       integer k
-c     double precision abs
+      double precision abs
       k=1
       go to 2
     1 k=k+1
     2 if((k).gt.(m)) go to 4
-      if(int(dabs(tb(2,k))+.1) .ne. j) go to 1
+      if(int(abs(tb(2,k))+.1) .ne. j) go to 1
       jft=1
       return
     4 jft=0
@@ -3624,8 +3619,8 @@ c     double precision abs
       l2=i2-i1+1
       call org(i1,i2,tb,cm,xs,a)
     3 continue
-c      write(it,'(/,'' bsfn:'',6(''    '',i4,''    ''))') (i,i=i1,i2)
-c      write(it,'('' coef:'',6g12.4)') (a(i),i=1,l2)
+      write(it,'(/,'' bsfn:'',6(''    '',i4,''    ''))') (i,i=i1,i2)
+      write(it,'('' coef:'',6g12.4)') (a(i),i=1,l2)
       go to 1
     4 return
       end
@@ -3644,7 +3639,7 @@ c      write(it,'('' coef:'',6g12.4)') (a(i),i=1,l2)
     1 s=1.0
       ip=m
     2 if(ip.le.0) go to 3
-      j=dabs(tb(2,ip))+.1
+      j=abs(tb(2,ip))+.1
       if(cm(2*j).eq.0.0) s=s*xs(j)
       ip=tb(4,ip)+.1
       go to 2
@@ -3734,9 +3729,9 @@ c      write(it,'('' coef:'',6g12.4)') (a(i),i=1,l2)
    10 if(iq.gt.kq) go to 15
       if(iq.lt.lq) go to 15
       if((iq .ne. 1) .and. (iq .ne. 3)) go to 11
-      a=dabs((y-y0)/(x-x0))
+      a=abs((y-y0)/(x-x0))
       go to 12
-   11 a=dabs((x-x0)/(y-y0))
+   11 a=abs((x-x0)/(y-y0))
    12 if(iq.eq.lq.and.a.lt.a0) go to 15
       if(iq .ge. kq) go to 13
       kq=iq
@@ -3780,7 +3775,7 @@ c      write(it,'('' coef:'',6g12.4)') (a(i),i=1,l2)
       subroutine knts (l,nt,jv,jl,kv,nk,tb,cm,x,js)
       implicit none
       integer l,nt,jl,nk,jv(l),kv(2,jl),js(*)
-      double precision tb(5,nk),cm(*),x(nt,*)
+      double precision tb(5,nk),cm(*),x(nt,l)
       integer l1,m,k,j,ip
       double precision t
       integer jf,icf,nordc
@@ -3799,7 +3794,7 @@ c      write(it,'('' coef:'',6g12.4)') (a(i),i=1,l2)
       l1=l1+1
     3 if(ip.le.0) go to 7
       t=tb(2,ip)
-      j=dabs(t)+.1
+      j=abs(t)+.1
       if(cm(2*j) .eq. 0.0) go to 4
       ip=tb(4,ip)+.1
       go to 3
@@ -3948,7 +3943,7 @@ c      write(it,'('' coef:'',6g12.4)') (a(i),i=1,l2)
       ip=m
     3 if(ip.le.0) go to 10
       t=tb(2,ip)
-      j=dabs(t)+.1
+      j=abs(t)+.1
       i=1
       go to 5
     4 i=i+1
@@ -4115,7 +4110,7 @@ c      write(it,'('' coef:'',6g12.4)') (a(i),i=1,l2)
       ip=m
       nordc=0
     1 if(ip.le.0) go to 4
-      j=dabs(tb(2,ip))+.1
+      j=abs(tb(2,ip))+.1
       if(l .ne. 1) go to 2
       if(cm(2*j).eq.0.0) nordc=nordc+1
       go to 3
@@ -4132,7 +4127,7 @@ c      write(it,'('' coef:'',6g12.4)') (a(i),i=1,l2)
       ip=m
       nv=0
     1 if(ip.le.0) go to 5
-      j=dabs(tb(2,ip))+.1
+      j=abs(tb(2,ip))+.1
       if(l .ne. 1) go to 3
       if(cm(2*j) .le. 0.0) go to 4
       ip=tb(4,ip)+.1
@@ -4473,18 +4468,18 @@ c     write(6,7)
       wm(1)=wm(1)/wt
       wm(2)=wm(2)/wt
 c     write(it,'(/,'' binary (0/1) response:  mass(0) ='',g12.4,
-c     1                           ''   mass(1) ='',g12.4)') wm(1),wm(2)
+c    1                           ''   mass(1) ='',g12.4)') wm(1),wm(2)
       return
     2 continue
-c      write(it,'(/,'' ordinal response:'')')
-c      write(it,'(''      min         n/4         n/2        3n/4
-c     1 max'')')
+      write(it,'(/,'' ordinal response:'')')
+      write(it,'(''      min         n/4         n/2        3n/4
+     1 max'')')
       do 3 i=1,n
       m(i)=i
     3 continue
       call psort(y,m,1,n)
-c      write(it,'('' '',5g12.4)') y(m(1)),y(m(n/4)),y(m(n/2)),y(m(n-n/4))
-c     1,y(m(n))
+      write(it,'('' '',5g12.4)') y(m(1)),y(m(n/4)),y(m(n/2)),y(m(n-n/4))
+     1,y(m(n))
       return
       end
       subroutine ordpr (it,n,p,x,lx,m)
@@ -4498,17 +4493,17 @@ c     1,y(m(n))
       if(lx(j).gt.0) no=no+1
     1 continue
       if(no.eq.0) return
-c      write(it,'(/,'' there are'',i3,'' ordinal predictor variables.'',/
-c     1)') no
-c      write(it,'(''  var     min         n/4         n/2        3n/4
-c     1     max'')')
+      write(it,'(/,'' there are'',i3,'' ordinal predictor variables.'',/
+     1)') no
+      write(it,'(''  var     min         n/4         n/2        3n/4
+     1     max'')')
       n1=n/4
       n2=n/2
       n3=n-n1
       do 2 j=1,p
       if(lx(j).le.0) go to 2
-c      write(it,'('' '',i3,'' '',5g12.4)') j,  x(m(1,j),j),x(m(n1,j),j),x
-c     1(m(n2,j),j),x(m(n3,j),j),x(m(n,j),j)
+      write(it,'('' '',i3,'' '',5g12.4)') j,  x(m(1,j),j),x(m(n1,j),j),x
+     1(m(n2,j),j),x(m(n3,j),j),x(m(n,j),j)
     2 continue
       return
       end
@@ -4522,8 +4517,8 @@ c     1(m(n2,j),j),x(m(n3,j),j),x(m(n,j),j)
       if(nct.eq.0) return
       n2=2*p+1
       np=0
-c      write(it,'(/,'' there are'',i3,'' categorical predictor variables.
-c     1'')') nct
+      write(it,'(/,'' there are'',i3,'' categorical predictor variables.
+     1'')') nct
       i=2
       go to 2
     1 i=i+(2)
@@ -4690,7 +4685,7 @@ c     write(it,5) m,lp(3,m),(lv(i),i=k2,i2)
       do 13 j=1,nv
       t=te(1,j)
       u=te(2,j)
-      jp=dabs(t)+.1
+      jp=abs(t)+.1
       jp2=2*jp
       jp21=jp2+1
       jpp=jp
@@ -4699,7 +4694,7 @@ c     write(it,5) m,lp(3,m),(lv(i),i=k2,i2)
       ip=m
     1 if(ip.le.0) go to 12
       t=tb(2,ip)
-      jq=dabs(t)+.1
+      jq=abs(t)+.1
       jqq=jq
       if(t.lt.0.0) jqq=-jqq
       if(jp .eq. jq) go to 2
@@ -4768,7 +4763,7 @@ c     write(6,20)j,(tb(i,j),i=1,4)
       ip=m
     1 if(ip.le.0) go to 4
       t=tb(2,ip)
-      j=dabs(t)+.1
+      j=abs(t)+.1
       jj=j
       if(t.lt.0.0) jj=-jj
       u=tb(3,ip)
@@ -4776,7 +4771,7 @@ c     write(6,20)j,(tb(i,j),i=1,4)
       ig=0
       do 2 i=1,l
       t=te(1,i)
-      jp=dabs(t)+.1
+      jp=abs(t)+.1
       if(x(jp).ne.flg) k=k+1
       if(t.lt.0.0) jp=-jp
       if(jj .ne. jp .or. ieq(te(2,i),u,r(j)) .ne. 1) go to 2
@@ -4805,7 +4800,7 @@ c     write(6,20)j,(tb(i,j),i=1,4)
       bzn=bz
       do 9 m=1,nk
       t=tb(2,m)
-      j=dabs(t)+.1
+      j=abs(t)+.1
       if(x(j).eq.flg) go to 9
       if(cm(2*j) .le. 0.0) go to 7
       k=icat(x(j),j,cm)
@@ -4829,13 +4824,13 @@ c     write(6,20)j,(tb(i,j),i=1,4)
    11 if((-1)*((m)-(1)).gt.0) go to 21
       ip=tbn(4,m)+.1
       t=tbn(2,m)
-      j=dabs(t)+.1
+      j=abs(t)+.1
       if(x(j) .ne. flg) go to 15
       if(tbn(1,m) .eq. 0.0) go to 10
       iq=ip
    12 if(iq.le.0) go to 10
       t=tbn(2,iq)
-      j=dabs(t)+.1
+      j=abs(t)+.1
       if(x(j) .eq. flg) go to 13
       tbn(1,m)=tbn(1,m)*sc(iq)
       td(1,m)=td(1,m)*td(2,iq)
@@ -4861,7 +4856,7 @@ c     write(6,20)j,(tb(i,j),i=1,4)
    22 m=m+(-1)
    23 if((-1)*((m)-(1)).gt.0) go to 31
       t=tb(2,m)
-      j=dabs(t)+.1
+      j=abs(t)+.1
       if(x(j).eq.flg) go to 22
       k=m+1
       go to 25
@@ -4989,7 +4984,7 @@ c     write(6,20)j,(tb(i,j),i=1,4)
       integer ieq
       double precision a,b,r
       ieq=0
-      if(dabs((a-b)/r).lt.1.d-5) ieq=1
+      if(abs((a-b)/r).lt.1.e-5) ieq=1
       return
       end
       function lcm (p,nk,tb,cm)
@@ -5001,7 +4996,7 @@ c     write(6,20)j,(tb(i,j),i=1,4)
       ix=0
       jj=0
       do 1 m=1,nk
-      j=dabs(tb(2,m))+.1
+      j=abs(tb(2,m))+.1
       if(cm(2*j).eq.0.0) go to 1
       if(int(tb(3,m)+.1) .le. ix) go to 1
       ix=tb(3,m)+.1
@@ -5289,7 +5284,7 @@ c     if(it.gt.0) write(it,22) m,dfu,cv(m,2),gcv,cv(m,3)
       gcv=yv/(1.0-1.0/wn)**2
 c     if(it.gt.0) write(it,22) 0,dmx,yv,gcv,cv0
 c     if(it.gt.0) write(it,'(/,'' estimated optimal df('',i3,'') ='',f7.
-c     12,               '' with (estimated) pse ='',g12.4)') im,df,cvm
+c    12,               '' with (estimated) pse ='',g12.4)') im,df,cvm
       return
       entry cvinfo(a1,a2,ia1)
       a1=dfs
@@ -5308,7 +5303,7 @@ c     12,               '' with (estimated) pse ='',g12.4)') im,df,cvm
       double precision t,s,u
       do 8 m=1,mk
       t=tb(2,m)
-      j=dabs(t)+.1
+      j=abs(t)+.1
       if(cm(2*j) .le. 0.0) go to 5
       k=x(i,j)+.1
       if(k .ne. 0) go to 1
@@ -5370,7 +5365,7 @@ c     12,               '' with (estimated) pse ='',g12.4)') im,df,cvm
     4 il=il+1
       if(il .le. mlist) go to 5
 c     write(6,  '('' increase parameter mlist in subroutine nest to grea
-c     1ter than'',               i5,'' and recompile.'')') il
+c    1ter than'',               i5,'' and recompile.'')') il
       stop
     5 m(1,il)=i
       m(2,il)=j
@@ -5378,7 +5373,7 @@ c     1ter than'',               i5,'' and recompile.'')') il
       m(4,il)=jl
       if(jl+nv .le. nlist) go to 6
 c     write(6,  '('' increase parameter nlist in subroutine nest to grea
-c     1ter than'',               i5,'' and recompile.'')') jl+nv
+c    1ter than'',               i5,'' and recompile.'')') jl+nv
       stop
     6 do 7 k=1,nv
       jl=jl+1
@@ -5409,12 +5404,12 @@ c     write(it,'(/,'' variable nesting:'',/)')
       do 18 k=1,il
       if(m(3,k) .le. 5) go to 17
 c     write(it,'('' '',i3,'': var('',i3,'') exists for var('',i3,'') =''
-c     1)')  k,m(1,k),m(2,k)
+c    1)')  k,m(1,k),m(2,k)
 c     write(it,'(100('' '',10f7.1))') (vm(l),l=m(4,k)+1,m(4,k)+m(3,k))
       go to 18
    17 continue
 c     write(it,'('' '',i3,'': var('',i3,'') exists for var('',i3,'') =''
-c     1,5f7.1)')  k,m(1,k),m(2,k),(vm(l),l=m(4,k)+1,m(4,k)+m(3,k))
+c    1,5f7.1)')  k,m(1,k),m(2,k),(vm(l),l=m(4,k)+1,m(4,k)+m(3,k))
    18 continue
       return
       entry oknest(it,p,lx,cm)
@@ -5476,7 +5471,7 @@ c     if(ig.eq.0) write(it,28) l,vm(k),jn
       ig=0
       ip=lm
    37 if(ip.le.0) go to 39
-      j1=dabs(tb(2,ip))+.1
+      j1=abs(tb(2,ip))+.1
       if(j1 .ne. jn) go to 38
       ig=1
       go to 39
@@ -5513,7 +5508,7 @@ c     if(ig.eq.0) write(it,28) l,vm(k),jn
       ip=lk
    46 if(ip.le.0) go to 55
       t1=tb(2,ip)
-      j1=dabs(t1)+.1
+      j1=abs(t1)+.1
       if(j1 .ne. jn) go to 54
       kp=tb(3,ip)+.1
       kg=0
@@ -5617,7 +5612,7 @@ c     if(ig.eq.0) write(it,28) l,vm(k),jn
       parameter(al2=0.693147,al25=1.732868)
       integer nst,nnr,nnl
       double precision allf,fmn,fme
-      allf=-dlog(1.0D0-alf)
+      allf=-dlog(1.0-alf)
       fmn=-dlog(allf/(nep*nnt))/al25
       fme=-dlog(alf*0.125/nep)/al2
       if(ms .le. 0) go to 1
@@ -5658,7 +5653,7 @@ c     if(ig.eq.0) write(it,28) l,vm(k),jn
       nc=0
     1 if(ipo.le.0) go to 16
       to=tb(2,ipo)
-      jo=dabs(to)+.1
+      jo=abs(to)+.1
       jg=0
       if(cm(2*jo) .ne. 0.0) go to 2
       t=tb(3,ipo)
@@ -5670,7 +5665,7 @@ c     if(ig.eq.0) write(it,28) l,vm(k),jn
     3 ip=lk
     4 if(ip.le.0) go to 14
       t1=tb(2,ip)
-      j1=dabs(t1)+.1
+      j1=abs(t1)+.1
       if(j1 .ne. jo) go to 13
       if(ic .ne. 0) go to 6
       if(to*t1 .le. 0.0) go to 13
@@ -5795,7 +5790,7 @@ c     if(ig.eq.0) write(it,28) l,vm(k),jn
       data tol /0.001/
       if(p .le. nlist) go to 1
 c     write(6,'('' increase parameter nlist in subroutine mkmiss to '',i
-c     15,                      '' and recompile.'')') p
+c    15,                      '' and recompile.'')') p
       stop
     1 do 3 j=1,p
       m(j)=0
@@ -5885,7 +5880,7 @@ c     15,                      '' and recompile.'')') p
       ip=m
       nnord=0
     1 if(ip.le.0) go to 2
-      call isnstr(int(dabs(tb(2,ip))+.1),jb)
+      call isnstr(int(abs(tb(2,ip))+.1),jb)
       if(jb.eq.0) nnord=nnord+1
       ip=tb(4,ip)+.1
       go to 1
