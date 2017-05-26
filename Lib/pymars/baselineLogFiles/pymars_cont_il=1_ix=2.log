@@ -1,0 +1,108 @@
+ContinuousTest
+logisticRegression=1
+crossValidation=2
+mars output
+L1 Absolute error:    2.21368
+L1 Relative error:   0.678534
+L2 Absolute error:    6.99497
+L2 Relative error:    0.64471
+Linf Absolute error:    12.8822
+pymars output
+ MARS modeling, version 4.0 (7/13/09)
+ input parameters (see doc.):
+     n    p    nk   ms    mi   df     il   fv    ic 
+     98   2    5    0     2    3.0    1    0.0    0
+ predictor variable flags:
+
+ var:    1  2
+
+ flag:   1  1
+
+(/ binary (0/1) response:  mass(0) =       0.4898,   mass(1) =       0.5102)
+
+ there are   2 ordinal predictor variables.
+  var          min         n/4         n/2        3n/4            max 
+   1           -1      0.02974       0.4943       0.9445            2
+   2           -1        0.316          0.5          0.5            2
+
+ cvmars output
+
+ sample reuse to estimate df:
+   2 - fold cross-validation.
+
+ forward stepwise knot placement:
+
+  basfn(s)    gcv      #indbsfns  #efprms   variable      knot            parent
+    0         0.2604      0.0      1.0
+  2    1      0.07773     2.0      6.0      2            0.5              
+  4    3      0.01931     4.0     11.0      1         0.3013              
+    5        0.02334     5.0     15.0       1             -1             2
+
+  final model after backward stepwise elimination:
+
+ bsfn:       0           1           2           3           4           5    
+ coef:      1.0925     -0.4970     -0.4791     -0.3319     -0.5852      0.0000
+   (piecewise linear) gcv =      0.02059   #efprms =  12.2
+
+ forward stepwise knot placement:
+
+  basfn(s)    gcv      #indbsfns  #efprms   variable      knot            parent
+    0         0.2595      0.0      1.0
+  2    1      0.08332     2.0      6.0      2            0.5              
+  4    3      0.03511     4.0     11.0      1         0.7967              
+    5        0.04285     5.0     15.0       1             -1             1
+
+  final model after backward stepwise elimination:
+
+ bsfn:       0           1           2           3           4           5    
+ coef:      1.0479     -0.5099     -0.5279     -0.5791     -0.2417      0.0000
+   (piecewise linear) gcv =      0.03744   #efprms =  12.2
+
+  #bsfns      df         asr           gcv           cv
+     5      -0.62      0.01593      0.01902      0.03383
+     4       5.05      0.01636      0.03865      0.03196
+     3      11.51      0.03313        0.135        0.072
+     2      16.44      0.06201       0.2157      0.06575
+     0      20.57       0.2495         0.26       0.2511
+estimated optimal df(   4 ) =    5.05 with (estimated) pse =      0.03196
+
+ forward stepwise knot placement:
+
+  basfn(s)    gcv      #indbsfns  #efprms   variable      knot            parent
+    0         0.2551      0.0      1.0
+  2    1      0.07463     2.0      8.0      2            0.5              
+  4    3        0.028     4.0     15.1      1         0.5694              
+    5        0.03257     5.0     21.1       1             -1             2
+
+  final model after backward stepwise elimination:
+
+ bsfn:       0           1           2           3           4           5    
+ coef:      1.0688     -0.4781     -0.4857     -0.4529     -0.4066      0.0000
+   (piecewise linear) gcv =      0.02942   #efprms =  17.1
+
+ piecewise-linear logistic gcv =    2.458e-07   ave var=   0.0001386
+
+ logit anova decomposition on   4  basis functions:
+  fun.    -gcv    #bsfns  #efprms  variable(s)
+  1         0.1734      2      8.1          2
+  2         0.1487      2      8.1          1
+
+ piecewise cubic fit on   4  basis functions, gcv =      0.03141
+ piecewise-cubic logistic gcv =    5.165e-08   ave var =   8.554e-05
+
+ gcv removing each variable:
+       1       2
+
+    0.1487    0.1734
+
+ relative variable importance:
+       1       2
+
+     92.58       100
+
+Returned from python mars
+L1 Absolute error:    2.21368
+L1 Relative error:   0.678534
+L2 Absolute error:    6.99497
+L2 Relative error:    0.64471
+Linf Absolute error:    12.8822

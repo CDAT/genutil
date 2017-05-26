@@ -1,0 +1,114 @@
+MultiCategoricalTest
+logisticRegression=0
+crossValidation=2
+mars output
+L1 Absolute error:   0.481118
+L1 Relative error:   0.411677
+L2 Absolute error:    0.26801
+L2 Relative error:   0.277049
+Linf Absolute error:      0.525
+pymars output
+ MARS modeling, version 4.0 (7/13/09)
+ input parameters (see doc.):
+     n    p    nk   ms    mi   df     il   fv    ic 
+   1000   3    5    0     1    3.0    0    0.0    0
+ predictor variable flags:
+
+ var:    1  2  3
+
+ flag:   1  1  -1
+
+ ordinal response:
+
+          min          n/4          n/2          3n/4         max
+           0         1.09         2.09         4.49         5.81 
+
+ there are   2 ordinal predictor variables.
+  var          min         n/4         n/2        3n/4            max 
+   1            0          0.2          0.4          0.7          0.9
+   2            0            0            0            1            1
+
+ there are   1 categorical predictor variables.
+ categorical variable   3 has   3 values.
+ value     internal code     counts
+     0             1             300
+     1             2             300
+     2             3             400
+
+ cvmars output
+
+ sample reuse to estimate df:
+   2 - fold cross-validation.
+
+ forward stepwise knot placement:
+
+  basfn(s)    gcv      #indbsfns  #efprms   variable      knot            parent
+    0          3.582      0.0      1.0
+  2    1       0.5066     1.0     4.0         3             001                 
+    3         0.2272     2.0      7.0       2              0              
+  5    4       0.0726     3.0    10.0         3             100                 
+
+  final model after backward stepwise elimination:
+
+ bsfn:       0           1           2           3           4           5    
+ coef:      1.2563      3.0200      0.0000      1.0257     -1.0134      0.0000
+   (piecewise linear) gcv =       0.0726   #efprms =  10.0
+
+ forward stepwise knot placement:
+
+  basfn(s)    gcv      #indbsfns  #efprms   variable      knot            parent
+    0          3.264      0.0      1.0
+  2    1       0.4501     1.0     4.0         3             001                 
+    3         0.2279     2.0      7.0       2              0              
+  5    4      0.07651     3.0    10.0         3             100                 
+
+  final model after backward stepwise elimination:
+
+ bsfn:       0           1           2           3           4           5    
+ coef:      1.3130      2.9784      0.0000      0.9731     -0.9864      0.0000
+   (piecewise linear) gcv =      0.07651   #efprms =  10.0
+
+  #bsfns      df         asr           gcv           cv
+     5      -1.50       0.0716      0.07189      0.07361
+     3      85.14       0.0716       0.1687      0.07361
+     2     174.40       0.2212       0.7908       0.2247
+     1     322.98       0.4707        1.473       0.4762
+     0     468.95        3.409        3.423        3.421
+estimated optimal df(   3 ) =   85.14 with (estimated) pse =      0.07361
+
+ forward stepwise knot placement:
+
+  basfn(s)    gcv      #indbsfns  #efprms   variable      knot            parent
+    0          3.419      0.0      1.0
+  2    1       0.5329     1.0    58.8         3             001                 
+    3         0.2846     2.0    116.5       2              0              
+  5    4       0.1058     3.0   174.3         3             100                 
+
+  final model after backward stepwise elimination:
+
+ bsfn:       0           1           2           3           4           5    
+ coef:      1.2850      3.0000      0.0000      1.0000     -1.0000      0.0000
+   (piecewise linear) gcv =       0.1058   #efprms = 174.3
+ anova decomposition on   3 basis functions:
+  fun. std. dev.     -gcv    #bsfns  #efprms  variable(s)
+   1     0.6245      3.055      2    1.2e+02       3
+   2          1     -6.624      1      58       2
+
+ piecewise cubic fit on   3  basis functions, gcv =       0.1058
+
+ gcv removing each variable:
+       1       2       3
+
+    0.1058    0.4127     3.569
+
+ relative variable importance:
+       1       2       3
+
+         0     29.77       100
+
+Returned from python mars
+L1 Absolute error:   0.481118
+L1 Relative error:   0.411677
+L2 Absolute error:    0.26801
+L2 Relative error:   0.277049
+Linf Absolute error:      0.525

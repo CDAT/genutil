@@ -111,8 +111,9 @@ def buildResponseSurface(n, p, x, y, w, nk, ms, df, fv, mi, lx, xm, xs, az, tb, 
         parent, nextVar = genutil.pymars.ADDPAR0.nxtpar(parent, nextVar)
         #debug.info('before buildNextBasisFunction '+repr(tb[2:5, bfIndex]))
         #print 'rsq, ssq, kr, k1 before=', rsq, ssq, kr, k1
+        #ms, fv, newBF, txl, tx1, txi, ssq, rsq, kcp0,
         (tb, cm, mm, evaluations, db, bfIndex, bfIndexLast, 
-        ms, fv, newBF, txl, tx1, txi, ssq, rsq, kcp0, 
+        ms, fv, newBF, tx1, txi, ssq, rsq, kcp0,
         nextVar, jas, kr, nc, kcp, k1, DY )= \
         buildNextBasisFunction(parent, nextVar,
                                n, p, x, y, yb, w, sw, lx, tb, cm, mm, mi, 
@@ -265,7 +266,7 @@ def buildNextBasisFunction(parent, nextVar,
     of max interaction(mi), an input parameter.  
     """
     #print 'begin build'
-
+    #pdb.set_trace()
     while parent >= 0:
         parentEval = evaluations[:,parent]
         txl = big
@@ -316,8 +317,9 @@ def buildNextBasisFunction(parent, nextVar,
         parent, nextVar = genutil.pymars.ADDPAR0.nxtpar(parent, nextVar)
     #print 'end build'
     return tb, cm, mm, evaluations, db, bfIndex, bfIndexLast, \
-           ms, fv, newHS, txl, tx1, txi, ssq, rsq, kcp0, \
+           ms, fv, newHS, tx1, txi, ssq, rsq, kcp0, \
            nextVar, jas, kr, nc, kcp, k1, DY
+        #ms, fv, newHS, txl, tx1, txi, ssq, rsq, kcp0, \
 def copyAtoSC(n, nk, k1, nBasisFunctions, a, A, cvStuff):
     l = 0
     while l <= nk:
