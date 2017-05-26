@@ -95,7 +95,7 @@ def buildResponseSurface(n, p, x, y, w, nk, ms, df, fv, mi, lx, xm, xs, az, tb, 
         logger.info('  %3i   %12.4g    %5.1f    %5.1f' %(bfIndex, txm, 0.0, 1.0))
     if parameters['marsgo']['fln'] < 0.0: 
         parameters['marsgo']['fln'] = 1.0 + 4.0/wn
-        genutil.pymars.ADDPAR0.addpar(0)
+    genutil.pymars.ADDPAR0.addpar(0)
     parent = 0
     #main loop
     START = time.time()
@@ -350,7 +350,7 @@ def addBasisFunction(n, x, y, w, sw, yb, tb, cm,
             
     if kr > k1:
         rsq = rsq - DY[kr]**2
-        genutil.pymars.ADDPAR0.addpar(bfIndex)
+    genutil.pymars.ADDPAR0.addpar(bfIndex)
     return tb, evaluations, k1, kr, rsq, db, DY
 def addReflectedBasisFunction(n, x, y, w, sw, yb, tb, cm, variable, 
                               evaluations, partialEval, k1, kr, rsq, bfIndex, newBF, db, DY):
@@ -370,7 +370,7 @@ def addReflectedBasisFunction(n, x, y, w, sw, yb, tb, cm, variable,
         evaluations[:,bfIndex] = currentEval
         if kr > k1:
             rsq = rsq - DY[kr]**2
-        genutil.pymars.ADDPAR0.addpar(bfIndex)
+    genutil.pymars.ADDPAR0.addpar(bfIndex)
     return tb, evaluations, k1, kr, rsq, db, DY
 def printBasisFunction(xm, xs, bfIndex, mtot, kr, tcst, cm, newBF, rsq, sw, wn):
     mp = bfIndex-1
@@ -400,7 +400,7 @@ def processNestedData(n, x, y, w, sw, yb, tb, cm, jas, jn, kcp0, kcp, kr, rsq,
                       nBasisFunctions, newBF, bfIndex, evaluations, partialEval, db, DY):
     VALS = cm[kcp0+1:kcp+1]
     VALS = border(VALS)
-    jn, VALS = NEST0.getnst(jas, cm, jn, kcp, VALS)#needs work
+    jn, VALS = genutil.pymars.NEST0.getnst(jas, cm, jn, kcp, VALS)#needs work
     cm[kcp0+1:kcp+1] = VALS[1:]
     tb[2, bfIndex] = jn
     tb[3, bfIndex] = kcp0
@@ -424,7 +424,7 @@ def processNestedData(n, x, y, w, sw, yb, tb, cm, jas, jn, kcp0, kcp, kr, rsq,
 
     if kr > k1:
         rsq = rsq - DY[kr]**2
-        genutil.pymars.ADDPAR0.addpar(bfIndex)
+    genutil.pymars.ADDPAR0.addpar(bfIndex)
     if bfIndex < nBasisFunctions: 
         bfIndex = bfIndex + 1
         tb[2, bfIndex] = -tb[2, bfIndex-1]
@@ -435,7 +435,7 @@ def processNestedData(n, x, y, w, sw, yb, tb, cm, jas, jn, kcp0, kcp, kr, rsq,
         else:    
             for i in range(1, n+1):
                 evaluations[i, bfIndex] = phi(bfIndex, x[i,:], tb, cm)
-                genutil.pymars.ADDPAR0.addpar(bfIndex)
+            genutil.pymars.ADDPAR0.addpar(bfIndex)
     if LOG: 
         mp = bfIndex - 1
         tcst = (nopt-1)*df1 + kr + 1.0

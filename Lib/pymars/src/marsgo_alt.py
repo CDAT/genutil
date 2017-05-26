@@ -1,5 +1,5 @@
 #Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
-import numpy, logging, time, pymars
+import numpy, logging, time, genutil.pymars
 from genutil.pymars import LOG, logger, debug, parameters, ARRAY_SIZE, FLOAT_DTYPE, INT_DTYPE
 from .border import *
 from .nnord import nnord
@@ -94,7 +94,7 @@ def buildResponseSurface(n, p, x, y, w, nk, ms, df, fv, mi, lx, xm, xs, az, tb, 
         logger.info('  %3i   %12.4g    %5.1f    %5.1f' %(bfIndex, txm, 0.0, 1.0))
     if parameters['marsgo']['fln'] < 0.0: 
         parameters['marsgo']['fln'] = 1.0 + 4.0/wn
-    pymars.ADDPAR0.addpar(0)
+    genutil.pymars.ADDPAR0.addpar(0)
     parent = 0
     #main loop
     START = time.time()
@@ -102,13 +102,13 @@ def buildResponseSurface(n, p, x, y, w, nk, ms, df, fv, mi, lx, xm, xs, az, tb, 
     while bfIndex < nBasisFunctions and tcst < tcmx:
         #debug.info('bfIndex = '+str(bfIndex))
         nopt = nopt+1
-        pymars.ADDPAR0.itrpar(nopt)
+        genutil.pymars.ADDPAR0.itrpar(nopt)
         bfIndexLast = bfIndex
         bfIndex = bfIndex+1
         txi = parameters['marsgo']['big']
         kcp = kcp0
         asq0 = rsq/sw
-        parent, nextVar = pymars.ADDPAR0.nxtpar(parent, nextVar)
+        parent, nextVar = genutil.pymars.ADDPAR0.nxtpar(parent, nextVar)
         #debug.info('before buildNextBasisFunction '+repr(tb[2:5, bfIndex]))
 
         (tb, cm, mm, evaluations, db, bfIndex, bfIndexLast, 
@@ -128,7 +128,7 @@ def buildResponseSurface(n, p, x, y, w, nk, ms, df, fv, mi, lx, xm, xs, az, tb, 
                                parameters['marsgo']['alf'])
 
         variable = int(newBF[2]+.1)
-        pymars.ADDPAR0.selpar(int(newBF[4]+.1))
+        genutil.pymars.ADDPAR0.selpar(int(newBF[4]+.1))
         if cm[2*variable] > 0.:
             nc = int(cm[2*variable+1]+.1) - int(cm[2*variable]+.1) + 1
             kcp0 = kcp0 + nc
@@ -162,14 +162,14 @@ def buildResponseSurface(n, p, x, y, w, nk, ms, df, fv, mi, lx, xm, xs, az, tb, 
             mtot = bfIndex
     #end main loop
     END = time.time()
-    if 'marsgo' in pymars.TIME.keys(): pymars.TIME['marsgo'] += [(START, END)]         
+    if 'marsgo' in genutil.pymars.TIME.keys(): genutil.pymars.TIME['marsgo'] += [(START, END)]
     nBasisFunctions = min(bfIndex,nBasisFunctions) #actual number of basis functions found
     tb[1, nBasisFunctions+1:nk+1] = 0.0
     D, XB = sscp(n, nBasisFunctions, evaluations, y, w, yb, yv, sw)
     START = time.time()
     D, b, A, a, DP = lsf1(D, nBasisFunctions, XB, yb, parameters['marsgo']['alr'])
     END = time.time()
-    if 'marsgo_lsf1' in pymars.TIME.keys(): pymars.TIME['marsgo_lsf1'] += [(START, END)]        
+    if 'marsgo_lsf1' in genutil.pymars.TIME.keys(): genutil.pymars.TIME['marsgo_lsf1'] += [(START, END)]
     (k,) = numpy.where(A[1:] != 0.0)
     nli = len(k)  #number of non-trivial basis functions
     df1 = df1*nopt + nli
@@ -245,14 +245,14 @@ def buildNextBasisFunction(parent0, nextVar,
     parent = parent0
     while parent >= 0:
         txl = big
-        NNORD = nnord(pymars.NEST0, parent, tb)
+        NNORD = nnord(genutil.pymars.NEST0, parent, tb)
         if NNORD >= mi:
-            pymars.ADDPAR0.updpar(0,-1.0)
+            genutil.pymars.ADDPAR0.updpar(0,-1.0)
         else:
-            nnt, partialEval = blf0(pymars.NEST0, parent, 0, n, x, w, cm, evaluations[:,parent])
+            nnt, partialEval = blf0(genutil.pymars.NEST0, parent, 0, n, x, w, cm, evaluations[:,parent])
             lbf = 0
             if nnt <= nmin:
-                pymars.ADDPAR0.updpar(0,-1.0)
+                genutil.pymars.ADDPAR0.updpar(0,-1.0)
             else:
                 nep = 0
                 for variable in range(1, p+1):
@@ -260,17 +260,17 @@ def buildNextBasisFunction(parent0, nextVar,
                     if x[mm[1,variable],variable] < x[mm[n,variable],variable]:
                         #check if variable is already included
                         if jf(parent, variable, tb) == 0:
-                            ja = pymars.NEST0.isfac(parent, variable, bfIndexLast, tb, cm)
+                            ja = genutil.pymars.NEST0.isfac(parent, variable, bfIndexLast, tb, cm)
                             if ja >= 0:
-                                if elg(pymars.NEST0, pymars.SETINT0, 
+                                if elg(genutil.pymars.NEST0, genutil.pymars.SETINT0,
                                        variable, parent, lx, tb, cm):
                                     nep = nep+1               
                 if nep == 0:
-                    pymars.ADDPAR0.updpar(0,-1.0)
+                    genutil.pymars.ADDPAR0.updpar(0,-1.0)
                 else:
                     mn, me, mel = mnspan(ms, alf, nep, nnt)
                     if nnt <= max(me,mel):
-                        pymars.ADDPAR0.updpar(0,-1.0)
+                        genutil.pymars.ADDPAR0.updpar(0,-1.0)
                     else:
                         (nextVar, newHS, cm, db, fv, tx1, txi, ssq, rsq, 
                          kcp0, kcp, nop, ja, jas, lbf, nnt, nc, kr, k1, DY) = \
@@ -282,8 +282,8 @@ def buildNextBasisFunction(parent0, nextVar,
                                           mn, me, mel, nop, 
                                           ja, jas, lbf, nnt, kr, k1, nc, DY,
                                           fln, eps, big, nmin, alf)
-                        pymars.ADDPAR0.updpar(nextVar, asq0-tx1)
-        parent, nextVar = pymars.ADDPAR0.nxtpar(parent, nextVar)
+                        genutil.pymars.ADDPAR0.updpar(nextVar, asq0-tx1)
+        parent, nextVar = genutil.pymars.ADDPAR0.nxtpar(parent, nextVar)
     return tb, cm, mm, evaluations, db, bfIndex, bfIndexLast, \
            ms, fv, newHS, txl, tx1, txi, ssq, rsq, kcp0, \
            nop, nextVar, jas, kr, \
@@ -318,7 +318,7 @@ def addBasisFunction(n, x, y, w, sw, yb, tb, cm,
             
     if kr > k1:
         rsq = rsq - DY[kr]**2
-    pymars.ADDPAR0.addpar(bfIndex)      
+    genutil.pymars.ADDPAR0.addpar(bfIndex)
     return tb, evaluations, k1, kr, rsq, db, DY
 def addReflectedBasisFunction(n, x, y, w, sw, yb, tb, cm, variable, 
                               evaluations, partialEval, k1, kr, rsq, bfIndex, newBF, db, DY):
@@ -338,7 +338,7 @@ def addReflectedBasisFunction(n, x, y, w, sw, yb, tb, cm, variable,
         evaluations[:,bfIndex] = currentEval
         if kr > k1:
             rsq = rsq - DY[kr]**2
-    pymars.ADDPAR0.addpar(bfIndex)
+    genutil.pymars.ADDPAR0.addpar(bfIndex)
     return tb, evaluations, k1, kr, rsq, db, DY
 def printBasisFunction(xm, xs, bfIndex, mtot, kr, tcst, cm, newBF, rsq, sw, wn):
     mp = bfIndex-1
@@ -366,7 +366,7 @@ def processNestedData(n, x, y, w, sw, yb, tb, cm, jas, jn, kcp0, kcp, kr, rsq,
                       nBasisFunctions, newBF, bfIndex, evaluations, partialEval, db, DY):
     VALS = cm[kcp0+1:kcp+1]
     VALS = border(VALS)
-    jn, VALS = NEST0.getnst(jas, cm, jn, kcp, VALS)#needs work
+    jn, VALS = genutil.NEST0.getnst(jas, cm, jn, kcp, VALS)#needs work
     cm[kcp0+1:kcp+1] = VALS[1:]
     tb[2, bfIndex] = jn
     tb[3, bfIndex] = kcp0
@@ -390,7 +390,7 @@ def processNestedData(n, x, y, w, sw, yb, tb, cm, jas, jn, kcp0, kcp, kr, rsq,
 
     if kr > k1:
         rsq = rsq - DY[kr]**2
-    pymars.ADDPAR0.addpar(bfIndex)
+    genutil.pymars.ADDPAR0.addpar(bfIndex)
     if bfIndex < nBasisFunctions: 
         bfIndex = bfIndex + 1
         tb[2, bfIndex] = -tb[2, bfIndex-1]
@@ -401,7 +401,7 @@ def processNestedData(n, x, y, w, sw, yb, tb, cm, jas, jn, kcp0, kcp, kr, rsq,
         else:    
             for i in range(1, n+1):
                 evaluations[i, bfIndex] = phi(bfIndex, x[i,:], tb, cm)
-            pymars.ADDPAR0.addpar(bfIndex)
+            genutil.pymars.ADDPAR0.addpar(bfIndex)
     if LOG: 
         mp = bfIndex - 1
         tcst = (nopt-1)*df1 + kr + 1.0

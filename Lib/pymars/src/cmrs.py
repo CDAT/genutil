@@ -4,7 +4,7 @@ from .que import que
 from .border import border
 from .icat import icat
 from .basisFunction import categoricalBasisFunction
-from genutil.pymars import ARRAY_SIZE, FLOAT_DTYPE, INT_DTYPE
+from genutil.pymars import ARRAY_SIZE, FLOAT_DTYPE, INT_DTYPE, parameters
 def cmrs(n, x, cm, kp, kv, lp, lv, bz, tc):
     #print 'cmrs'
     y = numpy.array([0.0] + n*[bz], dtype=FLOAT_DTYPE)

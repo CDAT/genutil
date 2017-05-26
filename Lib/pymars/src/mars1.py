@@ -16,7 +16,7 @@ from .cubic import cubic
 from .ccoll import ccoll
 from .anova import anova
 from .addpar import ADDPAR
-from .marsgo import marsgo
+#from .marsgo import marsgo
 from .logitl import LOGITL
 from .fmrs import fmrs
 from .anoval import anoval
