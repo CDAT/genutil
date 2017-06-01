@@ -101,6 +101,7 @@ def buildResponseSurface(n, p, x, y, w, nk, ms, df, fv, mi, lx, xm, xs, az, tb, 
     START = time.time()
     
     while bfIndex < nBasisFunctions and tcst < tcmx:
+        #pdb.set_trace()
         nopt = nopt+1
         genutil.pymars.ADDPAR0.itrpar(nopt)
         bfIndexLast = bfIndex
@@ -109,7 +110,7 @@ def buildResponseSurface(n, p, x, y, w, nk, ms, df, fv, mi, lx, xm, xs, az, tb, 
         kcp = kcp0
         asq0 = rsq/sw
         parent, nextVar = genutil.pymars.ADDPAR0.nxtpar(parent, nextVar)
-        #debug.info('before buildNextBasisFunction '+repr(tb[2:5, bfIndex]))
+        debug.info('before buildNextBasisFunction '+repr(tb[2:5, bfIndex]))
         #print 'rsq, ssq, kr, k1 before=', rsq, ssq, kr, k1
         #ms, fv, newBF, txl, tx1, txi, ssq, rsq, kcp0,
         (tb, cm, mm, evaluations, db, bfIndex, bfIndexLast, 
@@ -130,7 +131,7 @@ def buildResponseSurface(n, p, x, y, w, nk, ms, df, fv, mi, lx, xm, xs, az, tb, 
         #print 'rsq, ssq, kr, k1 after=', rsq, ssq, kr, k1
         variable = int(newBF[2]+.1)
         genutil.pymars.ADDPAR0.selpar(int(newBF[4]+.1))
-#        debug.info('    variable, cm[2*variable]='+repr((variable, cm[2*variable])))
+        debug.info('    variable, cm[2*variable]='+repr((variable, cm[2*variable])))
         if cm[2*variable] > 0.:
             nc = int(cm[2*variable+1]+.1) - int(cm[2*variable]+.1) + 1
             kcp0 = kcp0 + nc
@@ -149,7 +150,7 @@ def buildResponseSurface(n, p, x, y, w, nk, ms, df, fv, mi, lx, xm, xs, az, tb, 
                 addBasisFunction(n, x, y, w, sw, yb, tb, cm, 
                                  evaluations, partialEval, k1, kr, rsq, 
                                  bfIndex, newBF, db, DY)
-            #debug.info('after addBasisFunction, tb='+repr(tb[1:4,bfIndex]))
+            debug.info('after addBasisFunction, tb='+repr(tb[1:4,bfIndex]))
             if (bfIndex < nBasisFunctions and 
                 (cm[2*variable] > 0.0  or newBF[3] > x[mm[1,variable],variable])):
                 bfIndex = bfIndex + 1
@@ -157,7 +158,7 @@ def buildResponseSurface(n, p, x, y, w, nk, ms, df, fv, mi, lx, xm, xs, az, tb, 
                     addReflectedBasisFunction(n, x, y, w, sw, yb, tb, cm, variable, 
                                               evaluations, partialEval, k1, kr, rsq, 
                                               bfIndex, newBF, db, DY)
-                #debug.info('after addReflectedBasisFunction, tb='+repr(tb[1:4,bfIndex]))
+                debug.info('after addReflectedBasisFunction, tb='+repr(tb[1:4,bfIndex]))
             tcst = nopt*df1 + kr + 1.0
             #at this stage the basis function has been decided; print it
             if LOG: 
@@ -170,20 +171,20 @@ def buildResponseSurface(n, p, x, y, w, nk, ms, df, fv, mi, lx, xm, xs, az, tb, 
     nBasisFunctions = min(bfIndex,nBasisFunctions) #actual number of basis functions found
     tb[1, nBasisFunctions+1:nk+1] = 0.0
     nBF = nBasisFunctions+1
-#    debug.info('before sscp, hockey sticks')
-#    for j in range(1, nBasisFunctions+1):
-#        debug.info( repr(tb[1:5, j]))
-#    debug.info(' ')
+    debug.info('before sscp, hockey sticks')
+    for j in range(1, nBasisFunctions+1):
+        debug.info( repr(tb[1:5, j]))
+    debug.info(' ')
     D, XB = sscp(n, nBF, evaluations, y, w, yb, yv, sw)
     START = time.time()
-#    debug.info('D')
-#    for j in range(1, nBasisFunctions+1):
-#        debug.info( repr(D[1:nBasisFunctions+1, j]))
-#    debug.info(' ')
-#    debug.info('hockey sticks')
-#    for j in range(1, nBasisFunctions+1):
-#        debug.info( repr(tb[1:5, j]))
-#    debug.info(' ')
+    debug.info('D')
+    for j in range(1, nBasisFunctions+1):
+        debug.info( repr(D[1:nBasisFunctions+1, j]))
+    debug.info(' ')
+    debug.info('hockey sticks')
+    for j in range(1, nBasisFunctions+1):
+        debug.info( repr(tb[1:5, j]))
+    debug.info(' ')
     D, b, A, a, DP = lsf1(D, nBF, XB, yb, parameters['marsgo']['alr'])
     END = time.time()
     if 'marsgo_lsf1' in genutil.pymars.TIME.keys(): genutil.pymars.TIME['marsgo_lsf1'] += [(START, END)]
@@ -199,9 +200,9 @@ def buildResponseSurface(n, p, x, y, w, nk, ms, df, fv, mi, lx, xm, xs, az, tb, 
     az = a
 
     tb = copyAtoTB(A, tb)
-#    for j in range(1, nBasisFunctions+1):
-#        debug.info( repr(tb[1:5, j]))
-#    debug.info(' ')
+    for j in range(1, nBasisFunctions+1):
+        debug.info( repr(tb[1:5, j]))
+    debug.info(' ')
 
     if parameters['cvmars']['ix'] != 0:
         cvStuff[1,1] = (cfac*nopt)/nli
@@ -243,9 +244,9 @@ def buildResponseSurface(n, p, x, y, w, nk, ms, df, fv, mi, lx, xm, xs, az, tb, 
         az = yb
         tb[1,1:] = 0.0
     
-#    debug.info('xs='+repr(xs))
-#    for j in range(1, nBasisFunctions+1):
-#        debug.info( repr(tb[1:5, j]))
+    debug.info('xs='+repr(xs))
+    for j in range(1, nBasisFunctions+1):
+        debug.info( repr(tb[1:5, j]))
 
     if LOG:
         logger.info('\n  final model after backward stepwise elimination:')

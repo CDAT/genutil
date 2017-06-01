@@ -1,5 +1,5 @@
 #Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
-import numpy, time, genutil.pymars
+import numpy, time, genutil.pymars, pdb
 from genutil.pymars import LOG, logger, debug, parameters, ARRAY_SIZE, FLOAT_DTYPE, INT_DTYPE
 from genutil.pymars import ADDPAR0, NEST0, SETINT0, LOGITL0
 from .rspnpr import rspnpr

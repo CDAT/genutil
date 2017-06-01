@@ -5,7 +5,7 @@ from .border import border, copyback
 from .phi import phi
 from .coll import coll
 from .nord import nord
-from jf import jf
+from .jf import jf
 from .exch import exch
 from .efp import efp
 from .varf import varf
@@ -32,7 +32,7 @@ def anova (n, x, y, w, nk, tb, cm):
 
     ni = 0
     for m in range(1, nk+1):
-      	if tb[1,m] != 0.0:
+        if tb[1,m] != 0.0:
             ni = ni+1
             for j in range(1, n+1):
                 t[j,ni] = phi(m, x[j,:], tb, cm)
@@ -60,7 +60,7 @@ def anova (n, x, y, w, nk, tb, cm):
     
     m = 1
     if na == 1:
-      	k2 = lp[2,m]
+        k2 = lp[2,m]
       	i2 = lp[1,m] + k2 - 1
       	efm = eft-1.0
       	u = GCV(yv, 1.0, wn)

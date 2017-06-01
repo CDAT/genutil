@@ -172,5 +172,5 @@ except:
     MPI = False
 
 #SITE_PACKAGES = "/opt/local/Library/Frameworks/Python.framework/Versions/2.6/lib/python2.6/site-packages/"
-SITE_PACKAGES = "/Users/mcenerney1/anaconda/envs/2.8/lib/python2.7/site-packages/"
+#SITE_PACKAGES = "/Users/mcenerney1/anaconda/envs/2.8/lib/python2.7/site-packages/"
 #cmars = Ctypes.cdll.LoadLibrary(SITE_PACKAGES + "cmars.so")

@@ -1,0 +1,8 @@
+Pymars is a faithful conversion of the mars application. It is far less obscure than the original fortran
+but it too needs work. The original conversion computed the response surface that mars computed. The
+answers were the same! For some reason the version here does NOT get the same answer. I don't know why.
+I believe that I have the right source code and it is setup in the same way as before. I suspect that
+there is some initialization that is not executed but I'm not sure. It is worthwhile to pursue this
+at some point and make sure that mars and pymars agree.
+6/1/17
+Jim McEnerney
