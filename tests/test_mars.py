@@ -1,17 +1,19 @@
-import os
-import sys
+import os, sys, unittest, logging, numpy, time
 from subprocess import Popen, PIPE
-
 from genutil.mars import logit as F_logit
+from genutil.mars import xvalid as F_xvalid
+from genutil.mars import mars as F_mars
+from genutil.mars import fmod as F_fmod
+from genutil.mars import setlog as F_setlog
 
-import unittest
-from Lib.marsUnitTestTools import errorTools, ioTools, marsParameters
+from marsUnitTestTools import errorTools, ioTools, marsParameters, marslogging
 
 sep = os.sep
 pardir = os.pardir
-logdir = '..' + sep + 'logfiles' + sep
-baselinedir = '..' + sep + 'baselineLogFiles' + sep
+logdir = 'marsUnitTestTools' + sep + 'logfiles' + sep
+baselinedir = 'marsUnitTestTools' + sep + 'marsBaselineLogFiles' + sep
 
+logger = marslogging.marslogging(logdir + 'marsLog')
 
 def suite():
     s = unittest.TestSuite()
@@ -35,6 +37,7 @@ class MarsTest(unittest.TestCase):
     # solved.  The only solution that seams to work is to start a new
     # process for each execution of mars.
     def __init__(self, testName):
+
         self.fns = []
         self.cases = [(0, 0), (0, 2), (1, 0), (1, 2)]
         unittest.TestCase.__init__(self, testName)
@@ -48,10 +51,11 @@ class MarsTest(unittest.TestCase):
         output = []
         for logisticRegression, crossValidation in self.cases:
             marsParameters.marsParameters()
-            runMarsAndPymars = RunMarsAndPymars()
+            ids = [('il=', logisticRegression), ('ix=', crossValidation)]
+            #runMarsAndPymars = RunMarsAndPymars()
 
             testName = 'ContinuousTest '
-            input, output = ioTools.getData(testName)
+            x, y = ioTools.getData(testName)
             nk = 5
             mi = 2
             m = 1
@@ -61,9 +65,9 @@ class MarsTest(unittest.TestCase):
             Flogfile = logdir + filename('mars_cont', ids) + '.log'
             lx = [1,1]
 
-            runMarsAndPymars.execute(testName, input, output, nk, mi, m, lx,
-                                     logisticRegression, crossValidation,
-                                     logfile, Flogfile)
+            #runMarsAndPymars.execute(testName, input, output, nk, mi, m, lx,
+            #                         logisticRegression, crossValidation,
+            #                         logfile, Flogfile)
             #logger.setlog(logfile)
             F_setlog(Flogfile)
 
@@ -74,6 +78,7 @@ class MarsTest(unittest.TestCase):
 
             # set the mars parameters
             n, p = x.shape
+            print '\n'
             print "x.shape: ", x.shape
             print "y.shape: ", y.shape
 
@@ -98,12 +103,13 @@ class MarsTest(unittest.TestCase):
             print 'error in evaluation of fortran response surface on input data'
             errorTools.computeErrors('fortran', y, f, n)
 
-            output += [logfile + '\n', 'stderr=\n', stderr, 'stdout=\n', stdout, '\n']
-            if len(stderr) > 0:
-                print 'stderr=\n', stderr
-            print 'stdout=\n', stdout
+            #output += [Flogfile + '\n', 'stderr=\n', stderr, 'stdout=\n', stdout, '\n']
+            #if sys.stderr is not None:
+            #    print 'stderr=\n', sys.stderr
+            #print 'stdout=\n', sys.stdout
 
             # dumpDebug('pymars_cont'+'.debug', output)
+        logger.close()
 
     def xtestCategorical(self):
         # test categorical data
@@ -250,5 +256,5 @@ def dumpDebug(fn, output):
 
 
 if __name__ == '__main__':
-    suite = marsUnitTestTools.TestLoader().loadTestsFromTestCase(MarsTest)
-    marsUnitTestTools.TextTestRunner(verbosity=2).run(suite)
+    suite = unittest.TestLoader().loadTestsFromTestCase(MarsTest)
+    unittest.TextTestRunner(verbosity=2).run(suite)

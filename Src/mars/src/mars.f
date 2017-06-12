@@ -560,7 +560,8 @@ c
      1p,mm)
       im(1)=im(15)+lcm(p,nk,fm(im(12)),fm(im(15)))-1
       ttaken = secnds(tstart)
-      write(99,100) ttaken
+c      write(99,100) ttaken
+      print 100, ttaken
       close(99)
       return
   100 format(/,' MARS run time = ',f13.6, ' seconds')
