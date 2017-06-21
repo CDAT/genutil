@@ -1,10 +1,12 @@
-import os, sys, unittest, logging, numpy, time
+import os, sys, unittest, logging, numpy, time, pdb
 from subprocess import Popen, PIPE
+import genutil.mars
 from genutil.mars import logit as F_logit
 from genutil.mars import xvalid as F_xvalid
 from genutil.mars import mars as F_mars
 from genutil.mars import fmod as F_fmod
 from genutil.mars import setlog as F_setlog
+from genutil.mars import setdf as F_setdf
 
 from marsUnitTestTools import errorTools, ioTools, marsParameters, marslogging
 
@@ -24,18 +26,18 @@ def suite():
 
 
 class MarsTest(unittest.TestCase):
-    # There are 2 tests defined in the class: continuous & categorical
-    # The implementation of each test uses a subprocess to perform
-    # the test.  The reason is that in python externally generated
-    # modules such as mars (generated using f2py) can not be reloaded.
-    # What this means if something changes in one execution of mars
-    # then it remains changed in the next execution of mars. It was
-    # df that brought this problem to light.  Specifically when
-    # testing cross validation df is changed and was picked up in the
-    # next call to mars. There is a sparse amount of information on the
-    # web regarding this problem, which indicates why it hasn't been
-    # solved.  The only solution that seams to work is to start a new
-    # process for each execution of mars.
+    """ There are 2 tests defined in the class: continuous & categorical
+     The implementation of each test uses a subprocess to perform
+     the test.  The reason is that in python externally generated
+     modules such as mars (generated using f2py) can not be reloaded.
+     What this means if something changes in one execution of mars
+     then it remains changed in the next execution of mars. It was
+     df that brought this problem to light.  Specifically when
+     testing cross validation df is changed and was picked up in the
+     next call to mars. There is a sparse amount of information on the
+     web regarding this problem, which indicates why it hasn't been
+     solved.  The only solution that seams to work is to start a new
+     process for each execution of mars."""
     def __init__(self, testName):
 
         self.fns = []
@@ -47,13 +49,13 @@ class MarsTest(unittest.TestCase):
 
     def testContinuous(self):
         # test continuous data
-        self.cases = [(0, 0)]
+        #self.cases = [(0, 2)]
         output = []
         for logisticRegression, crossValidation in self.cases:
+
             marsParameters.marsParameters()
             ids = [('il=', logisticRegression), ('ix=', crossValidation)]
             #runMarsAndPymars = RunMarsAndPymars()
-
             testName = 'ContinuousTest '
             x, y = ioTools.getData(testName)
             nk = 5
@@ -78,19 +80,21 @@ class MarsTest(unittest.TestCase):
 
             # set the mars parameters
             n, p = x.shape
-            print '\n'
-            print "x.shape: ", x.shape
-            print "y.shape: ", y.shape
+            logger.info("x.shape: " + str(x.shape))
+            logger.info("y.shape: " + str(y.shape))
 
             w = numpy.array(n * [1], dtype=numpy.float64)
+
             if lx == None:
                 lx = p * [1]
             lx = numpy.array(lx, dtype=numpy.int32)
-            print 'lx=', lx
+            logger.info('lx= '+str(lx))
             # logistic regression
             F_logit(logisticRegression)
             # cross validation
             F_xvalid(crossValidation)
+            #reset df
+            F_setdf(3.0)
 
             # run Friedman Fortran mars
             start = time.time()
@@ -100,8 +104,8 @@ class MarsTest(unittest.TestCase):
             # evaluate Friedman response surface at input variable values
             f = F_fmod(m, n, p, x, fm, im)
             # print _fmod.__doc__
-            print 'error in evaluation of fortran response surface on input data'
-            errorTools.computeErrors('fortran', y, f, n)
+            logger.info( 'error in evaluation of fortran response surface on input data')
+            errorTools.computeErrors(logger, 'fortran', y, f, n)
 
             #output += [Flogfile + '\n', 'stderr=\n', stderr, 'stdout=\n', stdout, '\n']
             #if sys.stderr is not None:

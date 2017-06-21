@@ -1,6 +1,6 @@
 import numpy
-from genutil.pymars import LOG, logger
-def computeErrors(id, x, y, n):
+
+def computeErrors(logger, id, x, y, n):
     print id + ' L1 Absolute error: %10g' % L1AbsError(x, y, n)
     
     print id + ' L1 Relative error: %10g' % L1RelError(x, y, n)

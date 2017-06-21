@@ -1,0 +1,6 @@
+This directory contains the source code for mars obtained from SNL.  It has been modified
+only slightly with initialization and comments to make it safer to use.  The user should
+be aware that consecutive execution with the same inputs could produce different output.
+This happens when using a cross validation of 2 for example. The reason is that under the
+hood the weights are changed in cvmars (stands for cross validation mars).  Take a look
+at the mars test named test_mars.py in the tests directory.

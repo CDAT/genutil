@@ -538,6 +538,16 @@ c      data logfile /'mars.log            '/
       tstart = (secnds(0.0))
       open(99, file=logfile)
 c      print *,logfile
+c      print *, 'in mars',n,p,nk,mi,lx(1:2),im(1:2)
+
+c     these initialzations are needed for consecutive execution
+c     the dimensions were taken from mars.pyf
+      fm(1: 3+nk*(5*mi+2001+6)+2*p+2001*p) = 0.
+      im(1: 21+nk*(3*mi+9))=0
+      sp(1: n*(MAX(nk+1,2)+3)+MAX(3*n+5*nk+p,MAX(2*p,4*n))+2*p+4*nk)=0.
+      dp(1: MAX(n*nk,(nk+1)*(nk+1))+MAX((nk+2)*(2001+3),4*nk))=0.
+      mm(1: n*p+2*MAX(mi,2001))=0
+
       im(3)=n
       im(4)=p
       im(5)=nk
@@ -708,7 +718,7 @@ c  14 continue
       double precision df,fv,sw,wn,ef,s,yh,gcv,val,t
       logical stelg,z00001
       data ms,df,il,fv,it,ic,ix /0,3.0,0,0.0,99,0,0/
-
+c      print *, 'in mars1 ms,df,il,fv,it,ic,ix', ms,df,il,fv,it,ic,ix
       if(it.gt.0) write(it,11)
       if(it.gt.0) write(it,10) n,p,nk,ms,mi,df,il,fv,ic
       if(it.gt.0) write(it,12)
@@ -738,7 +748,6 @@ c321  continue
       call oknest(it,p,lx,cm)
       if(ix.ne.0) call cvmars (ix,n,p,x,y,w,nk,ms,df,fv,mi,lx,it,sp(im),
      1sp(is),tb,cm,sp,dp,dp(i2),mm, sp(is+p),sp(is+p+2*n))
-
       call marsgo  (n,p,x,y,w,nk,ms,df,fv,mi,lx,it,sp(im),sp(is),az,tb,c
      1m,sp,dp,dp(i2),mm)
       if(il .le. 0) go to 6
@@ -796,6 +805,7 @@ c321  continue
       call orgpl(sp(im),sp(is),nk,tb,cm)
       call orgpc(sp(im),sp(is),lp,lv,tc)
       call sclato(n,p,x,sp(im),sp(is),cm,x)
+c      print *, 'in mars1 after marsgo before return tb=', tb
       return
       entry setms(mal)
       ms=mal
@@ -1377,7 +1387,9 @@ c     write(it,'('' x('',i3,'') ='',g12.4)') j,xs(j)
       integer jf,ibfext
       data ix,alr,eps,big,fln,nmin,alf,vcst  /0,1.d-7,1.d-4,9.9e30,-1.0,
      15,.05,1.0,.666667,.333333/
-
+c      print *, 'in marsgo ix,alr,eps,big,fln,nmin,alf,vcst', ix,alr,eps,
+c     1big,fln,nmin,alf,vcst
+c      print *, 'in marsgo w=', w(1:n)
       if(it.gt.0) write(it,97)
       mk=nk
       df1=0.0
@@ -1439,6 +1451,7 @@ c     write(it,'('' x('',i3,'') ='',g12.4)') j,xs(j)
       mtot=m
       txm=yv/(1.d0-1.d0/wn)**2
       rsq=yv*sw
+c      print *, 'yv, rsq,sw=', yv, rsq,sw
       kr=0
       nopt=0
       if(it.gt.0) write(it,98) m,txm,0.0,1.0
@@ -1525,6 +1538,7 @@ c      print *, (cm(ii), ii=1,kcp+nc)
       if(nop.eq.0) go to 52
       go to 45
    20 continue
+c      print *, 'rsq=', rsq
       tb(2,m)=jp
       tb(3,m)=x(mm(1,jp),jp)
       tb(4,m)=l
@@ -1536,7 +1550,7 @@ c      print *, 'k1, kr, rsq, DY[kr]=', k1, kr, rsq, d(kr,1)
 c      print *, 'k1, kr, rsq, DY[kr]=', k1, kr, rsq, d(kr,1)
       rsq=rsq-d(kr,1)**2
       tb(1,m)=rsq/sw
-c      print *, 'rsq=', rsq
+c      print *, 'rsq, sw=', rsq, sw
       go to 22
    21 tb(1,m)=big
    22 if((lx(jp) .ne. 3) .and. ((m .lt. mk) .and. (nnt .gt. me+mel))) go
@@ -1666,7 +1680,7 @@ c end findBestKnot
       tb(2,m)=jp
       tb(4,m)=l
       tb(1,m)=(rsq+tb(1,m))/sw
-cc      print *, 'proposedHS= ', (tb(jj,m), jj=1,4)
+c      print *, 'in marsgo proposedHS= ', (tb(jj,m), jj=1,4)
 c      print *, 'mm1=', mm1, m, nop
       if (ict .ne. 0) go to 46
       if (tb(1,mm1) .gt. fln*tb(1,m)) go to 46
@@ -1675,7 +1689,7 @@ c      print *, 'mm1=', mm1, m, nop
    46 mp=m
    47 newbf=newb(mp,tb).eq.0
 c      print *, 'in decide'
-c      print *, 'hockeyStick=', (tb(jj,mp),jj=1,4)
+c      print *, 'in marsgo hockeyStick=', (tb(jj,mp),jj=1,4)
 c      print *, 'fvr, tb(1,mp), txl=', fvr, tb(1,mp), txl
       if(fvr*tb(1,mp) + 1.e-10 .ge. txl .or. .not.(newbf)) go to 48
 c      print *, 'pass 1'
@@ -1726,7 +1740,7 @@ c      print *, '    jp, cm(2*jp)=', jp, cm(2*jp)
       nc=int(cm(2*jp+1)+.1)-int(cm(2*jp)+.1)+1
       kcp0=kcp0+nc
    54 if(jas .le. 0) go to 60
-      print *, 'nested data'
+c      print *, 'nested data'
       call getnst(jas,cm,jn,kcp,cm(kcp0+1))
       tb(2,m)=jn
       tb(3,m)=kcp0
@@ -1973,6 +1987,7 @@ c     end marsgo
       double precision big,arg,beta
       save mpr,mtr,ktr,big,beta,lq,kp,itr,jp,que,n,m
       data big,mpr,mtr,beta /9.9e30,10,5,1.0/
+c      print *, 'in addpar',big,mpr,mtr,beta
       if(ib .ne. 0) go to 1
       lq=1
       que(1,1)=big
@@ -2754,6 +2769,7 @@ c      print *, 'in cubic   j, d=', j, (d(ii,j), ii=1,j)
       double precision wm,thr,bz,pp,ww
       double precision phi
       data niter,wm,thr /25,0.0001,0.0001/
+c      print *, 'in logitl',niter,wm,thr
       k=0
       do 2 i=1,n
       k=0
@@ -5388,6 +5404,7 @@ c      do 71 ii=1,5
 c   71 print *,(tb(ii,jj),jj=1,nk)
 c      do 711 ii=1,n
 c  711 print *,(mm(ii,jj),jj=1,p)
+c      print *, 'in cvmars before marsgo wt=', wt
       call marsgo (n,p,x,y,wt,nk,ms,df,fv,mi,lx,99,xm,xs,az,tb,cm,sc,db,
      1d,mm)
       yv1=sc(3)
