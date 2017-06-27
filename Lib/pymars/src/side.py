@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 from .pr import pr
 def side(l, nt, jv, xe, x):
     #print 'side'

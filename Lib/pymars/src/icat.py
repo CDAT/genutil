@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 def icat(x, j, cm):
     #print 'icat'
     j0 = int(cm[2*j]+.1) 

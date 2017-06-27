@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 import numpy
 from genutil.pymars import LOG, logger, ARRAY_SIZE, FLOAT_DTYPE, INT_DTYPE
 def rspnpr(il, n, y, w):

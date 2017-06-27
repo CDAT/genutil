@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 from .nord import nord
 from .jf import jf
 def efp(l, jv, nk, tb):

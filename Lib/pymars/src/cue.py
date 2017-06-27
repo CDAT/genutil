@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 def cue(x, um, u, up, p, r):
     s = 1.0
     if um > up:

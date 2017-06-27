@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 import numpy, time, genutil.pymars
 from genutil.pymars import ARRAY_SIZE, FLOAT_DTYPE, INT_DTYPE
 from .border import border

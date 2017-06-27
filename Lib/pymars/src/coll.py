@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 import numpy
 from .nord import nord
 from .jfv import jfv

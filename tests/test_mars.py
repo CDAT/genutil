@@ -44,8 +44,8 @@ class MarsTest(unittest.TestCase):
         self.cases = [(0, 0), (0, 2), (1, 0), (1, 2)]
         unittest.TestCase.__init__(self, testName)
 
-    def SetUp(self):
-        pass
+    def setUp(self):
+        self.fns = []
 
     def testContinuous(self):
         # test continuous data
@@ -61,7 +61,9 @@ class MarsTest(unittest.TestCase):
             m = 1
             lx = [1,1]
 
-            Flogfile = logdir + filename('mars_cont', ids) + '.log'
+            Flogfile = filename('mars_cont', ids) + '.log'
+            self.fns += [Flogfile]
+            Flogfile = logdir + Flogfile
             F_setlog(Flogfile)
 
             logger.info(testName)
@@ -207,11 +209,14 @@ class MarsTest(unittest.TestCase):
 
     def tearDown(self):
         # compare the output of pymars with the baseline output
+        allPass = True
         for fn in self.fns:
             ok = fileCompare(logdir + fn, baselinedir + fn)
             print 'passed=', ok, fn
+            allPass = allPass and ok
         self.fns = []
         sys.stdout.flush()
+        self.assertEqual(allPass, True)
         return
 
 

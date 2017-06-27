@@ -40,13 +40,15 @@ class MarsTest(unittest.TestCase):
         self.cases = [(0, 0), (0, 2), (1, 0), (1, 2)]
         unittest.TestCase.__init__(self, testName)
 
-    def SetUp(self):
+    def setUp(self):
+        self.fns = []
         pass
 
     def testContinuous(self):
         # test continuous data
         #self.cases = [(0, 0)]#, (0,2)]
         output = []
+        print '\n'
         for logisticRegression, crossValidation in self.cases:
 
             testName = 'ContinuousTest '
@@ -58,7 +60,9 @@ class MarsTest(unittest.TestCase):
             m = 1
             lx = [1,1]
 
-            logfile = logdir + filename('pymars_cont', ids) + '.log'
+            logfile = filename('pymars_cont', ids) + '.log'
+            self.fns += [logfile]
+            logfile = logdir + logfile
             logger.setlog(logfile)
             #python logging is not used because it trashes the first log file
             #pymars_fh = setlogging(logfile)
@@ -223,21 +227,20 @@ class MarsTest(unittest.TestCase):
 
     def tearDown(self):
         # compare the output of pymars with the baseline output
+        allPass = True
         for fn in self.fns:
             ok = fileCompare(logdir + fn, baselinedir + fn)
             print 'passed=', ok, fn
+            allPass = allPass and ok
         self.fns = []
         sys.stdout.flush()
+        self.assertEqual(allPass, True)
         return
-
-
 def filename(root, ids):
     fn = root
     for id, val in ids:
         fn = fn + '_' + id + str(val)
     return fn
-
-
 def fileCompare(f1, f2):
     ok = False
     try:
@@ -249,15 +252,11 @@ def fileCompare(f1, f2):
     except:
         print 'file problems with ', f1, f2
     return ok
-
-
 def dumpDebug(fn, output):
     f = open(fn, 'w')
     for o in output:
         f.write(o)
     f.close()
-
-
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(MarsTest)
-    unittest.TextTestRunner(verbosity=1).run(suite)
+    unittest.TextTestRunner(verbosity=2).run(suite)

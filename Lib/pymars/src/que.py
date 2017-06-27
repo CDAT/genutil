@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 import numpy
 from .cue import cue
 def que(jp, l, nt, jv, n, x, tc, t):

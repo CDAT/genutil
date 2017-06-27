@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 def org(m1, m2, tb, cm, xs, a):
     k = 0
     for m in range(m1, m2+1):

@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 from .nnord import nnord
 from .nordc import nordc
 from genutil.pymars import parameters

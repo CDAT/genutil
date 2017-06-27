@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 """
 pymars is a pure python version of mars, originally written in fortran.
 python INPUTS

@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 import numpy
 def generalizedCrossValidation(a,b,c):
     gcv = a/(1.0 - b/c)**2

@@ -1,5 +1,4 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
-def jf(m, j, tb):   
+def jf(m, j, tb):
     ip = m
     jf = 0
     while ip > 0:

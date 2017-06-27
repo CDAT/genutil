@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 def scpc(xm, xs, jp, l, nt, jv, tc, b):
 
     l2 = l+l

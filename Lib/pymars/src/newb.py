@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 from .ieq import ieq
 def newb(m, tb):
     #this looks like code from marsgo

@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 from .basisFunction import defaultBasisFunction,categoricalBasisFunction
 def cvmod (i, n, x, y, w, nk, mk, tb, cm, sc, cv0, cv):
     #print 'cvmod'

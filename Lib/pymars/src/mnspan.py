@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 import numpy
 def mnspan(ms, alf, nep, nnt):
     """ Equations 42-45 in Friedman paper."""

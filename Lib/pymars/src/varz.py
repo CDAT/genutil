@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 import numpy
 from .jf import jf
 def varz(j, nk, tb, ub, cst, nd):

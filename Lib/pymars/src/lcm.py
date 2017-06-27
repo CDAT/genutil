@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 def lcm(p,nk,tb,cm):
     #my hunch is that lcm means the last relevant entry of the cm array
     #cuurently it is not used

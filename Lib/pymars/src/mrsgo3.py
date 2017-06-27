@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 from .decideNextVariable import decideNextVariable
 from .newb import isNewHS
 from genutil.pymars import debug

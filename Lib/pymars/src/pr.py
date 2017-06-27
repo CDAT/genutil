@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 def pr(um, u, up, p, r):
     #this is where the cubic is being spliced at the knot?
     s=1.0

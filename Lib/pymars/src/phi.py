@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 from .basisFunction import defaultBasisFunction,categoricalBasisFunction
 def phi(m, point, tb, cm):
     """ This is equation 38 from Friedman paper. """

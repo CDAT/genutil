@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 def jfvc(l, m, tb, cm, nv, jv, jp):
 
     ip = m

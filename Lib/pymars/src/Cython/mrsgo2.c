@@ -8341,7 +8341,6 @@ PyMODINIT_FUNC PyInit_mrsgo2Cython(void)
   /*--- Execution code ---*/
 
   /* "mrsgo2.pyx":2
- * #Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
  * import numpy as np             # <<<<<<<<<<<<<<
  * cimport numpy as np
  * 

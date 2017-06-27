@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 def orgpl(xm, xs, nk, tb, cm):
       
     for m in range(1, nk+1):

@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 from .blf import blf
 def blf0(NEST, l, ja, n, x ,w, cm, sc):
     nnt=0

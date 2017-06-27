@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 def nnord(NEST, m, tb):
     ip = m
     nnord = 0

@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 def ieqbf(lk, lm, tb, cm):
     print "ieqbf"
     ipo = lm

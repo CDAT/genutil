@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 def exch(nk, m, k, d, a, b):
     #print 'exch'
     l = k+1

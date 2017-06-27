@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 import numpy
 from genutil.pymars import debug, LOG, logger, FLOAT_DTYPE
 from .border import border

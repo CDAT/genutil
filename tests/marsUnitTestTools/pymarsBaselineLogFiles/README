@@ -1,0 +1,4 @@
+These are baseline output files that are used to compare with the output of test_pymars.py.
+The original files can be found in the pymars directory.  The only ones that are current
+are the ones for a continuous test. The other output files need to be compared to these
+original files before they become the new baseline.

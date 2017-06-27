@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 import genutil.pymars, time, sys, scipy, numpy, operator, pdb
 from .mrsgo2_no_ctypes import findBestKnot
 #from mrsgo2Cython import findBestKnot

@@ -1,17 +1,15 @@
-ContinuousTest
+ContinuousTest 
 logisticRegression=0
 crossValidation=2
-mars output
-L1 Absolute error:   0.279662
-L1 Relative error:   0.571756
-L2 Absolute error:   0.121205
-L2 Relative error:   0.546542
-Linf Absolute error:   0.410816
 pymars output
+x.shape: (98, 2)
+y.shape: (98,)
+lx= [1 1]
  MARS modeling, version 4.0 (7/13/09)
  input parameters (see doc.):
      n    p    nk   ms    mi   df     il   fv    ic 
      98   2    5    0     2    3.0    0    0.0    0
+
  predictor variable flags:
 
  var:    1  2
@@ -100,6 +98,9 @@ estimated optimal df(   4 ) =    5.05 with (estimated) pse =      0.03196
       74.2       100
 
 Returned from python mars
+error in evaluation of python response surface on input data
+
+
 L1 Absolute error:   0.279662
 L1 Relative error:   0.571756
 L2 Absolute error:   0.121205

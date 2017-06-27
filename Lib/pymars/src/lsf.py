@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 import numpy
 
 def lsf(nk, m, M, yb, d, a, a0, gf, k1):

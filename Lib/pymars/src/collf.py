@@ -1,4 +1,3 @@
-#Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 from .nordc import nordc
 from .icf import icf
 from .jfvc import jfvc
