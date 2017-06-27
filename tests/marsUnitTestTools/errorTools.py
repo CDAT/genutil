@@ -1,21 +1,19 @@
 import numpy
 
 def computeErrors(logger, id, x, y, n):
-    print id + ' L1 Absolute error: %10g' % L1AbsError(x, y, n)
-    
-    print id + ' L1 Relative error: %10g' % L1RelError(x, y, n)
-            
-    print id + ' L2 Absolute error: %10g' % L2AbsError(x, y, n)
-            
-    print id + ' L2 Relative error: %10g' % L2RelError(x, y, n)
-            
-    print id + ' Linf Absolute error: %10g' % LinfAbsError(x, y, n)
-            
+    #print '\n'
+    #print id + ' L1 Absolute error: %10g' % L1AbsError(x, y, n)
+    #print id + ' L1 Relative error: %10g' % L1RelError(x, y, n)
+    #print id + ' L2 Absolute error: %10g' % L2AbsError(x, y, n)
+    #print id + ' L2 Relative error: %10g' % L2RelError(x, y, n)
+    #print id + ' Linf Absolute error: %10g' % LinfAbsError(x, y, n)
+
+    logger.info('\n')
     logger.info('L1 Absolute error: %10g' % L1AbsError(x, y, n))
     logger.info('L1 Relative error: %10g' % L1RelError(x, y, n))
     logger.info('L2 Absolute error: %10g' % L2AbsError(x, y, n))
     logger.info('L2 Relative error: %10g' % L2RelError(x, y, n))
-    logger.info('Linf Absolute error: %10g' % LinfAbsError(x, y, n))   
+    logger.info('Linf Absolute error: %10g' % LinfAbsError(x, y, n))
 def L1RelError(x, y, n):
     n = min(len(x),len(y))
     sum = 0.0

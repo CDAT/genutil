@@ -1,21 +1,18 @@
-import os, sys, unittest, logging, numpy, time, pdb
+import os, sys, unittest, logging, numpy, time, pdb, scipy, genutil
 from subprocess import Popen, PIPE
-import genutil.mars
-from genutil.mars import logit as F_logit
-from genutil.mars import xvalid as F_xvalid
-from genutil.mars import mars as F_mars
-from genutil.mars import fmod as F_fmod
-from genutil.mars import setlog as F_setlog
-from genutil.mars import setdf as F_setdf
+from genutil.pymars.mars import mars as py_mars
+from genutil.pymars.fmod import fmod as py_fmod
+from genutil.pymars.border import border
+from genutil.pymars import marsParameters, parameters, logger, setlogging
 
-from marsUnitTestTools import errorTools, ioTools, marsParameters, marslogging
+from marsUnitTestTools import errorTools, ioTools#, marsParameters, marslogging
 
 sep = os.sep
 pardir = os.pardir
 logdir = 'marsUnitTestTools' + sep + 'logfiles' + sep
-baselinedir = 'marsUnitTestTools' + sep + 'marsBaselineLogFiles' + sep
+baselinedir = 'marsUnitTestTools' + sep + 'pymarsBaselineLogFiles' + sep
 
-logger = marslogging.marslogging(logdir + 'marsLog')
+#logger = genutil.pymars.mylogging(logdir + 'marsLog')
 
 def suite():
     s = unittest.TestSuite()
@@ -23,7 +20,6 @@ def suite():
         if methodName.startswith("test"):
             s.addTest(MarsTest(methodName))
     return s
-
 
 class MarsTest(unittest.TestCase):
     """ There are 2 tests defined in the class: continuous & categorical
@@ -49,25 +45,30 @@ class MarsTest(unittest.TestCase):
 
     def testContinuous(self):
         # test continuous data
-        #self.cases = [(0, 2), (0,2)]
+        #self.cases = [(0, 0)]#, (0,2)]
         output = []
-        print '\n'
         for logisticRegression, crossValidation in self.cases:
-            ids = [('il=', logisticRegression), ('ix=', crossValidation)]
+
             testName = 'ContinuousTest '
+            marsParameters()
+            ids = [('il=', logisticRegression), ('ix=', crossValidation)]
             x, y = ioTools.getData(testName)
             nk = 5
             mi = 2
             m = 1
             lx = [1,1]
 
-            Flogfile = logdir + filename('mars_cont', ids) + '.log'
-            F_setlog(Flogfile)
+            logfile = logdir + filename('pymars_cont', ids) + '.log'
+            logger.setlog(logfile)
+            #python logging is not used because it trashes the first log file
+            #pymars_fh = setlogging(logfile)
+            #logging.basicConfig(filename=logfile, filemode='w')
+            #pdb.set_trace()
 
             logger.info(testName)
             logger.info('logisticRegression=' + repr(logisticRegression))
             logger.info('crossValidation=' + repr(crossValidation))
-            logger.info('mars output')
+            logger.info('pymars output')
 
             # set the mars parameters
             n, p = x.shape
@@ -75,28 +76,43 @@ class MarsTest(unittest.TestCase):
             logger.info("y.shape: " + str(y.shape))
 
             w = numpy.array(n * [1], dtype=numpy.float64)
-
             if lx == None:
                 lx = p * [1]
             lx = numpy.array(lx, dtype=numpy.int32)
             logger.info('lx= '+str(lx))
-            # logistic regression
-            F_logit(logisticRegression)
-            # cross validation
-            F_xvalid(crossValidation)
-            #reset df
-            F_setdf(3.0)
 
-            # run Friedman Fortran mars
+            # run python mars
+            # put -infinity in dummy location for future sorting in these parameters
+            x = border(x, val=-scipy.inf)
+            y = border(y, val=-scipy.inf)
+            w = border(w)
+            lx = border(lx)
+
+            # logistic regression
+            parameters['mars']['il'] = logisticRegression
+            # cross validation
+            parameters['cvmars']['ix'] = crossValidation
+
+            # there is some sort of overflow with exp in logistic regression
+            numpy.seterr(over='ignore')
             start = time.time()
-            fm, im = F_mars(n, p, x, y, w, nk, mi, lx)
+
+            x, az, tb, cm, kp, kv, lp, lv, bz, tc = py_mars(n, p, x, y, w, nk, mi, lx)
+
             end = time.time()
-            F_time = end - start
-            # evaluate Friedman response surface at input variable values
-            f = F_fmod(m, n, p, x, fm, im)
-            logger.info( 'error in evaluation of fortran response surface on input data')
-            errorTools.computeErrors(logger, 'fortran', y, f, n)
-        logger.close()
+            PY_time = end - start
+            print 'pymars timing = ', PY_time
+            logger.info("Returned from python mars")
+
+            # evaluate python response surface at input variable values
+            pf = py_fmod(m, n, nk, x, az, tb, cm, kp, kv, lp, lv, bz, tc)
+
+            logger.info('error in evaluation of python response surface on input data')
+            errorTools.computeErrors(logger, 'pymars', y[1:], pf[1:], n)
+            #pymars_fh.flush()
+            #pymars_fh.close()
+            #logger.removeHandler(pymars_fh)
+            logger.close()
 
     def xtestCategorical(self):
         # test categorical data
@@ -244,4 +260,4 @@ def dumpDebug(fn, output):
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(MarsTest)
-    unittest.TextTestRunner(verbosity=2).run(suite)
+    unittest.TextTestRunner(verbosity=1).run(suite)

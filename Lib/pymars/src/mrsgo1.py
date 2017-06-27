@@ -1,6 +1,6 @@
 #Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
 import genutil.pymars, time, sys, scipy, numpy, operator, pdb
-from .mrsgo2 import findBestKnot
+from .mrsgo2_no_ctypes import findBestKnot
 #from mrsgo2Cython import findBestKnot
 from .elg import elg
 from .mnspan import mnspan
@@ -155,6 +155,7 @@ def computeProposedHockeyStick((variable, X, MM, parent,
                             if 'proposed' in coefAndKnot.keys():
                                 coef, knot = coefAndKnot['proposed']
                                 proposedHS = [coef, variable, knot, parent]
+                                #debug.info('after findBestKnot proposedHS=' + repr(proposedHS))
 
     return CM, nc, ict,  rsq, ja, fvr, prelimDecision, defaultHS, proposedHS
 def makePreliminaryDecision(prelimDecision, tb,  nc, ict, bfIndex, fln, fvr, sw, 

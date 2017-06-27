@@ -131,7 +131,7 @@ def buildResponseSurface(n, p, x, y, w, nk, ms, df, fv, mi, lx, xm, xs, az, tb, 
         #print 'rsq, ssq, kr, k1 after=', rsq, ssq, kr, k1
         variable = int(newBF[2]+.1)
         genutil.pymars.ADDPAR0.selpar(int(newBF[4]+.1))
-        debug.info('    variable, cm[2*variable]='+repr((variable, cm[2*variable])))
+        #debug.info('    variable, cm[2*variable]='+repr((variable, cm[2*variable])))
         if cm[2*variable] > 0.:
             nc = int(cm[2*variable+1]+.1) - int(cm[2*variable]+.1) + 1
             kcp0 = kcp0 + nc
@@ -163,6 +163,8 @@ def buildResponseSurface(n, p, x, y, w, nk, ms, df, fv, mi, lx, xm, xs, az, tb, 
             #at this stage the basis function has been decided; print it
             if LOG: 
                 printBasisFunction(xm, xs, bfIndex, mtot, kr, tcst, cm, newBF, rsq, sw, wn)
+                #print bfIndex, newBF[1],newBF[2],newBF[3],newBF[4]
+                #pdb.set_trace()
             mtot = bfIndex
     #end main loop
 
@@ -203,7 +205,6 @@ def buildResponseSurface(n, p, x, y, w, nk, ms, df, fv, mi, lx, xm, xs, az, tb, 
     for j in range(1, nBasisFunctions+1):
         debug.info( repr(tb[1:5, j]))
     debug.info(' ')
-
     if parameters['cvmars']['ix'] != 0:
         cvStuff[1,1] = (cfac*nopt)/nli
         cvStuff[2,1] = wn

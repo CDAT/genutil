@@ -82,7 +82,9 @@ def marsParameters():
     #parameters['cptb'] = {'ub':numpy.zeros(shape=(5+1, nk+1), dtype=numpy.float64)}
     return 
 
-class mylogging():
+class simplelogging():
+    """This logger is being used because I could not get python loggong to work right.
+    It keeps messing up the first pymars logger when executed."""
     def __init__(self,fn):
         self.buf = []
         self.fn = fn
@@ -100,14 +102,12 @@ class mylogging():
         file.close()
         return
 
-    
 def setlogging(fn):
     logger.setLevel(logging.INFO)
     fh = logging.FileHandler(fn, 'w')
     fh.setLevel(logging.INFO)
     logger.addHandler(fh)  
-    return
-
+    return fh
 def closefh():
     fh.close()
     return
@@ -139,20 +139,21 @@ def timeTotals(PRINT=True):
             print 'total time in '+ key + ' is ' + str(total)
     return totals
 #define some package parameters
-TIME = None
+TIME = {}
 ARRAY_SIZE = 10000           #a large number that may not be large enough
 FLOAT_DTYPE = numpy.float64  #change to higher precision if necessary
 INT_DTYPE = numpy.int64      #change to higher precision if necessary
 LOG = True
-logger = mylogging('marsLog')
+#logger = logging.getLogger('pymarsLog' )
+logger = simplelogging('pymarsLog')
 #logging.basicConfig(filename= 'pymars.log', filemode='w')
 #fh = logging.FileHandler('pymars.log', 'w')
 #logger.addHandler(fh)
 
-debug = logging.getLogger('debugLog')
-debug.setLevel(logging.INFO)
+debug = logging.getLogger('debugLog' )
+debug.setLevel(logging.DEBUG)
 dfh = logging.FileHandler('debug.log', 'w')
-dfh.setLevel(logging.INFO)
+dfh.setLevel(logging.DEBUG)
 debug.addHandler(dfh)
 
 parameters = {}
@@ -163,6 +164,7 @@ NEST0 = NEST()
 ADDPAR0 = ADDPAR()
 LOGITL0 = LOGITL()
 
+
 try:
     import mpi
     #from NodePool import *
@@ -170,6 +172,7 @@ try:
     MPI = True
 except:
     MPI = False
+MPI = False
 
 #SITE_PACKAGES = "/opt/local/Library/Frameworks/Python.framework/Versions/2.6/lib/python2.6/site-packages/"
 #SITE_PACKAGES = "/Users/mcenerney1/anaconda/envs/2.8/lib/python2.7/site-packages/"

@@ -1,2 +1,4 @@
 This directory contains the source files associated with the ctypes implementation.
 It has been disabled in this instalation. 05/22/17
+To run pymars without ctypes mrsgo_no_ctypes.py was copied to the src directory.
+Jim McEnerney 0626/17

@@ -1,6 +1,6 @@
 #simple example
 
-import numpy, scipy, time, random, genutil.pymars
+import numpy, scipy, time, random, genutil.pymars, pdb
 from genutil.pymars import LOG, logger, parameters, marsParameters, FLOAT_DTYPE, timeTotals
 from genutil.pymars.border import border
 from genutil.pymars.mars import mars as py_mars
@@ -12,8 +12,8 @@ mi = 1
 m = 1
 logisticRegression = 0
 crossValidation = 0
-logfile = 'simple_pymars.log'
-Flogfile = 'simple_mars.log'
+logfile = 'pymars_simple.log'
+Flogfile = 'mars_simple.log'
 logger.setlog(logfile)
             
 logger.info(testName)
@@ -41,7 +41,8 @@ z = x**2 + y**2
 
 x = numpy.array([x,y]).T
 w = numpy.array(n*[1], dtype=numpy.float64)
-lx = numpy.array(p*[1], dtype=numpy.int32)    
+lx = numpy.array(p*[1], dtype=numpy.int32)
+
 try:
     #from genutil import mars as mars
     from genutil.mars import logit as F_logit
@@ -56,7 +57,7 @@ try:
     F_logit(logisticRegression)
     #cross validation
     F_xvalid(crossValidation)
-        
+
     #run Friedman Fortran mars
     start = time.time()
     fm, im = F_mars(n, p, x, z, w, nk, mi, lx)
@@ -68,7 +69,7 @@ try:
     print 'fortran time=', end-start
 except:
     print 'mars is not installed'
-   
+
 #run python mars        
 #put -infinity in dummy location for future sorting inside the algorithm
 logger.info('pymars output')

@@ -574,7 +574,7 @@ c      write(99,100) ttaken
       print 100, ttaken
       close(99)
       return
-  100 format(/,' MARS run time = ',f13.6, ' seconds')
+  100 format('MARS run time = ',f13.6, ' seconds')
       entry setlog(fn)
 c      print *, fn
       logfile = fn

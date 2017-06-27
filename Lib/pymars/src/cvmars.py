@@ -36,7 +36,7 @@ def crossValidation(n, p, x, y, w, nk, ms, df, fv, mi, lx, xm, xs, tb, cm, mm):
     #setup the split of data for cross validation
     for i in range(1, n+1):
         r = rnms(1)[1]
-        k = (n-i+1)*r+i
+        k = int((n-i+1)*r+i)  #type fix 6/26/17
         t = wt[i,2]
         wt[i,2] = wt[k,2]
         wt[k,2] = t

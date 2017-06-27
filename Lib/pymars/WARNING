@@ -4,5 +4,7 @@ answers were the same! For some reason the version here does NOT get the same an
 I believe that I have the right source code and it is setup in the same way as before. I suspect that
 there is some initialization that is not executed but I'm not sure. It is worthwhile to pursue this
 at some point and make sure that mars and pymars agree.
-6/1/17
-Jim McEnerney
+6/1/17 Jim McEnerney
+The issue above has been resolved. I did not have the correct mrsgo2.py source file.  I needed the one
+named mrsgo2_no_ctypes.py.
+0627/17 Jim McEnerney

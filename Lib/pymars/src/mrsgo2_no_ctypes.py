@@ -1,10 +1,9 @@
 #Copyright (c) 2010, LLNS, LLC.  See "Copyright" for full copyright notice.
-import numpy, time, genutil.pymars, pdb
+import numpy, time, genutil.pymars
 from .update import update
 from .newb import isNewHS
 from .decideNextVariable import decideNextVariable
 from genutil.pymars import debug, ARRAY_SIZE, FLOAT_DTYPE, INT_DTYPE
-#from .Ctypes.computeCoef import computeCoef as computeCoefCtypes
 if genutil.pymars.MPI:
     import mpi
 
@@ -15,9 +14,9 @@ def findBestKnot(n, X, y, w, lx, cm, MM,  partialEval, db,
     This function computes the best knot & coefficient in a specified variable.
     """
     #START = time.time()
-
+    
     knot = X[MM[1]]
-
+    
     k1 = kr
     kr, currentEval, db, DY = update(1, n, kr, X, y, w, sw, yb, variable, knot,
                                      cm, cm[2*variable], partialEval, db, DY)
@@ -87,8 +86,7 @@ def bestKnot(n, X, y, yb, w, sw, MM, partialEval, db,
     trialKnot = 0.0
     coef = big
     knot = 0.0
-    db_nrows, db_ncols = db.shape
-    
+
     v, u, t, we, se, sy, dy = 7*[0.0]
     D = numpy.zeros(shape = kr+1, dtype = FLOAT_DTYPE)
     DB = numpy.zeros(shape = kr+1, dtype = FLOAT_DTYPE)
@@ -110,12 +108,9 @@ def bestKnot(n, X, y, yb, w, sw, MM, partialEval, db,
             trialKnot = X[MM[j]]
             input = \
                 (FIRST_TRIAL, lastTrialKnot, 
-                 trialKnot, X, y, yb, w, sw, MM[j:j0+1], xt, partialEval, kr, db, db_nrows, db_ncols)
-            #input = ComputeCoef.input(FIRST_TRIAL, lastTrialKnot, trialKnot, 
-            #                         X, y, yb, w, sw, MM[j:j0+1], xt, partialEval, kr, db)
+                 trialKnot, X, y, yb, w, sw, MM[j:j0+1], xt, partialEval, kr, db)
             inputs += [input]
-        COMPUTE_COEF = False
-
+        COMPUTE_COEF = False    
         if len(inputs) >= MAXINPUTS or LastPair:
             outputs = []
             if PARALLEL:
@@ -124,13 +119,9 @@ def bestKnot(n, X, y, yb, w, sw, MM, partialEval, db,
             #else:
             for input in inputs:
                 FIRST_TRIAL, lastTrialKnot, trialKnot = input[0:3]
-                #args = input[2:]
-                #V, T, U, WE, SE, SY, DYY, ST, SU = computeCoefCtypes(*args)
-                #output = computeCoef(input)
-                #outputs += [output]
-                #outputs += \
-                #        [(FIRST_TRIAL, lastTrialKnot, trialKnot, V, T, U, WE, SE, SY, DYY, ST, SU)]
-                                                            
+                V, T, U, WE, SE, SY, DYY, ST, SU = computeCoef(input[2:])
+                outputs += \
+                        [(FIRST_TRIAL, lastTrialKnot, trialKnot, V, T, U, WE, SE, SY, DYY, ST, SU)]
             inputs = []
             if PARALLEL:
                 try:
@@ -140,13 +131,12 @@ def bestKnot(n, X, y, yb, w, sw, MM, partialEval, db,
             COMPUTE_COEF = True
         if COMPUTE_COEF:
             for (FIRST_TRIAL, lastTrialKnot, trialKnot, V, T, U, WE, SE, SY, DYY, ST, SU) in outputs:
-            #for output in outputs:
 
-                if not FIRST_TRIAL:#j0 != n: #output.
-                    dx = lastTrialKnot - trialKnot #output.
+                if not FIRST_TRIAL:#j0 != n:
+                    dx = lastTrialKnot - trialKnot
                     dy = dy + dx*sy
                     we = we + dx*se
-                    v = v + dx*(2.0*u - (lastTrialKnot + trialKnot - txt)*t)  #output.
+                    v = v + dx*(2.0*u - (lastTrialKnot + trialKnot - txt)*t)
                     D[1:kr+1] = D[1:kr+1] + dx*DB[1:kr+1]
                 #accumulate the local contributions to the best knot & coefficient
                 v += V
@@ -156,47 +146,43 @@ def bestKnot(n, X, y, yb, w, sw, MM, partialEval, db,
                 se += SE
                 sy += SY
                 dy += DYY
-                D[1:kr+1]  = D[1:kr+1]  + ST[1:kr+1] #output.
-                DB[1:kr+1] = DB[1:kr+1] + SU[1:kr+1] #output.
+                D[1:kr+1]  = D[1:kr+1]  + ST[1:kr+1]
+                DB[1:kr+1] = DB[1:kr+1] + SU[1:kr+1]
                 #perform the check that a new best knot & coefficient has been found
                 newCoef, Coef = checkCoef(coef, eps, kr, sw, v, we, se, dy, D, DY)
                 if newCoef:
                     coef = Coef
-                    knot = trialKnot #output.
+                    knot = trialKnot
  
     return coef, knot
-#def computeCoef((trialKnot, X, y, yb, w, sw, MM, xt, partialEval, kr, db)): 
+def computeCoef((trialKnot, X, y, yb, w, sw, MM, xt, partialEval, kr, db)): 
                 #v, u, t, we, se, sy, txt, xt, dy, partialEval, kr, db)):  
-def computeCoef(input): 
     """This function computes the local calculations involved in deciding
     a new knot and coefficient. It is called from bestKnot and once complete
     the accumulation of the local contributions is done before it is decided
     if the best one is found."""
     #print 'computeCoef'
-    output = ComputeCoef.output(input.FIRST_TRIAL, input.lastTrialKnot, input.trialKnot, input.kr)
-    #v, u, t, we, se, sy, dy = 7*[0.0]
-    #ST = numpy.zeros(shape = input.kr+1, dtype = FLOAT_DTYPE) #input.
-    #SU = numpy.zeros(shape = input.kr+1, dtype = FLOAT_DTYPE) #input.
-    for mj in input.MM: #input.
-        h = input.partialEval[mj] #input.
-        if input.w[mj] > 0.0 and h > 0.0:#input.
-            xx = input.X[mj]#input.
-            xd = xx - input.trialKnot#input.
-            su = input.w[mj]*h#input.
+    v, u, t, we, se, sy, dy = 7*[0.0]
+    ST = numpy.zeros(shape = kr+1, dtype = FLOAT_DTYPE)
+    SU = numpy.zeros(shape = kr+1, dtype = FLOAT_DTYPE)
+    for mj in MM:
+        h = partialEval[mj]
+        if w[mj] > 0.0 and h > 0.0:
+            xx = X[mj]
+            xd = xx - trialKnot
+            su = w[mj]*h
             st = su*xd
-            yc = input.y[mj] - input.yb#input.
-            output.dy = output.dy + st*yc
-            output.sy = output.sy + su*yc
-            output.we = output.we + st
-            output.se = output.se + su
-            sj = input.w[mj]*h**2#input.
-            output.v = output.v + sj*xd**2
-            output.t = output.t + sj
-            output.u = output.u + sj*(xx - input.xt)#input.
-            output.ST[1:input.kr+1] = output.ST[1:input.kr+1] + st*input.db[mj,1:input.kr+1]#input.
-            output.SU[1:input.kr+1] = output.SU[1:input.kr+1] + su*input.db[mj,1:input.kr+1]#input.
-    
-    return output
+            yc = y[mj] - yb
+            dy = dy + st*yc
+            sy = sy + su*yc
+            we = we + st
+            se = se + su
+            sj = w[mj]*h**2
+            v = v + sj*xd**2
+            t = t + sj
+            u = u + sj*(xx - xt)
+            ST[1:kr+1] = ST[1:kr+1] + st*db[mj,1:kr+1]
+            SU[1:kr+1] = SU[1:kr+1] + su*db[mj,1:kr+1]
     return v, t, u, we, se, sy, dy, ST, SU
 def checkCoef(coef, eps, kr, sw, v, we, se, dy, D, DY):
     """This function checks to see if the proposed coefficient is best."""

@@ -40,7 +40,9 @@ def mars1 (n, p, x, y, w, nk, mi, lx,
         logger.info( ' input parameters (see doc.):\n ' + \
                     '    n    p    nk   ms    mi   df     il   fv    ic \n' + \
                     '  %5i %3i %4i %4i  %4i   %4.1f    %i    %3.1f   %2i' \
-                        %(n,p,nk,ms,mi,df,il,fv,ic))
+                        %(n,p,nk,ms,mi,df,il,fv,ic)
+                     )
+
         logger.info(' predictor variable flags:\n')
 
         predVarStr  = " var:  "
