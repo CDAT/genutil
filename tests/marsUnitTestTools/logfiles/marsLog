@@ -1,0 +1,60 @@
+ContinuousTest 
+logisticRegression=0
+crossValidation=0
+mars output
+x.shape: (98, 2)
+y.shape: (98,)
+lx= [1 1]
+error in evaluation of fortran response surface on input data
+
+
+L1 Absolute error:   0.279662
+L1 Relative error:   0.571756
+L2 Absolute error:   0.121205
+L2 Relative error:   0.546542
+Linf Absolute error:   0.410816
+ContinuousTest 
+logisticRegression=0
+crossValidation=2
+mars output
+x.shape: (98, 2)
+y.shape: (98,)
+lx= [1 1]
+error in evaluation of fortran response surface on input data
+
+
+L1 Absolute error:   0.279662
+L1 Relative error:   0.571756
+L2 Absolute error:   0.121205
+L2 Relative error:   0.546542
+Linf Absolute error:   0.410816
+ContinuousTest 
+logisticRegression=1
+crossValidation=0
+mars output
+x.shape: (98, 2)
+y.shape: (98,)
+lx= [1 1]
+error in evaluation of fortran response surface on input data
+
+
+L1 Absolute error:    2.21368
+L1 Relative error:   0.678534
+L2 Absolute error:    6.99497
+L2 Relative error:    0.64471
+Linf Absolute error:    12.8822
+ContinuousTest 
+logisticRegression=1
+crossValidation=2
+mars output
+x.shape: (98, 2)
+y.shape: (98,)
+lx= [1 1]
+error in evaluation of fortran response surface on input data
+
+
+L1 Absolute error:    2.21368
+L1 Relative error:   0.678534
+L2 Absolute error:    6.99497
+L2 Relative error:    0.64471
+Linf Absolute error:    12.8822

@@ -1,0 +1,56 @@
+
+ MARS modeling, version 3.6 (3/25/93)
+
+
+ input parameters (see doc.):
+    n     p    nk    ms    mi     df    il    fv     ic
+    98    2     5     0     2   3.000    1  0.000     0
+
+ predictor variable flags:
+ var:    1  2
+ flag:   1  1
+
+ binary (0/1) response:  mass(0) =  0.4898       mass(1) =  0.5102    
+
+ there are  2 ordinal predictor variables.
+
+  var     min         n/4         n/2        3n/4         max
+   1   -1.000      0.2974E-01  0.4943      0.9445       2.000    
+   2   -1.000      0.3160      0.5000      0.5000       2.000    
+
+
+ forward stepwise knot placement:
+
+  basfn(s)    gcv      #indbsfns  #efprms   variable      knot            parent
+     0      0.2551         0.0     1.0
+   2   1    0.7135E-01         2         6             2    0.5000            0
+   4   3    0.2543E-01         4        11             1    0.5694            0
+     5      0.2793E-01         5        15             1    -1.000            2
+
+ final model after backward stepwise elimination:
+
+ bsfn:       0           1           2           3           4           5    
+ coef:   1.069     -0.4781     -0.4857     -0.4529     -0.4066       0.000    
+
+   (piecewise linear) gcv =   0.2615E-01   #efprms =  12.2
+
+ piecewise-linear logistic gcv =  0.2184E-06   ave var =  0.1386E-03
+
+ logit anova decomposition on  4 basis functions:
+  fun.    -gcv    #bsfns  #efprms  variable(s)
+   1   0.1642        2      5.6       2
+   2   0.1408        2      5.6       1
+
+ piecewise cubic fit on  4 basis functions, gcv =  0.2792E-01
+
+ piecewise-cubic logistic gcv =  0.4591E-07   ave var =  0.8554E-04
+
+ -gcv removing each variable:
+
+        1           2        
+   0.1408      0.1642    
+
+ relative variable importance:
+
+        1           2        
+    92.58       100.0    

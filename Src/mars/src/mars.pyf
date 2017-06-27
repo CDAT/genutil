@@ -1,0 +1,220 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module mars ! in 
+    interface  ! in :mars
+        subroutine mars(n,p,x,y,w,nk,mi,lx,fm,im,sp,dp,mm) ! in :mars:mars.f            
+            integer, intent(in) :: n
+            integer, intent(in) :: p
+            double precision dimension(n,p), depend(n), depend(p), intent(in) :: x
+            double precision dimension(n), depend(n), intent(in) :: y
+            double precision dimension(n), depend(n), intent(in) :: w
+            integer, intent(in) :: nk
+            integer, intent(in) :: mi
+            integer dimension(p), depend (p), intent(in) :: lx
+            double precision dimension(3+nk*(5*mi+2001+6)+2*p+2001*p), intent(out) :: fm
+            integer dimension(21+nk*(3*mi+9)), intent(out) :: im
+            double precision dimension(n*(MAX(nk+1,2)+3)+MAX(3*n+5*nk+p,MAX(2*p,4*n))+2*p+4*nk), intent(hide,cache) :: sp
+            double precision dimension(MAX(n*nk,(nk+1)*(nk+1))+MAX((nk+2)*(2001+3),4*nk)), intent(hide,cache) :: dp
+            integer dimension(n*p+2*MAX(mi,2001)), intent(hide,cache) :: mm
+            character*120 intent(in) :: fn
+            entry setlog(fn)
+        end subroutine mars
+        subroutine plot(m,n,p,x,fm,im,ngc,ngs,icx,nk,nc,crv,ns,srf,sp,mm) ! in :mars:mars.f
+            integer, intent(in) :: m
+            integer, intent(in) :: n
+            integer, intent(in) :: p
+            double precision dimension(n,p), depend(n), depend(p), intent(in) :: x
+            double precision dimension(*), intent(in) :: fm
+            integer dimension(*), intent(in) :: im
+            integer, intent(in) :: ngc
+            integer, intent(in) :: ngs
+            integer, intent(in) :: icx
+            integer, intent(in) :: nk
+            integer, intent(out) :: nc
+            double precision dimension(ngc,2,nk), depend(ngc), depend(nk), intent(out) :: crv
+            integer, intent(out) :: ns
+            double precision dimension(ngs,ngs,nk), depend(ngs), depend(nk), intent(out) :: srf
+            double precision dimension(MAX(4*ngs*ngs,MAX(ngc,2*n))), intent(hide,cache) :: sp
+            integer dimension(MAX(2*(p+1),2001)), intent(hide,cache) :: mm
+        end subroutine plot
+        subroutine catprt(m,nk,fm,im,sp,mm) ! in :mars:mars.f
+            integer, intent(in) :: m
+            integer, intent(in) :: nk
+            double precision dimension(*), intent(in) :: fm
+            integer dimension(*), intent(in) :: im
+            double precision dimension(2001*2001), intent(hide,cache) :: sp
+            integer dimension(2*nk+2001), intent(hide,cache) :: mm
+        end subroutine catprt
+        subroutine slice(flg,xs,n,p,x,nk,mi,fm,im,fmn,imn,sp,mm) ! in :mars:mars.f
+            double precision, intent(in) :: flg
+            double precision dimension(*), intent(in) :: xs
+            integer, intent(in) :: n
+            integer, intent(in) :: p
+            double precision dimension(n,p), depend(n), depend(p), intent(in) :: x
+            integer, intent(in) :: nk
+            integer, intent(in) :: mi
+            double precision dimension(*), intent(in) :: fm
+            integer dimension(*), intent(in) :: im
+            double precision dimension(3+nk*(5*mi+2001+6)+2*p+2001*p), intent(out) :: fmn
+            integer dimension(21+nk*(3*mi+8)), intent(out) :: imn
+            double precision dimension(2*nk+2*p+MAX(nk,3*p)), intent(hide,cache) :: sp
+            integer dimension(n*p+2*MAX(mi,2001)), intent(hide,cache) :: mm
+        end subroutine slice
+        subroutine fmod(m,n,p,x,fm,im,f,sp) ! in :mars:mars.f
+            integer, intent(in) :: m
+            integer, intent(in) :: n
+            integer, intent(in) :: p
+            double precision dimension(n,p), depend(n), depend(p), intent(in) :: x
+            double precision dimension(*), intent(in) :: fm
+            integer dimension(*), intent(in) :: im
+            double precision dimension(n), intent(out) :: f
+            double precision dimension(n,2), intent(hide,cache) :: sp
+        end subroutine fmod
+        subroutine print(it) ! in :mars:mars.f
+            integer, intent(in) :: it
+        end subroutine print
+        subroutine setint(i,j,k) ! in :mars:mars.f
+            integer, intent(in) :: i
+            integer, intent(in) :: j
+            integer, intent(in) :: k
+            integer, intent(in) :: it
+            entry intalw(i,j,k)
+            entry intlst(it)
+        end subroutine setint
+        subroutine mars1(n,p,x,y,w,nk,mi,lx,az,tb,cm,kp,kv,lp,lv,bz,tc,sp,dp,mm) ! in :mars:mars.f
+            integer, intent(in) :: n
+            integer, intent(in) :: p
+            double precision dimension(n,p), intent(in) :: x
+            double precision dimension(n),depend(n), intent(in) :: y
+            double precision dimension(n),depend(n), intent(in) :: w
+            integer optional,check(shape(tb,1)==nk),depend(tb), intent(in) :: nk=shape(tb,1)
+            integer, intent(in) :: mi
+            integer dimension(p),depend(p), intent(in) :: lx
+            double precision :: az
+            double precision dimension(5,nk) :: tb
+            double precision dimension(*) :: cm
+            integer dimension(5,*) :: kp
+            integer dimension(2,*) :: kv
+            integer dimension(3,*) :: lp
+            integer dimension(*) :: lv
+            double precision :: bz
+            double precision dimension(*) :: tc
+            double precision dimension(*), intent(hide,cache) :: sp
+            double precision dimension(*), intent(hide,cache) :: dp
+            integer dimension(n,*),depend(n), intent(hide,cache) :: mm
+            double precision, intent(in) :: val
+            integer, intent(in) :: mal
+            entry logit(mal)
+            entry setfv(val)
+            entry setdf(val)
+            entry setms(mal)
+            entry xvalid(mal)
+            entry printm(mal)
+            entry setic(mal)
+        end subroutine mars1
+        subroutine speed(is) ! in :mars:mars.f
+            integer, intent(in) :: is
+        end subroutine speed
+        subroutine cvmars(ix,n,p,x,y,w,nk,ms,df,fv,mi,lx,it,xm,xs,tb,cm,sc,db,d,mm,wt,cv) ! in :mars:mars.f
+            integer :: ix
+            integer optional,check(shape(x,0)==n),depend(x), intent(in) :: n=shape(x,0)
+            integer optional,check(shape(x,1)==p),depend(x), intent(in) :: p=shape(x,1)
+            double precision dimension(n,p), intent(in) :: x
+            double precision dimension(n),depend(n), intent(in) :: y
+            double precision dimension(n),depend(n), intent(in) :: w
+            integer optional,check(shape(tb,1)==nk),depend(tb), intent(in) :: nk=shape(tb,1)
+            integer :: ms
+            double precision :: df
+            double precision :: fv
+            integer :: mi
+            integer dimension(p),depend(p) :: lx
+            integer :: it
+            double precision dimension(p),depend(p) :: xm
+            double precision dimension(p),depend(p) :: xs
+            double precision dimension(5,nk) :: tb
+            double precision dimension(*) :: cm
+            double precision dimension(*) :: sc
+            double precision dimension(n,*),depend(n) :: db
+            double precision dimension(nk,*),depend(nk) :: d
+            integer dimension(n,*),depend(n) :: mm
+            double precision dimension(n,2),depend(n) :: wt
+            double precision dimension(nk,4),depend(nk) :: cv
+            double precision, intent(out) :: a1
+            double precision, intent(out) :: a2
+            integer, intent(out) :: ia1
+            entry cvinfo(a1,a2,ia1)
+        end subroutine cvmars
+        subroutine nest(n,i,j,nv,vals) ! in :mars:mars.f
+            integer :: n
+            integer :: i
+            integer :: j
+            integer :: nv
+            double precision dimension(*) :: vals
+            integer :: lm
+            double precision dimension(*) :: cm
+            integer :: p
+            double precision dimension(5,*) :: tb
+            integer dimension(*) :: lx
+            double precision dimension(*) :: bl
+            integer :: it
+            integer :: ja
+            integer :: jb
+            integer :: mk
+            double precision dimension(n,*) :: x
+            entry isnstr(j,jb)
+            entry cmpnst(ja,n,x,cm,bl)
+            entry oknest(it,p,lx,cm)
+            entry getnst(ja,cm,j,nv,vals)
+            entry nstlst(it)
+            entry isfac(lm,j,mk,tb,cm,ja)
+        end subroutine nest
+        subroutine miss(n,p,x,lx,xm,flg,pn,xn,lxn,xs,xp) ! in :mars:mars.f
+            integer, intent(in) :: n
+            integer, intent(in) :: p
+            double precision dimension(n,p), depend(n), depend(p), intent(in) :: x
+            integer dimension(*) :: lx
+            double precision dimension(*) :: xm
+            double precision :: flg
+            integer :: pn
+            double precision dimension(n,*),depend(n) :: xn
+            integer dimension(*) :: lxn
+            double precision dimension(*) :: xs
+            double precision dimension(*) :: xp
+        end subroutine miss
+        subroutine mkmiss(n,p,x,y,w,xm,pm,nnx,nn,xnn,yn,wn,sc) ! in :mars:mars.f
+            integer, intent(in) :: n
+            integer, intent(in) :: p
+            double precision dimension(n,p), depend(n), depend(p), intent(in) :: x
+            double precision dimension(n),depend(n) :: y
+            double precision dimension(n),depend(n) :: w
+            double precision dimension(p),depend(p) :: xm
+            double precision dimension(p),depend(p) :: pm
+            integer :: nnx
+            integer :: nn
+            double precision dimension(*) :: xnn
+            double precision dimension(*) :: yn
+            double precision dimension(*) :: wn
+            double precision dimension(p,*),depend(p) :: sc
+            double precision :: val
+            entry smktol(val)
+        end subroutine mkmiss
+        subroutine xmiss(n,p,x,xm,xp,xn) ! in :mars:mars.f
+            integer, intent(in) :: n
+            integer, intent(in) :: p
+            double precision dimension(n,p), depend(n), depend(p), intent(in) :: x
+            double precision dimension(*) :: xm
+            double precision dimension(*) :: xp
+            double precision dimension(n,*),depend(n) :: xn
+        end subroutine xmiss
+        subroutine stseed(iseed) ! in :mars:mars.f
+            integer :: iseed
+            double precision dimension(1) :: x
+            integer :: n
+            entry rnms(x,n)
+        end subroutine stseed
+    end interface 
+end python module mars
+
+! This file was auto-generated with f2py (version:2_2522).
+! See http://cens.ioc.ee/projects/f2py2e/

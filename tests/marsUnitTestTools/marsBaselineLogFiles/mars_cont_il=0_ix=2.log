@@ -1,0 +1,98 @@
+
+ MARS modeling, version 3.6 (3/25/93)
+
+
+ input parameters (see doc.):
+    n     p    nk    ms    mi     df    il    fv     ic
+    98    2     5     0     2   3.000    0  0.000     0
+
+ predictor variable flags:
+ var:    1  2
+ flag:   1  1
+
+ ordinal response:
+      min         n/4         n/2        3n/4         max
+    0.000       0.000       1.000       1.000       1.000    
+
+ there are  2 ordinal predictor variables.
+
+  var     min         n/4         n/2        3n/4         max
+   1   -1.000      0.2974E-01  0.4943      0.9445       2.000    
+   2   -1.000      0.3160      0.5000      0.5000       2.000    
+
+ sample reuse to estimate df:
+   2 - fold cross-validation.
+
+
+
+ forward stepwise knot placement:
+
+  basfn(s)    gcv      #indbsfns  #efprms   variable      knot            parent
+     0      0.2604         0.0     1.0
+   2   1    0.7773E-01         2         6             2    0.5000            0
+   4   3    0.1931E-01         4        11             1    0.3013            0
+     5      0.2334E-01         5        15             1    -1.000            2
+
+ final model after backward stepwise elimination:
+
+ bsfn:       0           1           2           3           4           5    
+ coef:   1.093     -0.4970     -0.4791     -0.3319     -0.5852       0.000    
+
+   (piecewise linear) gcv =   0.2059E-01   #efprms =  12.2
+
+
+ forward stepwise knot placement:
+
+  basfn(s)    gcv      #indbsfns  #efprms   variable      knot            parent
+     0      0.2595         0.0     1.0
+   2   1    0.8332E-01         2         6             2    0.5000            0
+   4   3    0.3511E-01         4        11             1    0.7967            0
+     5      0.4285E-01         5        15             1    -1.000            1
+
+ final model after backward stepwise elimination:
+
+ bsfn:       0           1           2           3           4           5    
+ coef:   1.048     -0.5099     -0.5279     -0.5791     -0.2417       0.000    
+
+   (piecewise linear) gcv =   0.3744E-01   #efprms =  12.2
+  #bsfns     df        asr           gcv           cv
+     5 -0.62D+00    0.1593E-01    0.1902E-01    0.3383E-01
+     4  0.50D+01    0.1636E-01    0.3865E-01    0.3196E-01
+     3  0.12D+02    0.3313E-01    0.1350        0.7200E-01
+     2  0.16D+02    0.6201E-01    0.2157        0.6575E-01
+     0  0.21D+02    0.2495        0.2600        0.2511    
+
+ estimated optimal df(  4) =   5.05 with (estimated) pse =  0.3196E-01
+
+
+ forward stepwise knot placement:
+
+  basfn(s)    gcv      #indbsfns  #efprms   variable      knot            parent
+     0      0.2551         0.0     1.0
+   2   1    0.7463E-01         2         8             2    0.5000            0
+   4   3    0.2800E-01         4        15             1    0.5694            0
+     5      0.3257E-01         5        21             1    -1.000            2
+
+ final model after backward stepwise elimination:
+
+ bsfn:       0           1           2           3           4           5    
+ coef:   1.069     -0.4781     -0.4857     -0.4529     -0.4066       0.000    
+
+   (piecewise linear) gcv =   0.2942E-01   #efprms =  17.1
+
+ anova decomposition on  4 basis functions:
+  fun. std. dev.     -gcv    #bsfns  #efprms  variable(s)
+   1   0.2891     -0.2845E-01   2       8.1     2
+   2   0.2384      0.7633E-01   2       8.1     1
+
+ piecewise cubic fit on  4 basis functions, gcv =  0.3141E-01
+
+ -gcv removing each variable:
+
+        1           2        
+   0.7633E-01  0.1146    
+
+ relative variable importance:
+
+        1           2        
+    74.20       100.0    
