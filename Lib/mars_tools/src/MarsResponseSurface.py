@@ -6,22 +6,25 @@ from types import *
 import numpy
 from numpy import shape
 
-import mars
-from mars import mars as _mars
-from mars import fmod as _fmod
+from genutil.mars import mars as _mars
+from genutil.mars import fmod as _fmod
 
 class MarsResponseSurface:
-    def __init__(self, arg, SIGN=+1):
+    def __init__(self, arg, SIGN=+1, fm=None, im=None):
         self.const = 0.
         self.functions = []
         self.error = 'none'
         self.inputs = {}
         self.outputs = {}
+        self.fm = fm
+        self.im = im
         self.SIGN=SIGN
+
         
         if type(arg) is FloatType:
             self.const = arg
         elif type(arg) is TupleType:
+            self.fm, self.im = arg
             mem = ParseMarsMemory(arg)
             BFs = mem.basisFunctions
             self.inputs = mem.inputs
@@ -51,21 +54,21 @@ class MarsResponseSurface:
             s = s + str(output)+ ' = ' + str(val) + '\n'
         s = s + 'SIGN=' + str(self.SIGN) + '\n'
         return s
-    def __call__(self, xinput,fm,im):
+    def __call__(self, xinput):
         if not isinstance(xinput, numpy.ndarray):
             print 'MarsResponseSurface requires numpy (nsamps,p) input array'
             return
-        if not isinstance(fm, numpy.ndarray):
+        if not isinstance(self.fm, numpy.ndarray):
             print 'MarsResponseSurface requires numpy fm array'
             return
         if not isinstance(xinput, numpy.ndarray):
             print 'MarsResponseSurface requires numpy im array'
             return
         (n,p) = xinput.shape
-        if not p == self.inputs['dim']:
+        if 'dim' in self.inputs.keys() and not p == self.inputs['dim']:
             print 'input array does not have correct number of predictor variables'
             return        
-        return _fmod(1,n,p,xinput,fm,im)
+        return _fmod(1,n,p,xinput,self.fm, self.im)
     def __len__(self):
         return len(self.functions)
     def __cmp__(self, x):
