@@ -1,0 +1,143 @@
+DESCRIPTION
+
+One  standard technique for generating a response surface is to use Multivariate Adaptive
+Regression Splines(MARS, a trademark of Salford Systems). This technique was developed
+by Jerome Friedman at Stanford University and implemented in fortran. Pymars is a conversion
+of the original fortran to python and makes this package widely available with minimal
+configuration requirements. By moving to python it is recognized that there is a reduction in
+performance but there is a gain in understanding the implementation. The projects goals include
+1. making the algorithm available on any platform where python is installed
+2. implementing a parallel version of pymars
+3. extending the algorithm to more general basis functions.
+The main functionality includes continuous variables, categorical variables, linear
+regression, logistic regression and cross validation. Approximately 80% of the code has been
+converted. The remaining routines will be converted if demand surfaces.
+
+One of the main principles followed in the fortran implementation was high speed. The
+conversion to python ensured that performance would be sacrificed and it did happen.
+On a 5 dimensional problem with 230 points, the fortran ran in .18 sec while the python
+ran in 28 sec. This big difference can be mitigated by identifying where the time is
+spent and working the issues there. But the parallel version is where the biggest gains
+will be made.
+
+While the base level conversion is complete, there is a lot of code that is still opaque.
+Releasing this code is the first step to building a community to understand this code.
+
+PYMARS INPUTS
+
+A simple example is provided along with output files for both mars & pymars.
+mars(n, p, x, y, w, nk, mi, lx) has a number of inputs
+input data:
+    x is an nxp dimensional array for the independent variables
+    y is an n-dimensional array for the dependent variable
+weights:
+    w is an n-dimensional array that weights each value of y
+knots:
+    nk is the number of requested knots
+max interaction:
+    mi is an integer that indicates how many of the basis functions
+    can appear in a product
+input variable flags:
+    lx is a p-dimensional integer array used to direct the algorithm for each variable
+    value  indicates
+    3      variable has only linear effect
+    2      variable is treated as only additively
+    1      unrestricted variable
+    0      exclude
+    -1     unrestricted categorical variable
+    -2     categorical variable: same as 2
+    NOTE: the only capability tested thus far is value of 1 or -1
+pymars directives:
+from pymars import parameters, marsParameters
+marsParameters() sets the defaults.
+regression type:
+    parameters['mars']['il'] = value
+    value  indicates
+    0      ordinary regression
+    1      logistic regression; this assumes the data takes values of 0 or 1.
+cross validation:
+    parameters['cvmars']['ix'] = value
+    value  indicates
+    0      turned off
+    >1     turned on, the value is used as a cross-fold validation number
+    NOTE: value < 0 is acceptable but untested; it does a validation where the
+    the value represents array entry used.
+degrees of freedom:
+    parameters['mars']['df'] = value
+    df is a parameter that represents how hard the algorithm should work to
+    get a fit, specifically in the knot optimization.  The default value is 3.0.
+    Smaller values can be used for a better and more time consuming fit. Testing
+    only used the default.
+other directives are available but remain untested.
+
+SOURCE CODE
+
+The source code is located in the src directory.  There is a setup_pymars.py used to build
+pymars.  There is also setup_Fmars.py to build a project that has an f2py interface to
+the fortran. The latter is only available for convenience; the original source is NOT
+part of the distribution.
+
+Unit testing is achieved by comparing pymars and mars output files byte for byte. In the
+baselineLogFiles directory there are log files for all combinations of continuous, categorical,
+regression and cross validation.  The mars output and the pymars output are identical up
+to a slight change in format.  MarsTest.py is a unitest application that runs both mars
+and pymars and performs a comparison of the pymars output against the baseline output. By
+doing this any changes to the source code was tested against the baseline and any deviation
+between these outputs was treated as an issue for the python version.
+
+The question of how to handle loops arose at the very beginning of the conversion. In
+fortran a typical loop looks like: do 1 i=1, n.  For the current version the choice was made
+not to change these loops. This loop was replaced by: for i in range(1,n+1).  Also there is
+a problem with how arrays are addressed. In fortran indices start at 1, in python 0.
+To handle this all arrays were bordered with some value so that when arrays were
+manipulated with loops the indices had the proper address. In pymars.border there is
+a function to handle this.  The intent is eliminate the need to index from 0 instead of 1.
+To prepare for this the reader will see declarations like
+kp = numpy.zeros(shape = (5+1, nk+2), dtype = INT_DTYPE)
+The dimension 5+1 is an indicator to me that I can prune the array back to 5 when the change
+is made.
+
+Multi-dimensional arrays presented additional problems. There was
+a number of situations in the fortran where a signal large one-dimensional array is
+segmented into subarrays and subsequent equivalences into such an array was reshaped into
+a multi-dimensional array. Also in fortran they are column major while in python they are
+row major. Much of this has been dismantled by using transpose, flatten and shape. There
+is still some of this code scattered around and in future versions they will be eliminated.
+
+The testing of the pymars is not complete. There are parts of the code where print
+statements are embedded which have not yet been executed.  By using different data and
+executing with different options these parts of the code might become active.  When this
+occurs I would like the data set and the input settings.
+
+The fortran source is NOT included. If you have the source code to run the test example and
+the unittest with the fortran you need to modify the source (only a little) for logging.
+See setlog.f in the src directory for more detail. Also you need to go through the code and
+uncomment the write statements throughout the code.
+
+ACKNOWLEDGEMENTS
+
+Thanks to George Christianson who was a valuable resource for his in-depth knowledge of
+programming languages.
+
+The data logit.csv is available through
+Introduction to SAS.  UCLA: Academic Technology Services, Statistical Consulting Group.
+from http://www.ats.ucla.edu/stat/sas/
+
+CONVERSION HISTORY
+July 6, 2009 - begin conversion
+Aug 30, 2009 - raw conversion is complete. Although marsgo is a beast & I don't trust it.
+Sept 14, 2009 - fmod & associated functions have been tested. The fm & im arrays have been eliminated
+Oct 16, 2009 - first step in isolating marsgo is complete. MarsTest gets an answer but not the right one.
+Oct 27, 2009 - varimp & 9 associated routines are complete when il=0. TBD il>0 in vp.py
+Oct 30, 2009 - cubic & 9 associated routines are complete
+Nov 3, 2009 - ccoll & 4 associated routines are complete
+Nov. 10, 2009 - anova & 3 associated routines are complete; marsgo is isolated in the case of il==0
+Nov 25, 2009 - investigated callback in f2py; it's invasive & fragile, can't use it
+Dec 1, 2009 - performed surgery on marsgo & split it into 4 pieces
+Dec 11, 2009 - the marsgo split is complete!
+Dec 16, 2009 - The first purely pythonic version of mars with continuous variables is complete!!!!!
+Jan 12, 2010 - Logistic response surface is now complete; but there are now issues with the continuous version.
+Jan. 25, 2010 - categorical variables are now complete; conversion is complete!
+Feb. 1 2010 - Cross validation now works for one example; now lots of testing!
+Feb 5, 2010 - All of the test cases now work in any combination of logistic regress and cross validation!
+Feb 24, 2010 - Reorganized MarsTest.
