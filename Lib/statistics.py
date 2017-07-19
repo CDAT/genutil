@@ -2,11 +2,11 @@
 import MV2
 import numpy.ma,cdms2
 #import genutil
-from grower import grower
+from .grower import grower
 import numpy
 import cdat_info
-import arrayindexing,array_indexing_emulate as array_indexing
-from averager import __check_weightoptions
+from . import arrayindexing,array_indexing_emulate as array_indexing
+from .averager import __check_weightoptions
 class StatisticsError (Exception):
     def __init__ (self, args=None):
         """Create an exception"""
@@ -196,7 +196,7 @@ def __covariance(x,y,weights=None,centered=1,biased=1):
         of covariance() for details.
     """
     if not weights is None and biased!=1 :
-        raise StatisticsError,'Error in covariance, you cannot have weights and unbiased together'
+        raise StatisticsError('Error in covariance, you cannot have weights and unbiased together')
     
     if centered == 1:
         xmean=numpy.ma.average(x,weights=weights, axis=0)
@@ -394,12 +394,12 @@ def __linearregression(y,x,error=None,probability=None,noslope=None,nointercept=
     also possibly returns error and P values.
     """
     if (not (noslope is None or noslope==0)) and (not (nointercept is None or nointercept==0)):
-        raise StatisticsError,'Error in __linearregression, at least one of the following argument as to be None: noslope or nointercept, you are requesting nothing back !'
+        raise StatisticsError('Error in __linearregression, at least one of the following argument as to be None: noslope or nointercept, you are requesting nothing back !')
     if (not probability is None) and (error is None):
-        raise StatisticsError,'Error in __linearregression, error must not be None if probability is defined, probability is:'+str(probability)
+        raise StatisticsError('Error in __linearregression, error must not be None if probability is defined, probability is:'+str(probability))
     if not error is None:
         if error>3:
-            raise StatisticsError,"Error in __linearregression, error must be None (0), 1, ,2 or 3"
+            raise StatisticsError("Error in __linearregression, error must be None (0), 1, ,2 or 3")
     xmean=numpy.ma.average(x, axis=0)
     ymean=numpy.ma.average(y, axis=0)
     x=x-xmean
@@ -554,12 +554,12 @@ def __checker(x,y,w,axes,smally=0):
             w=numpy.ma.array(w,copy=0)
         else:
             if not xismv:
-                raise StatisticsError,'Error if weights are a list then x must be an MV2 !!!'
+                raise StatisticsError('Error if weights are a list then x must be an MV2 !!!')
             w=__makeweights(x,w,axes)
             wismv=1
     elif not w is None:
             if not xismv:
-                raise StatisticsError,'Error if weights are a list then x must be an MV2 !!!'
+                raise StatisticsError('Error if weights are a list then x must be an MV2 !!!')
             w=__makeweights(x,w,axes)
             wismv=1
         
@@ -567,7 +567,7 @@ def __checker(x,y,w,axes,smally=0):
         # We didn't pass all MV2s shapes have to match (unless None)
         if smally==0:
             if x.shape!=numpy.ma.shape(y) and not y is None:
-                raise StatisticsError,'Error x and y shape do not match !'+str(x.shape)+','+str(numpy.ma.shape(y))
+                raise StatisticsError('Error x and y shape do not match !'+str(x.shape)+','+str(numpy.ma.shape(y)))
         else:
             shy=list(y.shape)
             shy2=y.shape
@@ -583,26 +583,26 @@ def __checker(x,y,w,axes,smally=0):
             for anaxis in myaxes[::-1]:
                 shy.insert(0,shx[anaxis])
             y=numpy.ma.resize(y,shy)
-            sh=range(len(x.shape))
+            sh=list(range(len(x.shape)))
             if axes!=0:
                 for i in range(len(myaxes)):
                     sh[myaxes[i]]=i
                     sh[i]=myaxes[i]
                 y=numpy.ma.transpose(y,sh)
             if x.shape!=numpy.ma.shape(y) and not y is None:
-                raise StatisticsError,'Error x and y shape do not match (y shouldbe 1D less than x) !'+str(x.shape)+','+str(shy2)+' Remember y must be 1D less than x'
+                raise StatisticsError('Error x and y shape do not match (y shouldbe 1D less than x) !'+str(x.shape)+','+str(shy2)+' Remember y must be 1D less than x')
         if x.shape!=numpy.ma.shape(w) and not w is None:
-            raise StatisticsError,'Error x and weights shape do not match !'+str(x.shape)+','+str(numpy.ma.shape(w))+' ATTENTION if you are trynig to pass a list of 1D arrays for each dim, then x must be an MV2 !!!'
+            raise StatisticsError('Error x and weights shape do not match !'+str(x.shape)+','+str(numpy.ma.shape(w))+' ATTENTION if you are trynig to pass a list of 1D arrays for each dim, then x must be an MV2 !!!')
         if type(axes)!=type([]) :
             axes=cdms2.orderparse(str(axes))
         for i in axes:
             if len(x.shape)<i:
-                raise StatisticsError,'Error you have '+str(len(x.shape))+' dimensions and try to work on dim:'+str(i)
+                raise StatisticsError('Error you have '+str(len(x.shape))+' dimensions and try to work on dim:'+str(i))
     else:
         if not y is None:
             x,y=grower(x,y)
             if x.shape!=y.shape :
-                raise StatisticsError,'Error x and y have different shapes'+str(x.shape)+', '+str(y.shape)
+                raise StatisticsError('Error x and y have different shapes'+str(x.shape)+', '+str(y.shape))
         ax=x.getAxisList()
         xorder=x.getOrder(ids=1)
         # Now grows w
@@ -611,10 +611,10 @@ def __checker(x,y,w,axes,smally=0):
             waxes=w.getAxisList()
             for o in worder:
                 if not o in xorder:
-                    raise StatisticsError,'Error weights have a dimension that is neither in x or y:'+o
+                    raise StatisticsError('Error weights have a dimension that is neither in x or y:'+o)
             x,w=grower(x,w)
             if x.shape!=w.shape:
-                raise StatisticsError,'Error x and weights have different shapes'+str(x.shape)+', '+str(w.shape)
+                raise StatisticsError('Error x and weights have different shapes'+str(x.shape)+', '+str(w.shape))
         # Last thing convert the axes input to numbers
         if type(axes)==type(1) : axes=str(axes)
         if type(axes)!=type([]):
@@ -630,13 +630,13 @@ def __checker(x,y,w,axes,smally=0):
                             if o[1:-1]==x.getAxis(j).id:
                                 axesparse[i]=j
                     if type(axesparse[i])==type(''): # Everything failed the axis id must be not existing in the slab...
-                        raise StatisticsError,'Error axis id :'+o+' not found in first slab: '+x.getOrder(ids=1)
+                        raise StatisticsError('Error axis id :'+o+' not found in first slab: '+x.getOrder(ids=1))
             axes=axesparse
     # Now we have array those shape match, and a nice list of axes let's keep going
     naxes=len(axes)
     n0=1
     xsh=x.shape
-    xorder=range(len(x.shape))
+    xorder=list(range(len(x.shape)))
     forder=[]
     for i in range(naxes):
         forder.append(axes[i])
@@ -730,7 +730,7 @@ def covariance(x,y,weights=None,axis=0,centered=1,biased=1,max_pct_missing=100.)
     cov=_treat_missing(cov,x,max_pct_missing=max_pct_missing)
     if not ax is None:
         cov=cdms2.createVariable(cov,axes=ax,id='covariance',copy=0)
-        if 'units' in xatt.keys() and 'units' in yatt.keys(): cov.units=xatt['units']+'*'+yatt['units']
+        if 'units' in list(xatt.keys()) and 'units' in list(yatt.keys()): cov.units=xatt['units']+'*'+yatt['units']
     return cov
 
 
@@ -788,7 +788,7 @@ def variance(x,weights=None,axis=0,centered=1,biased=1,max_pct_missing=100.):
     var=_treat_missing(var,x,max_pct_missing=max_pct_missing)
     if not ax is None:
         var=cdms2.createVariable(var,axes=ax,id='variance',copy=0)
-        if 'units' in xatt.keys() : var.units=xatt['units']+'*'+xatt['units']
+        if 'units' in list(xatt.keys()) : var.units=xatt['units']+'*'+xatt['units']
     return var
 
 def checker(x,weights=None,axis=0,centered=1):
@@ -850,7 +850,7 @@ def std(x,weights=None,axis=0,centered=1,biased=1,max_pct_missing=100.):
     std=_treat_missing(std,x,max_pct_missing=max_pct_missing)
     if not ax is None:
         std=cdms2.createVariable(std,axes=ax,id='standard_deviation',copy=0)
-        if 'units' in xatt.keys() : std.units=xatt['units']
+        if 'units' in list(xatt.keys()) : std.units=xatt['units']
     return std
 
 
@@ -969,7 +969,7 @@ def rms(x,y,weights=None,axis=0,centered=0,biased=1,max_pct_missing=100.):
     rmsans=_treat_missing(rmsans,x,max_pct_missing=max_pct_missing)
     if not ax is None:
         rmsans=cdms2.createVariable(rmsans,axes=ax,id='RMS_difference',copy=0)
-        if 'units' in xatt.keys(): rms.units=xatt['units']
+        if 'units' in list(xatt.keys()): rms.units=xatt['units']
         
     return rmsans
 
@@ -1029,14 +1029,14 @@ def laggedcovariance(x,y,lag=None,axis=0,centered=1,partial=1,noloop=0,max_pct_m
     if cdms2.isVariable(y) : yatt=y.attributes
     x,y,w,axis,ax=__checker(x,y,None,axis)
     if lag is None:
-        lags=range(x.shape[0])
-    elif isinstance(lag,(int,long)):
+        lags=list(range(x.shape[0]))
+    elif isinstance(lag,int):
         if not noloop:
-            lags=range(lag+1)
+            lags=list(range(lag+1))
         else:
             lags=[lag]
     elif not isinstance(lag,(list,tuple)):
-        raise StatisticsError, 'lags type must be None, integer, list or tuple'
+        raise StatisticsError('lags type must be None, integer, list or tuple')
     else:
         lags=lag
 
@@ -1057,7 +1057,7 @@ def laggedcovariance(x,y,lag=None,axis=0,centered=1,partial=1,noloop=0,max_pct_m
         newax.id='lag'
         ax.insert(0,newax)
         lcovs=cdms2.createVariable(lcovs,axes=ax,id='lagged_covariance'+str(lag),copy=0)
-        if 'units' in xatt.keys() and 'units' in yatt.keys(): lcovs.units=xatt['units']+'*'+yatt['units']
+        if 'units' in list(xatt.keys()) and 'units' in list(yatt.keys()): lcovs.units=xatt['units']+'*'+yatt['units']
     return lcovs
 
 def laggedcorrelation(x,y,lag=None,axis=0,centered=1,partial=1,biased=1,noloop=0,max_pct_missing=100.):
@@ -1116,14 +1116,14 @@ def laggedcorrelation(x,y,lag=None,axis=0,centered=1,partial=1,biased=1,noloop=0
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.laggedcorrelation")
     x,y,w,axis,ax=__checker(x,y,None,axis)
     if lag is None:
-        lags=range(x.shape[0])
-    elif isinstance(lag,(int,long)):
+        lags=list(range(x.shape[0]))
+    elif isinstance(lag,int):
         if not noloop:
-            lags=range(lag+1)
+            lags=list(range(lag+1))
         else:
             lags=[lag]
     elif not isinstance(lag,(list,tuple)):
-        raise StatisticsError, 'lags type must be None, integer, list or tuple'
+        raise StatisticsError('lags type must be None, integer, list or tuple')
     else:
         lags=lag
         
@@ -1200,14 +1200,14 @@ def autocovariance(x,lag=None,axis=0,centered=1,partial=1,noloop=0,max_pct_missi
     if cdms2.isVariable(x) : xatt=x.attributes
     x,dum,dum,axis,ax=__checker(x,None,None,axis)
     if lag is None:
-        lags=range(x.shape[0])
-    elif isinstance(lag,(int,long)):
+        lags=list(range(x.shape[0]))
+    elif isinstance(lag,int):
         if not noloop:
-            lags=range(lag+1)
+            lags=list(range(lag+1))
         else:
             lags=[lag]
     elif not isinstance(lag,(list,tuple)):
-        raise StatisticsError, 'lags type must be None, integer, list or tuple'
+        raise StatisticsError('lags type must be None, integer, list or tuple')
     else:
         lags=lag
 
@@ -1226,7 +1226,7 @@ def autocovariance(x,lag=None,axis=0,centered=1,partial=1,noloop=0,max_pct_missi
         newax.id='lag'
         ax.insert(0,newax)
         acovs=cdms2.createVariable(acovs,axes=ax,id='autocovariance'+str(lag),copy=0)        
-        if 'units' in xatt.keys(): acovs.units=xatt['units']+'*'+xatt['units']
+        if 'units' in list(xatt.keys()): acovs.units=xatt['units']+'*'+xatt['units']
     return acovs
 
 def autocorrelation(x,lag=None,axis=0,centered=1,partial=1,biased=1,noloop=0,max_pct_missing=100.):
@@ -1280,14 +1280,14 @@ def autocorrelation(x,lag=None,axis=0,centered=1,partial=1,biased=1,noloop=0,max
     cdat_info.pingPCMDIdb("cdat","genutil.statistics.autocorrelation")
     x,dum,dum,axis,ax=__checker(x,None,None,axis)
     if lag is None:
-        lags=range(x.shape[0])
-    elif isinstance(lag,(int,long)):
+        lags=list(range(x.shape[0]))
+    elif isinstance(lag,int):
         if not noloop:
-            lags=range(lag+1)
+            lags=list(range(lag+1))
         else:
             lags=[lag]
     elif not isinstance(lag,(list,tuple)):
-        raise StatisticsError, 'lags type must be None, integer, list or tuple'
+        raise StatisticsError('lags type must be None, integer, list or tuple')
     else:
         lags=lag
     
@@ -1357,7 +1357,7 @@ def meanabsdiff(x,y,weights=None,axis=0,centered=1,max_pct_missing=100.):
     mad=_treat_missing(mad,x,max_pct_missing=max_pct_missing)
     if not ax is None:
         mad=cdms2.createVariable(mad,axes=ax,id='mean_absolute_difference',copy=0)
-        if 'units' in xatt.keys(): mad.units=xatt['units']
+        if 'units' in list(xatt.keys()): mad.units=xatt['units']
     return mad
 
 
@@ -1503,12 +1503,12 @@ def linearregression(y,axis=None,x=None,error=None,probability=None,nointercept=
     yisV=cdms2.isVariable(y)
     if yisV : yatt=y.attributes
     if not axis is None and not x is None:
-        raise StatisticsError,'Error you cannot pass an indepedent variable and an axis'
+        raise StatisticsError('Error you cannot pass an indepedent variable and an axis')
     if x is None and axis is None :
         axis=0
     if not axis is None:
         if not type(axis)==type([]) : ax=cdms2.orderparse(str(axis))
-        if len(ax)>1: raise StatisticsError, 'Error only one dim allowed'
+        if len(ax)>1: raise StatisticsError('Error only one dim allowed')
         if yisV :
             ax=y.getAxisList()
             yid=y.id
@@ -1542,7 +1542,7 @@ def linearregression(y,axis=None,x=None,error=None,probability=None,nointercept=
             val[0]=cdms2.createVariable(val[0],axes=axs,id='slope',copy=0)
         if nointercept is None or nointercept==0:
             val[-1]=cdms2.createVariable(val[-1],axes=axs,id='intercept',copy=0)
-        if 'units' in yatt.keys():
+        if 'units' in list(yatt.keys()):
             for v in val:
                 v.units=yatt['units']+' per '+ax2.units
     if error is None or error==0:
@@ -1569,7 +1569,7 @@ def linearregression(y,axis=None,x=None,error=None,probability=None,nointercept=
                     setattr(err[-1],'long_name','standard error for regression constant adjusted with residual (using centered autocorrelation)')
                 elif error==3:
                     setattr(err[-1],'long_name','standard error for regression constant adjusted with y (using centered autocorrelation)')
-            if 'units' in yatt.keys():
+            if 'units' in list(yatt.keys()):
                 for e in err:
                     e.units=yatt['units']+' per '+ax2.units
         if len(val)>1:
@@ -1595,7 +1595,7 @@ def linearregression(y,axis=None,x=None,error=None,probability=None,nointercept=
                     setattr(err[-1],'long_name','standard error for regression constant adjusted with residual (using centered autocorrelation)')
                 elif error==3:
                     setattr(err[-1],'long_name','standard error for regression constant adjusted with y (using centered autocorrelation)')
-            if 'units' in yatt.keys():
+            if 'units' in list(yatt.keys()):
                 for e in err:
                     e.units=yatt['units']+' per '+ax2.units
             if noslope is None or noslope==0:
@@ -1674,7 +1674,7 @@ def geometricmean(x,axis=0,max_pct_missing=100.):
     gmean=_treat_missing(gmean,x,max_pct_missing=max_pct_missing)
     if not ax is None:
         gmean=cdms2.createVariable(gmean,axes=ax,id='geometric_mean',copy=0)
-        if 'units' in xatt.keys() : gmean.units=xatt['units']
+        if 'units' in list(xatt.keys()) : gmean.units=xatt['units']
     return gmean
 
 def _percentiles(out,percent):
@@ -1766,7 +1766,7 @@ def percentiles(x,percentiles=[50.],axis=0):
         ax.insert(0,pax)
         p=MV2.array(p)
         p=cdms2.createVariable(p,axes=ax,id='percentiles',copy=0)
-        if 'units' in xatt.keys() : p.units=xatt['units']
+        if 'units' in list(xatt.keys()) : p.units=xatt['units']
     return p
 
 def median(x,axis=0):
@@ -1872,12 +1872,12 @@ def rank(x,axis=0):
         for i in range(len(axis)):
             b.setAxis(i,axs[axis[i]])
         b=b(order=o)
-        for a in xatt.keys():
+        for a in list(xatt.keys()):
             if a[0]!='_':
                 setattr(b,a,xatt[a])
         b.units='%'
     elif len(axis)==1:
-        sh=range(b.rank())
+        sh=list(range(b.rank()))
         sh[0]=axis[0]
         sh[axis[0]]=0
         b=numpy.ma.transpose(b,sh)

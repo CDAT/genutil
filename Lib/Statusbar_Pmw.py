@@ -1,4 +1,4 @@
-import Pmw, Tkinter
+import Pmw, tkinter
 class Statusbar(Pmw.MegaWidget):
     """
     Megawidget containing a scale and an indicator.
@@ -32,14 +32,14 @@ class Statusbar(Pmw.MegaWidget):
 
         self.label = self.createcomponent('label',
                                           (),None,
-                                          Tkinter.Label,
+                                          tkinter.Label,
                                           (interior,),
                                           text="Status",
                                      )
         self.label.pack(side='left')
         self.canvas = self.createcomponent('canvas',
                                       (),None,
-                                      Tkinter.Canvas,
+                                      tkinter.Canvas,
                                       (interior,),
                                       )
         self.canvas.pack(side='left')

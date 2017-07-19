@@ -1,6 +1,7 @@
 # Emulate array_indexing
 
-import array_indexing,numpy
+from  . import array_indexing
+import numpy
 
 def extract(a,b):
     b=numpy.where(numpy.equal(b,-1),0,b) # -1 means all missing so 0 is fine

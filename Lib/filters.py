@@ -53,7 +53,7 @@ def custom1D(x,filter,axis=0):
                 ax.append(float(numpy.ma.average(a[:], axis=0)))
     out=MV2.array(out,id=newx.id)
     if isMV2:
-        for k in xatt.keys():
+        for k in list(xatt.keys()):
             setattr(out,k,xatt[k])
         for i in range(1,len(sh)):
             out.setAxis(i,newx.getAxis(i))
@@ -62,7 +62,7 @@ def custom1D(x,filter,axis=0):
         a=newx.getAxis(0)
         attr=a.attributes
         ax.id=a.id
-        for k in attr.keys():
+        for k in list(attr.keys()):
             setattr(ax,k,attr[k])
         out.setAxis(0,ax)
         

@@ -23,7 +23,7 @@ class PickComponent(SelectorComponent):
         self.kargs=kargs
         self.match=kargs.get('match',1)
         if not self.match in [0,1,-1]:
-            raise Exception,'Error match must be 1 (strict matching), 0 (missing value) or -1 (skip inexistant values)'
+            raise Exception('Error match must be 1 (strict matching), 0 (missing value) or -1 (skip inexistant values)')
         
 
     def __str__(self):
@@ -35,7 +35,7 @@ class PickComponent(SelectorComponent):
             s+=')\n'
         if self.kargs!={}:
             s+='Keywords:\n'
-            for k in self.kargs.keys():
+            for k in list(self.kargs.keys()):
                 s+='\t'+str(k)+':'+str(self.kargs[k])+'\n'
         return s
     
@@ -54,7 +54,7 @@ class PickComponent(SelectorComponent):
                 confined_by[i]=self # for cdms I want to confine this dimension
                 self.aux[i]=specs=list(self.args[i]) # How do we want to confine this dim ?
                 if not (isinstance(specs,list) or isinstance(specs,tuple)):
-                    raise Exception,"Error in Selector, you must specify a list or a tuple, you passed:"+str(specs)
+                    raise Exception("Error in Selector, you must specify a list or a tuple, you passed:"+str(specs))
                 elif type(specs[0])==type(cdtime.comptime(1999)) or type(specs[0])==type(cdtime.reltime(0,'days since 1999')) or type(specs[0])==type(''):
                     list2=[]
                     for l in specs:
@@ -69,7 +69,7 @@ class PickComponent(SelectorComponent):
                     specification[i]=minimum(specs),maximum(specs)  # sets the specifications
             else:
                 return 1
-        for kw in self.kargs.keys():
+        for kw in list(self.kargs.keys()):
             axis=None
             for i in range(len(axes)):
                 if axes[i].id==kw : axis=i
@@ -87,7 +87,7 @@ class PickComponent(SelectorComponent):
                     for i in range(len(axes)):
                         if axes[i].isLatitude() : axis=i
                 elif not kw in ['match']: # keyword not a recognised keyword or dimension name
-                    raise Exception,'Error, keyword: '+kw+' not recognized'
+                    raise Exception('Error, keyword: '+kw+' not recognized')
             # At this point, if axis is None:
             # we are dealing with a keyword for the selector
             # so we'll skip it
@@ -135,14 +135,14 @@ class PickComponent(SelectorComponent):
                         ax=tmp.getAxis(i)
                         #print ax
                         newaxvals.append(ax[0])
-			if ax.getBounds() is not None:
-                   	     bounds.append(ax.getBounds()[0])
-			else:
-			     bounds=None
-                    except Exception,err:
+                        if ax.getBounds() is not None:
+                             bounds.append(ax.getBounds()[0])
+                        else:
+                             bounds=None
+                    except Exception as err:
                         #print 'err:',err,'match:',self.match
                         if self.match==1:
-                            raise Exception,'Error axis value :'+str(l)+' was requested but is not present in slab\n(more missing might exists)'
+                            raise Exception('Error axis value :'+str(l)+' was requested but is not present in slab\n(more missing might exists)')
                         elif self.match==0:
                             tmp=MV2.ones(sh,typecode=MV2.float)
                             tmp=MV2.masked_equal(tmp,1)
@@ -160,13 +160,13 @@ class PickComponent(SelectorComponent):
                     if not tmp is None:
                         if a is None:
                             a=tmp
-                        elif not tmp is None:
+                        else:
                             a=MV2.concatenate((a,tmp),i)
                 if bounds is not None:
-			newax=cdms.createAxis(numpy.array(newaxvals),bounds=numpy.array(bounds),id=ax.id)
-		else:
-			newax=cdms.createAxis(numpy.array(newaxvals),id=ax.id)
-                for att in faxes[i].attributes.keys():
+                        newax=cdms.createAxis(numpy.array(newaxvals),bounds=numpy.array(bounds),id=ax.id)
+                else:
+                        newax=cdms.createAxis(numpy.array(newaxvals),id=ax.id)
+                for att in list(faxes[i].attributes.keys()):
                     setattr(newax,att,faxes[i].attributes.get(att))
                 for j in range(len(fetched.shape)):
                     if j==i:

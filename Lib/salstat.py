@@ -18,8 +18,9 @@ GNU General Public License.
 """
 
 import numpy.ma,cdms2,array_indexing_emulate as array_indexing
-from statistics import __checker
+from .statistics import __checker
 import numpy
+from functools import reduce
 
 ## Short routines used in the functional constructs to reduce analysis time
 add=numpy.ma.add
@@ -62,7 +63,7 @@ def differencesquared(x,y,axis=0):
     diff=_diffsquared(x,y)
     if isvar:
         diff=cdms2.createVariable(diff,axes=ax,id='differencesquared',copy=0)
-        if 'units' in xatt.keys(): diff.units=xatt['units']+'*'+xatt['units']
+        if 'units' in list(xatt.keys()): diff.units=xatt['units']+'*'+xatt['units']
     ## in case we passed 2 numpy
     if (not numpy.ma.isMA(x)) and (not numpy.ma.isMA(y)):
         diff=diff.filled(1.e20)
@@ -515,8 +516,8 @@ def _ksprob(alam):
         ## Avoiding overflow....
         ae=a2*j*j
         ae=numpy.ma.where(numpy.ma.less(ae,-745),-745,ae)
-	term = fac*numpy.ma.exp(ae)
-	sum = sum + term
+        term = fac*numpy.ma.exp(ae)
+        sum = sum + term
         a=numpy.ma.absolute(term)
         c1=numpy.ma.less_equal(a,.001*termbf)
         c2=numpy.ma.less(a,1.E-8*sum).filled(0)
@@ -526,8 +527,8 @@ def _ksprob(alam):
         c2=numpy.ma.logical_and(c2,c)
         ans=numpy.ma.where(c2.filled(0),sum,ans)
         c=numpy.ma.logical_and(c,numpy.ma.logical_not(c2))
-	fac = -fac
-	termbf = numpy.ma.absolute(term)
+        fac = -fac
+        termbf = numpy.ma.absolute(term)
         if numpy.ma.allequal(c.filled(0),0):
             break
     return ans             # Get here only if fails to converge; was 0.0!!
@@ -937,7 +938,7 @@ def sumsquares(x,axis=0):
     sq=_sumsquares(x)
     if not ax is None:
         sq=cdms2.createVariable(sq,axes=ax,id='sumsquares',copy=0)
-        if 'units' in xatt.keys() : sq.units=xatt['units']+'*'+xatt['units']
+        if 'units' in list(xatt.keys()) : sq.units=xatt['units']+'*'+xatt['units']
     ## numpys only ?
     if not numpy.ma.isMA(x):
         sq=sq.filled(1.e20)
@@ -968,7 +969,7 @@ def Range(x,axis=0):
     out=_Range(x)
     if not ax is None:
         out=cdms2.createVariable(out,axes=ax,id='range',copy=0)
-        if 'units' in xatt.keys() : out.units=xatt['units']
+        if 'units' in list(xatt.keys()) : out.units=xatt['units']
     ## numpys only ?
     if not numpy.ma.isMA(x):
         out=out.filled(1.e20)
@@ -992,7 +993,7 @@ def harmonicmean(x,axis=0):
     out=_harmonicmean(x)
     if not ax is None:
         out=cdms2.createVariable(out,axes=ax,id='harmonicmean',copy=0)
-        if 'units' in xatt.keys() : out.units=xatt['units']
+        if 'units' in list(xatt.keys()) : out.units=xatt['units']
     ## numpys only ?
     if not numpy.ma.isMA(x):
         out=out.filled(1.e20)
@@ -1037,7 +1038,7 @@ def median(x,axis=0):
     out=_median(x)
     if not ax is None:
         out=cdms2.createVariable(out,axes=ax,id='median',copy=0)
-        if 'units' in xatt.keys() : out.units=xatt['units']
+        if 'units' in list(xatt.keys()) : out.units=xatt['units']
     ## numpys only ?
     if not numpy.ma.isMA(x):
         out=out.filled(1.e20)
@@ -1068,7 +1069,7 @@ def medianranks(x,axis=0):
     out=_medianranks(x)
     if not ax is None:
         out=cdms2.createVariable(out,axes=ax,id='medianranks',copy=0)
-        if 'units' in xatt.keys() : out.units=xatt['units']
+        if 'units' in list(xatt.keys()) : out.units=xatt['units']
     ## numpys only ?
     if not numpy.ma.isMA(x):
         out=out.filled(1.e20)
@@ -1099,7 +1100,7 @@ def mad(x,axis=0):
     out=_mad(x)
     if not ax is None:
         out=cdms2.createVariable(out,axes=ax,id='mad',copy=0)
-        if 'units' in xatt.keys() : out.units=xatt['units']
+        if 'units' in list(xatt.keys()) : out.units=xatt['units']
     ## numpys only ?
     if not numpy.ma.isMA(x):
         out=out.filled(1.e20)
@@ -1169,7 +1170,7 @@ def center(x,axis=0):
     out=_center(x)
     if not ax is None:
         out=cdms2.createVariable(out,axes=ax,id='center',copy=0)
-        if 'units' in xatt.keys() : out.units=xatt['units']
+        if 'units' in list(xatt.keys()) : out.units=xatt['units']
     ## numpys only ?
     if not numpy.ma.isMA(x):
         out=out.filled(1.e20)
@@ -1200,7 +1201,7 @@ def ssdevs(x,axis=0):
     out=_ssdevs(x)
     if not ax is None:
         out=cdms2.createVariable(out,axes=ax,id='ssdevs',copy=0)
-        if 'units' in xatt.keys() : out.units=xatt['units']
+        if 'units' in list(xatt.keys()) : out.units=xatt['units']
     ## numpys only ?
     if not numpy.ma.isMA(x):
         out=out.filled(1.e20)
@@ -1260,7 +1261,7 @@ def unbiasedvariance(x,axis=0):
     out=_samplevariance(x)
     if not ax is None:
         out=cdms2.createVariable(out,axes=ax,id='unbiasedvariance',copy=0)
-        if 'units' in xatt.keys() : out.units=xatt['units']+'*'+xatt['units']
+        if 'units' in list(xatt.keys()) : out.units=xatt['units']+'*'+xatt['units']
     ## numpys only ?
     if not numpy.ma.isMA(x):
         out=out.filled(1.e20)
@@ -1291,7 +1292,7 @@ def variance(x,axis=0):
     out=_variance(x)
     if not ax is None:
         out=cdms2.createVariable(out,axes=ax,id='variance',copy=0)
-        if 'units' in xatt.keys() : out.units=xatt['units']+'*'+xatt['units']
+        if 'units' in list(xatt.keys()) : out.units=xatt['units']+'*'+xatt['units']
     ## numpys only ?
     if not numpy.ma.isMA(x):
         out=out.filled(1.e20)
@@ -1322,7 +1323,7 @@ def standarddeviation(x,axis=0):
     out=_standarddeviation(x)
     if not ax is None:
         out=cdms2.createVariable(out,axes=ax,id='standarddeviation',copy=0)
-        if 'units' in xatt.keys() : out.units=xatt['units']+'*'+xatt['units']
+        if 'units' in list(xatt.keys()) : out.units=xatt['units']+'*'+xatt['units']
     ## numpys only ?
     if not numpy.ma.isMA(x):
         out=out.filled(1.e20)
@@ -1354,7 +1355,7 @@ def coefficentvariance(x,axis=0):
     out=_coefficentvariance(x)
     if not ax is None:
         out=cdms2.createVariable(out,axes=ax,id='coefficentvariance',copy=0)
-        if 'units' in xatt.keys() : out.units=xatt['units']
+        if 'units' in list(xatt.keys()) : out.units=xatt['units']
     ## numpys only ?
     if not numpy.ma.isMA(x):
         out=out.filled(1.e20)
@@ -1387,7 +1388,7 @@ def skewness(x,axis=0):
     out=_skewness(x)
     if not ax is None:
         out=cdms2.createVariable(out,axes=ax,id='skewness',copy=0)
-        if 'units' in xatt.keys() : out.units=xatt['units']
+        if 'units' in list(xatt.keys()) : out.units=xatt['units']
     ## numpys only ?
     if not numpy.ma.isMA(x):
         out=out.filled(1.e20)
@@ -1450,7 +1451,7 @@ def standarderror(x,axis=0):
     out=_standarderror(x)
     if not ax is None:
         out=cdms2.createVariable(out,axes=ax,id='standarderror',copy=0)
-        if 'units' in xatt.keys() : out.units=xatt['units']+'*'+xatt['units']
+        if 'units' in list(xatt.keys()) : out.units=xatt['units']+'*'+xatt['units']
     ## numpys only ?
     if not numpy.ma.isMA(x):
         out=out.filled(1.e20)
@@ -1771,7 +1772,7 @@ def _PearsonsCorrelation(data1, data2):
     Returns: r, t, df, prob
     """
     TINY = 1.0e-60
-    summult = reduce(add, map(multiply, data1, data2))
+    summult = reduce(add, list(map(multiply, data1, data2)))
     N1=numpy.ma.count(data1,axis=0)
     N2=numpy.ma.count(data2,axis=0)
     s1=numpy.ma.sum(data1,axis=0)
@@ -2102,7 +2103,7 @@ def _SpearmansCorrelation(data1, data2):
     TINY = 1e-30
     rankx = _rankdata(data1)
     ranky = _rankdata(data2)
-    dsq = numpy.ma.sum(map(_diffsquared, rankx, ranky),axis=0)
+    dsq = numpy.ma.sum(list(map(_diffsquared, rankx, ranky)),axis=0)
     N1=numpy.ma.count(data1,axis=0)
     rho = 1 - 6*dsq / (N1*(N1**2-1.))
     t = rho * numpy.ma.sqrt((N1-2) / ((rho+1.0+TINY)*(1.0-rho+TINY)))
@@ -2554,7 +2555,7 @@ def _anovaWithin( *inlist):
     SSbet=numpy.ma.sum(SSbet**2,axis=0)*GN/float(k)
 
     SSint = 0.0
-    sh=range(len(inlist.shape))
+    sh=list(range(len(inlist.shape)))
     sh[0]=1
     sh[1]=0
     mean=numpy.ma.average(inlist,axis=0)
@@ -2591,11 +2592,11 @@ def anovaWithin( *inlist,**kw):
     """
     if len(inlist)<2:
         raise 'Error must have at least 2 arrays!'
-    if not 'axis' in kw.keys():
+    if not 'axis' in list(kw.keys()):
         axis=0
     else:
         axis=kw['axis']
-    if not 'df' in kw.keys():
+    if not 'df' in list(kw.keys()):
         df=1
     else:
         df=kw['df']
@@ -2605,7 +2606,7 @@ def anovaWithin( *inlist,**kw):
             newlist=[x,y]
         else:
             newlist.append(y)
-    SSint, SSres, SSbet, SStot, dfbet, dfwit, dfres, dftot, MSbet, MSwit, MSres, F, prob = apply(_anovaWithin,newlist)
+    SSint, SSres, SSbet, SStot, dfbet, dfwit, dfres, dftot, MSbet, MSwit, MSres, F, prob = _anovaWithin(*newlist)
     if not ax is None:
         SSint=cdms2.createVariable(SSint,axes=ax,id='SSint',copy=0)
         SSres=cdms2.createVariable(SSres,axes=ax,id='SSres',copy=0)
@@ -2683,11 +2684,11 @@ def anovaBetween(*inlist,**kw):
     """
     if len(inlist)<2:
         raise 'Error must have at least 2 arrays!'
-    if not 'axis' in kw.keys():
+    if not 'axis' in list(kw.keys()):
         axis=0
     else:
         axis=kw['axis']
-    if not 'df' in kw.keys():
+    if not 'df' in list(kw.keys()):
         df=1
     else:
         df=kw['df']
@@ -2697,7 +2698,7 @@ def anovaBetween(*inlist,**kw):
             newlist=[x,y]
         else:
             newlist.append(y)
-    SSbet, SSwit, SStot, dfbet, dferr, dftot, MSbet, MSerr, F, prob = apply(_anovaBetween,newlist)
+    SSbet, SSwit, SStot, dfbet, dferr, dftot, MSbet, MSerr, F, prob = _anovaBetween(*newlist)
     if not ax is None:
         SSbet=cdms2.createVariable(SSbet,axes=ax,id='SSbet',copy=0)
         SSwit=cdms2.createVariable(SSwit,axes=ax,id='SSwit',copy=0)
@@ -2774,11 +2775,11 @@ def KruskalWallisH(*inlist,**kw):
     """
     if len(inlist)<2:
         raise 'Error must have at least 2 arrays!'
-    if not 'axis' in kw.keys():
+    if not 'axis' in list(kw.keys()):
         axis=0
     else:
         axis=kw['axis']
-    if not 'df' in kw.keys():
+    if not 'df' in list(kw.keys()):
         df=1
     else:
         df=kw['df']
@@ -2788,7 +2789,7 @@ def KruskalWallisH(*inlist,**kw):
             newlist=[x,y]
         else:
             newlist.append(y)
-    h, d, prob= apply(_KruskalWallisH,newlist)
+    h, d, prob= _KruskalWallisH(*newlist)
     if not ax is None:
         h=cdms2.createVariable(h,axes=ax,id='KruskalWallisH',copy=0)
         d=cdms2.createVariable(d,axes=ax,id='df',copy=0)
@@ -2811,7 +2812,7 @@ def _FriedmanChiSquare( *args):
     k=data.shape[0]
     n=data.shape[1]
     ## Transpose the data (nargs/0axis, rest is left identical)
-    tr=range(numpy.ma.rank(data[0])+1)
+    tr=list(range(numpy.ma.rank(data[0])+1))
     tr[0]=1
     tr[1]=0
     data=numpy.ma.transpose(data,tr)
@@ -2851,11 +2852,11 @@ def FriedmanChiSquare( *inlist, **kw):
     """
     if len(inlist)<2:
         raise 'Error must have at least 2 arrays!'
-    if not 'axis' in kw.keys():
+    if not 'axis' in list(kw.keys()):
         axis=0
     else:
         axis=kw['axis']
-    if not 'df' in kw.keys():
+    if not 'df' in list(kw.keys()):
         df=1
     else:
         df=kw['df']
@@ -2865,7 +2866,7 @@ def FriedmanChiSquare( *inlist, **kw):
             newlist=[x,y]
         else:
             newlist.append(y)
-    sumranks, h, d, prob= apply(_FriedmanChiSquare,newlist)
+    sumranks, h, d, prob= _FriedmanChiSquare(*newlist)
     if not ax is None:
         h=cdms2.createVariable(h,axes=ax,id='FriedmanChiSquare',copy=0)
         d=cdms2.createVariable(d,axes=ax,id='df',copy=0)
@@ -2921,11 +2922,11 @@ def CochranesQ( *inlist,**kw):
     """
     if len(inlist)<2:
         raise 'Error must have at least 2 arrays!'
-    if not 'axis' in kw.keys():
+    if not 'axis' in list(kw.keys()):
         axis=0
     else:
         axis=kw['axis']
-    if not 'df' in kw.keys():
+    if not 'df' in list(kw.keys()):
         df=1
     else:
         df=kw['df']
@@ -2935,7 +2936,7 @@ def CochranesQ( *inlist,**kw):
             newlist=[x,y]
         else:
             newlist.append(y)
-    h, d, prob= apply(_CochranesQ,newlist)
+    h, d, prob= _CochranesQ(*newlist)
     if not ax is None:
         h=cdms2.createVariable(h,axes=ax,id='CochranesQ',copy=0)
         d=cdms2.createVariable(d,axes=ax,id='df',copy=0)

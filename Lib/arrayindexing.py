@@ -1,7 +1,7 @@
 # Adapted for numpy/ma/cdms2 by convertcdms.py
 import numpy
 #from statistics import __checker
-import statistics
+from . import statistics
 import numpy.ma,cdms2,genutil
 def get(Array,Indices,axis=0):
     """
@@ -64,7 +64,7 @@ def get(Array,Indices,axis=0):
         C=numpy.ma.array(C,copy=0,mask=None)
     if not ax is None:
         C=cdms2.createVariable(C,axes=ax,id=id,copy=0)
-        for at in xatt.keys():
+        for at in list(xatt.keys()):
             setattr(C,at,xatt[at])
     return C
 
@@ -133,7 +133,7 @@ def set(Array,Indices,Values,axis=0):
             Array=numpy.ma.masked_where(m,Array,copy=0)
     if not ax is None:
         Array=cdms2.createVariable(C,axes=ax,id=id,copy=0)
-        for at in xatt.keys():
+        for at in list(xatt.keys()):
             setattr(C,at,xatt[at])
     return Array
 

@@ -14,7 +14,7 @@ setup (name = "genutil",
        url = "http://uvcdat.llnl.gov/software",
        packages = ['genutil','unidata'],
        package_dir = {'genutil': 'Lib', 'unidata':"unidata"},
-       include_dirs = [numpy.lib.utils.get_include()],
+       include_dirs = ['Include', numpy.lib.utils.get_include()],
        ext_modules = [
     Extension('genutil.array_indexing',
               ['Src/array_indexing.c',]

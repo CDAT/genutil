@@ -1,4 +1,4 @@
-import udunits_wrap
+from . import udunits_wrap
 import sys
 import genutil
 from collections import OrderedDict
@@ -28,8 +28,8 @@ def _readUnits():
             tmp = types.get(type, [])
             tmp.append(unit)
             types[type] = tmp
-    units = OrderedDict(sorted(units.iteritems()))
-    types = OrderedDict(sorted(types.iteritems()))
+    units = OrderedDict(sorted(units.items()))
+    types = OrderedDict(sorted(types.items()))
     return units, types
 
 
@@ -149,11 +149,11 @@ class udunits(object):
     dict['THERMODYNAMIC TEMPERATURE'] # returns['degree_Kelvin', 'degree_Celsius', ...]
 
     """
-    __slots__ = ['units', '_units', 'value', '_value']
+#    __slots__ = ['units', '_units', 'value', '_value']
 
     def __init__(self, value, units):
         if isinstance(value, str):
-            if isinstance(units, (int, long, float)):
+            if isinstance(units, (int, float)):
                 tmp = units
                 units = value
                 value = tmp
@@ -164,7 +164,7 @@ class udunits(object):
                 else:
                     units = value
 
-        if isinstance(units, (int, long, float)):
+        if isinstance(units, (int, float)):
             raise 'Error, must provide at least one args as string representing units'
 
         if genutil.udunits_init == 0:
@@ -190,7 +190,7 @@ class udunits(object):
         return s, i
 
     def available_units(self):
-        out = self.known_units().keys()
+        out = list(self.known_units().keys())
         return out
 
     def known_units(self, bytype=0):
@@ -230,7 +230,7 @@ class udunits(object):
     value = property(_getvalue, _setvalue)
 
     def __add__(self, other):
-        if not isinstance(other, (udunits, int, long, float)):
+        if not isinstance(other, (udunits, int, float)):
             raise "Error must add a number or a udunit object"
         out = udunits(self.units, self.value)
         if isinstance(other, udunits):
@@ -241,7 +241,7 @@ class udunits(object):
         return out
 
     def __radd__(self, other):
-        if not isinstance(other, (udunits, int, long, float)):
+        if not isinstance(other, (udunits, int, float)):
             raise "Error must add a number or a udunit object"
         out = udunits(self.units, self.value)
         if isinstance(other, udunits):
@@ -252,7 +252,7 @@ class udunits(object):
         return out
 
     def __sub__(self, other):
-        if not isinstance(other, (udunits, int, long, float)):
+        if not isinstance(other, (udunits, int, float)):
             raise "Error must sub a number or a udunit object"
         out = udunits(self.units, self.value)
         if isinstance(other, udunits):
@@ -263,7 +263,7 @@ class udunits(object):
         return out
 
     def __rsub__(self, other):
-        if not isinstance(other, (udunits, int, long, float)):
+        if not isinstance(other, (udunits, int, float)):
             raise "Error must sub a number or a udunit object"
         out = udunits(self.units, self.value)
         if isinstance(other, udunits):
@@ -274,7 +274,7 @@ class udunits(object):
         return out
 
     def __mul__(self, other):
-        if not isinstance(other, (udunits, int, long, float)):
+        if not isinstance(other, (udunits, int, float)):
             raise "Error must multiply a number or a udunit object"
         out = udunits(self.units + '*' + self.units, self.value)
         if isinstance(other, udunits):
@@ -290,7 +290,7 @@ class udunits(object):
         return out
 
     def __rmul__(self, other):
-        if not isinstance(other, (udunits, int, long, float)):
+        if not isinstance(other, (udunits, int, float)):
             raise "Error must multiply a number or a udunit object"
         out = udunits(self.units + '*' + self.units, self.value)
         if isinstance(other, udunits):
@@ -306,7 +306,7 @@ class udunits(object):
         return out
 
     def __div__(self, other):
-        if not isinstance(other, (udunits, int, long, float)):
+        if not isinstance(other, (udunits, int, float)):
             raise "Error must divide by a number or a udunit object"
         out = udunits(self.units, self.value)
         if isinstance(other, udunits):
@@ -322,7 +322,7 @@ class udunits(object):
         return out
 
     def __rdiv__(self, other):
-        if not isinstance(other, (udunits, int, long, float)):
+        if not isinstance(other, (udunits, int, float)):
             raise "Error must divide by a number or a udunit object"
         out = udunits(self.units, self.value)
         if isinstance(other, udunits):
@@ -339,7 +339,7 @@ class udunits(object):
         return out
 
     def __pow__(self, other):
-        if not isinstance(other, (int, long, float)):
+        if not isinstance(other, (int, float)):
             raise "Error must power to a number"
         out = udunits(self.value ** other, self.units + '**' + str(other))
         return out
