@@ -1,10 +1,11 @@
+from __future__ import print_function
 import genutil,sys,cdat_info
 import unittest
 
 class GENUTIL(unittest.TestCase):
     def testReadCol(self):
         ## Test reading of ascii file organized in columns
-        print 'Testing genutil.ASCII.read_col',cdat_info.get_sampledata_path()+'/test_col.asc'
+        print('Testing genutil.ASCII.read_col',cdat_info.get_sampledata_path()+'/test_col.asc')
         vars = genutil.ASCII.read_col(cdat_info.get_sampledata_path()+'/test_col.asc',header=4,cskip=1,idrow=True,axis=True)
         self.assertEqual(len(vars),3, 'genutil.ASCII: Error should have returned 3 variables, returned: %s\nCheck cskip option or axis=True option' % len(vars))
 
