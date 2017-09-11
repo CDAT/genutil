@@ -26,10 +26,12 @@ def minmax(*data) :
     global myfunction
     def myfunction(d,mx,mn):
         from numpy.ma import maximum,minimum,absolute,greater,count
+        if isinstance(d, (int, float)):
+            return maximum(d, mx), minimum(d, mn)
         try:
             if count(d)==0 : return mx,mn
-            mx=float(maximum(mx,float(maximum(d))))
-            mn=float(minimum(mn,float(minimum(d))))
+            mx=float(maximum(mx,float(maximum(d,axis=None)),axis=None))
+            mn=float(minimum(mn,float(minimum(d,axis=None)),axis=None))
         except:
             for i in d:
                 mx,mn=myfunction(i,mx,mn)
