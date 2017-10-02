@@ -202,7 +202,6 @@ def area_weights(ds, axisoptions=None):
         Lonaxisindex = list(dsorder).index('x')
         if __DEBUG__:
             print 'Lataxisindex = ', Lataxisindex, ' Lonaxisindex = ', Lonaxisindex
-        #wt = numpy.outer(__myGetAxisWeights(ds,Lataxisindex), __myGetAxisWeights(ds,Lonaxisindex))
         dsgr = ds.getGrid()
         latwts, lonwts = dsgr.getWeights()
         wt = numpy.outer(numpy.array(latwts), numpy.array(lonwts))
@@ -405,10 +404,6 @@ def __check_weightoptions(x, axisoptions, weightoptions):
                 #
                 # KRISHNA : check this for combinewts!!
                 #
-# if x.shape != weightoptions.shape:
-# raise AveragerError, \
-##                           'Error: Shape of weight array does not match shape of data array'
-# end of if x.shape != weightoptions.shape:
                 if __DEBUG__:
                     print '... definitely OK'
             except BaseException:
@@ -609,7 +604,6 @@ def _combine_weights(x, weightoptions):
             # end of if dim_wt in ['equal', 'weighted']:
             if __DEBUG__:
                 print 'At step ', i, dim_wt
-            #wt_init = numpy.outer(wt_init, dim_wt)
             newshape = list(wt_init.shape)
             newshape.insert(0, dim_wt.shape[0])
             wt_init = numpy.resize(wt_init, tuple(newshape))
@@ -635,15 +629,6 @@ def _combine_weights(x, weightoptions):
         #
         if __DEBUG__:
             print 'Are my weight and area_weights the same?', numpy.ma.allclose(weightoptions[0], area_weights(x))
-    elif MV2.isMaskedVariable(weightoptions):
-        if __DEBUG__:
-            print 'weightoptions is an MV2. Nothing to do?'
-    elif numpy.ma.isMaskedArray(V) and not MV2.isMaskedVariable(V):
-        if __DEBUG__:
-            print 'weightoptions is an MA. Nothing to do?'
-    else:
-        if __DEBUG__:
-            print 'weightoptions is something else. Nothing to do?'
     # end of if isinstance(weightoptions, types.ListType):
     #
     return weightoptions
@@ -1026,7 +1011,6 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
                 newaxorder.append(i)
             # if not i in newaxorder:
         # end of for i in range(len(numpy.ma.shape(V))):
-        #doloop = False
         if newaxorder != range(len(V.shape)):
             x = numpy.ma.transpose(V, newaxorder)
             if __DEBUG__:
@@ -1069,6 +1053,7 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
                     if __DEBUG__:
                         print weights[i].shape
                 # end of if not isinstance(weights[i] , types.StringType):
+                """
                 if i > len(weights) - 1:
                     if not retwts:
                         raise AveragerError('An unknown error occurred (retwts). Report this bug.')
@@ -1076,6 +1061,7 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
                         weights.append(retwts)
                     # end of if not retwts:
                 # end of if i > len(weights)-1:
+                """
                 try:
                     x, retwts = numpy.ma.average(x, weights=weights[i], returned=1, axis=0)
                 except BaseException:
@@ -1130,7 +1116,6 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
         return None
     # end of if numpy.ma.isMaskedArray(V):
     #
-    #******************************************************************************************
     #
     # Case 3: Masked Variable.
     #
@@ -1215,14 +1200,6 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
     # end of if combinewts == 1:
     #
     # Now decide if we need to average or sum
-    #
-    if __DEBUG__:
-        print 'type(weights) = ', type(weights)
-    try:
-        if __DEBUG__:
-            print 'Are they equal?', MV2.allclose(weights, area_weights(V, axisoptions))
-    except BaseException:
-        pass
     #
     if action == 'average':
         #

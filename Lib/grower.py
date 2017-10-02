@@ -72,19 +72,19 @@ def grower(x, y, singleton=0):
                 txt = txt + o
             else:
                 nyorder.append('(%s)' % txt)
-                if not '(%s)' % txt in forder:
+                if '(%s)' % txt not in forder:
                     forder.append('(%s)' % txt)
                 prev = 0
                 txt = ''
         else:
             nyorder.append(o)
-            if not o in forder:
+            if o not in forder:
                 forder.append(o)
     yorder = nyorder
     # Now grow x
     # print forder,xorder,yorder,nyorder
     for o in forder:
-        if not o in xorder:
+        if o not in xorder:
             for i in range(len(yorder)):
                 if yorder[i] == o:
                     newaxes = x.getAxisList()
@@ -115,7 +115,7 @@ def grower(x, y, singleton=0):
     # Now grow y
     # print forder,yorder
     for o in forder:
-        if not o in yorder:
+        if o not in yorder:
             for i in range(len(xorder)):
                 if o in ['(%s)' % xorder[i], xorder[i]]:
                     newaxes = y.getAxisList()

@@ -131,7 +131,6 @@ class StringConstructor:
         template = self.template
         for k in self.keys():
             sp = template.split("%%(%s)" % k)
-            n = len(sp)
             i1 = name.find(sp[0]) + len(sp[0])
             j1 = sp[1].find("%(")
             if j1 == -1:

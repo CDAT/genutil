@@ -152,8 +152,7 @@ class PickComponent(SelectorComponent):
                             bounds.append(ax.getBounds()[0])
                         else:
                             bounds = None
-                    except Exception as err:
-                        # print 'err:',err,'match:',self.match
+                    except BaseException:
                         if self.match == 1:
                             raise Exception(
                                 'Error axis value :' +

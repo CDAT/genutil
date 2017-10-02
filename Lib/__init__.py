@@ -2,26 +2,25 @@
 genutil -- General utility modules for scientific computing
 """
 # Lean mode does not install xmgrace module
-from grower import grower
+from grower import grower  # noqa
 try:
-    import xmgrace
+    import xmgrace  # noqa
 except BaseException:
     pass
-import statistics
-from minmax import minmax
-from statusbar import statusbar
-from selval import picker
-import filters
-#import salstat
-import arrayindexing
-import ASCII
-import udunits
-from Filler import Filler, StringConstructor
-from averager import averager, AveragerError, area_weights, getAxisWeight, getAxisWeightByName, __check_weightoptions
-import cdat_info
-from ASCII import get_parenthesis_content
-import os
-import sys
+import statistics  # noqa
+from minmax import minmax  # noqa
+from statusbar import statusbar  # noqa
+from selval import picker  # noqa
+import filters  # noqa
+import arrayindexing  # noqa
+import ASCII  # noqa
+import udunits  # noqa
+from Filler import Filler, StringConstructor  # noqa
+from averager import averager, AveragerError, area_weights, getAxisWeight, getAxisWeightByName, __check_weightoptions  # noqa
+import cdat_info  # noqa
+from ASCII import get_parenthesis_content  # noqa
+import os  # noqa
+import sys  # noqa
 
 # udunits bits
 from udunits import udunits, addBaseUnit, addDimensionlessUnit, addScaledUnit  # noqa

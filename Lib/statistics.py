@@ -2,7 +2,6 @@
 import MV2
 import numpy.ma
 import cdms2
-#import genutil
 from grower import grower
 import numpy
 import cdat_info
@@ -401,8 +400,9 @@ def __linearregression(y, x, error=None, probability=None, noslope=None, nointer
     """
     if (not (noslope is None or noslope == 0)) and (not (nointercept is None or nointercept == 0)):
         raise StatisticsError(
-            'Error in __linearregression, at least one of the following argument as to be None: noslope or nointercept, you are requesting nothing back !')
-    if (not probability is None) and (error is None):
+            'Error in __linearregression, at least one of the following argument as to be None:' +
+            'noslope or nointercept, you are requesting nothing back !')
+    if (probability is not None) and (error is None):
         raise StatisticsError(
             'Error in __linearregression, error must not be None if probability is defined, probability is:' +
             str(probability))
@@ -579,7 +579,7 @@ def __checker(x, y, w, axes, smally=0):
     if xismv * yismv * wismv != 1:
         # We didn't pass all MV2s shapes have to match (unless None)
         if smally == 0:
-            if x.shape != numpy.ma.shape(y) and not y is None:
+            if x.shape != numpy.ma.shape(y) and y is not None:
                 raise StatisticsError('Error x and y shape do not match !' +
                                       str(x.shape) + ',' + str(numpy.ma.shape(y)))
         else:
@@ -603,12 +603,14 @@ def __checker(x, y, w, axes, smally=0):
                     sh[myaxes[i]] = i
                     sh[i] = myaxes[i]
                 y = numpy.ma.transpose(y, sh)
-            if x.shape != numpy.ma.shape(y) and not y is None:
+            if x.shape != numpy.ma.shape(y) and y is not None:
                 raise StatisticsError('Error x and y shape do not match (y shouldbe 1D less than x) !' +
                                       str(x.shape) + ',' + str(shy2) + ' Remember y must be 1D less than x')
-        if x.shape != numpy.ma.shape(w) and not w is None:
-            raise StatisticsError('Error x and weights shape do not match !' + str(x.shape) + ',' + str(numpy.ma.shape(w)) +
-                                  ' ATTENTION if you are trynig to pass a list of 1D arrays for each dim, then x must be an MV2 !!!')
+        if x.shape != numpy.ma.shape(w) and w is not None:
+            raise StatisticsError('Error x and weights shape do not match !' +
+                                  str(x.shape) + ',' + str(numpy.ma.shape(w)) +
+                                  ' ATTENTION if you are trynig to pass a list of 1D arrays' +
+                                  'for each dim, then x must be an MV2 !!!')
         if not isinstance(axes, type([])):
             axes = cdms2.orderparse(str(axes))
         for i in axes:
@@ -625,7 +627,6 @@ def __checker(x, y, w, axes, smally=0):
         # Now grows w
         if w is not None:
             worder = w.getOrder(ids=1)
-            waxes = w.getAxisList()
             for o in worder:
                 if o not in xorder:
                     raise StatisticsError('Error weights have a dimension that is neither in x or y:' + o)
@@ -821,10 +822,7 @@ def variance(x, weights=None, axis=0, centered=1, biased=1, max_pct_missing=100.
 
 
 def checker(x, weights=None, axis=0, centered=1):
-    if cdms2.isVariable(x):
-        xatt = x.attributes
     x, dum, weights, axis, ax = __checker(x, None, weights, axis)
-
     return x, weights, axis, ax
 
 
@@ -1609,7 +1607,7 @@ def linearregression(y, axis=None, x=None, error=None, probability=None, nointer
                     setattr(
                         err[0],
                         'long_name',
-                        'standard error for regression coefficient '+
+                        'standard error for regression coefficient ' +
                         'adjusted with residual (using centered autocorrelation)')
                 elif error == 3:
                     setattr(
@@ -1623,7 +1621,8 @@ def linearregression(y, axis=None, x=None, error=None, probability=None, nointer
                     setattr(err[-1], 'long_name', 'standard error for regression constant')
                 elif error == 2:
                     setattr(
-                        err[-1], 'long_name', 'standard error for regression constant adjusted with residual (using centered autocorrelation)')
+                        err[-1], 'long_name', 'standard error for regression constant adjusted with residual ' +
+                        '(using centered autocorrelation)')
                 elif error == 3:
                     setattr(err[-1],
                             'long_name',
@@ -1659,7 +1658,8 @@ def linearregression(y, axis=None, x=None, error=None, probability=None, nointer
                     setattr(err[-1], 'long_name', 'standard error for regression constant')
                 elif error == 2:
                     setattr(
-                        err[-1], 'long_name', 'standard error for regression constant adjusted with residual (using centered autocorrelation)')
+                        err[-1], 'long_name', 'standard error for regression constant adjusted with residual ' +
+                        '(using centered autocorrelation)')
                 elif error == 3:
                     setattr(err[-1],
                             'long_name',
@@ -1671,18 +1671,18 @@ def linearregression(y, axis=None, x=None, error=None, probability=None, nointer
                 if error > 1:
                     pt1[0] = cdms2.createVariable(pt1[0], axes=axs, id='p-value', copy=0)
                     pt1[0].units = '-'
-                    pt1[0].long_name = 'p-value for regression coefficient t-value.'+\
+                    pt1[0].long_name = 'p-value for regression coefficient t-value.' +\
                         'Effective sample size adjustment for standard error (seb).'
                     pt2[0] = cdms2.createVariable(pt2[0], axes=axs, id='p-value', copy=0)
                     pt2[0].units = '-'
                     pt2[
-                        0].long_name = 'p-value for regression coefficient t-value. '+
+                        0].long_name = 'p-value for regression coefficient t-value. ' +\
                         'Effective sample size adjustment for standard error (seb) and critical t-value.'
                 else:
                     pt1[0] = cdms2.createVariable(pt1[0], axes=axs, id='p-value', copy=0)
                     pt1[0].units = '-'
-                    pt1[0].long_name = 'p-value for regression coefficient t-value. '+
-                    'No adjustment for standard error or critical t-value.'
+                    pt1[0].long_name = 'p-value for regression coefficient t-value. ' +\
+                        'No adjustment for standard error or critical t-value.'
                 pf1[0] = cdms2.createVariable(pf1[0], axes=axs, id='p-value', copy=0)
                 pf1[0].unit = '-'
                 pf1[0].long_name = 'p-value for regression coefficient F-value (one-tailed)'
@@ -1693,17 +1693,17 @@ def linearregression(y, axis=None, x=None, error=None, probability=None, nointer
                 if error > 1:
                     pt1[-1] = cdms2.createVariable(pt1[-1], axes=axs, id='p-value', copy=0)
                     pt1[-1].units = '-'
-                    pt1[-1].long_name = 'p-value for regression coefficient t-value. ' +
-                    'Effective sample size adjustment for standard error (seb).'
+                    pt1[-1].long_name = 'p-value for regression coefficient t-value. ' +\
+                        'Effective sample size adjustment for standard error (seb).'
                     pt2[-1] = cdms2.createVariable(pt2[-1], axes=axs, id='p-value', copy=0)
                     pt2[-1].units = '-'
-                    pt2[-1].long_name = 'p-value for regression coefficient t-value. '+
-                    'Effective sample size adjustment for standard error (seb) and critical t-value.'
+                    pt2[-1].long_name = 'p-value for regression coefficient t-value. ' +\
+                        'Effective sample size adjustment for standard error (seb) and critical t-value.'
                 else:
                     pt1[-1] = cdms2.createVariable(pt1[-1], axes=axs, id='p-value', copy=0)
                     pt1[-1].units = '-'
-                    pt1[-1].long_name = 'p-value for regression coefficient t-value. '+
-                    'No adjustment for standard error or critical t-value.'
+                    pt1[-1].long_name = 'p-value for regression coefficient t-value. ' +\
+                        'No adjustment for standard error or critical t-value.'
                 pf1[-1] = cdms2.createVariable(pf1[-1], axes=axs, id='p-value', copy=0)
                 pf1[-1].unit = '-'
                 pf1[-1].long_name = 'p-value for regression coefficient F-value (one-tailed)'
