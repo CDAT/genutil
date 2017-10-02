@@ -30,8 +30,8 @@ def minmax(*data) :
             return maximum(d, mx), minimum(d, mn)
         try:
             if count(d)==0 : return mx,mn
-            mx=float(maximum(mx,float(maximum(d,axis=None)),axis=None))
-            mn=float(minimum(mn,float(minimum(d,axis=None)),axis=None))
+            mx=float(maximum(mx,maximum.reduce(d,axis=None)))
+            mn=float(minimum(mn,minimum.reduce(d,axis=None)))
         except:
             for i in d:
                 mx,mn=myfunction(i,mx,mn)
