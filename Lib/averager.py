@@ -776,7 +776,6 @@ def average_engine(x, wts):
         return y, return_wts
     else:
         raise AveragerError('wts is an unknown type in average_engine')
-        return None
     # end of if MV2.isMaskedVariable(wts) or isinstance(wts, numpy.ndarray):
 
 
@@ -1053,15 +1052,13 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
                     if __DEBUG__:
                         print weights[i].shape
                 # end of if not isinstance(weights[i] , types.StringType):
-                """
                 if i > len(weights) - 1:
-                    if not retwts:
+                    if not retwts:  # noqa
                         raise AveragerError('An unknown error occurred (retwts). Report this bug.')
                     else:
-                        weights.append(retwts)
+                        weights.append(retwts)  # noqa
                     # end of if not retwts:
                 # end of if i > len(weights)-1:
-                """
                 try:
                     x, retwts = numpy.ma.average(x, weights=weights[i], returned=1, axis=0)
                 except BaseException:
@@ -1210,15 +1207,13 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
             if __DEBUG__:
                 print 'Averaging axis #', i
             #
-            """
             if i > len(filled_wtoptions) - 1:
-                if sumwts is None:
+                if sumwts is None:  # noqa # flake8 claims it does not exists
                     raise AveragerError('An unknown error occurred (sumwts). Report this bug.')
                 else:
-                    filled_wtoptions.append(sumwts)
+                    filled_wtoptions.append(sumwts)  # noqa # flake8 claims it does not exists
                 # end of if not sumwts:
             # end of if i > len(filled_wtoptions):
-            """
             V, sumwts = average_engine(V, filled_wtoptions[i])
             if __DEBUG__:
                 print 'Finished Averaging axis #', i
