@@ -29,7 +29,7 @@ def minmax(*data):
     global myfunction
 
     def myfunction(d, mx, mn):
-        from numpy.ma import maximum, minimum, absolute, greater, count
+        from numpy.ma import maximum, minimum, count
         try:
             if count(d) == 0:
                 return mx, mn

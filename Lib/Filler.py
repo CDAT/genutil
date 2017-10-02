@@ -54,7 +54,6 @@ class StringConstructor:
 # for k in kw.keys():
 # setattr(self,k,kw[k])
         # Now determine the keywords in the template:
-        end = 0
         s2 = template.split('%(')
         keys = []
         for k in s2:

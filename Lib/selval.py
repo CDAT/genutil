@@ -26,7 +26,7 @@ class PickComponent(SelectorComponent):
         self.args = args
         self.kargs = kargs
         self.match = kargs.get('match', 1)
-        if not self.match in [0, 1, -1]:
+        if self.match not in [0, 1, -1]:
             raise Exception('Error match must be 1 (strict matching), 0 (missing value) or -1 (skip inexistant values)')
 
     def __str__(self):
@@ -44,7 +44,6 @@ class PickComponent(SelectorComponent):
 
     def specify(self, slab, axes, specification, confined_by, aux):
         """ First part: confine the slab within a Domain wide enough to do the exact in post"""
-        import string
         import copy
         from numpy.ma import minimum, maximum
         # myconfined is for later, we can't confine a dimension twice with an argument plus a keyword or 2 keywords
@@ -59,7 +58,9 @@ class PickComponent(SelectorComponent):
                 self.aux[i] = specs = list(self.args[i])  # How do we want to confine this dim ?
                 if not (isinstance(specs, list) or isinstance(specs, tuple)):
                     raise Exception("Error in Selector, you must specify a list or a tuple, you passed:" + str(specs))
-                elif isinstance(specs[0], type(cdtime.comptime(1999))) or isinstance(specs[0], type(cdtime.reltime(0, 'days since 1999'))) or isinstance(specs[0], type('')):
+                elif isinstance(specs[0], type(cdtime.comptime(1999)))\
+                        or isinstance(specs[0], type(cdtime.reltime(0, 'days since 1999')))\
+                        or isinstance(specs[0], type('')):
                     list2 = []
                     for l in specs:
                         if not isinstance(l, type('')):
@@ -95,12 +96,12 @@ class PickComponent(SelectorComponent):
                     for i in range(len(axes)):
                         if axes[i].isLatitude():
                             axis = i
-                elif not kw in ['match']:  # keyword not a recognised keyword or dimension name
+                elif kw not in ['match']:  # keyword not a recognised keyword or dimension name
                     raise Exception('Error, keyword: ' + kw + ' not recognized')
             # At this point, if axis is None:
             # we are dealing with a keyword for the selector
             # so we'll skip it
-            if not axis is None:
+            if axis is not None:
                 if confined_by[axis] is None:
                     confined_by[axis] = self
                     myconfined[axis] = 1
@@ -173,10 +174,10 @@ class PickComponent(SelectorComponent):
                                 bounds.append([ax[-1] - 1., ax[-1] + 1])
                         else:
                             tmp = None
-                    if not tmp is None:
+                    if tmp is not None:
                         if a is None:
                             a = tmp
-                        elif not tmp is None:
+                        else:
                             a = MV2.concatenate((a, tmp), i)
                 if bounds is not None:
                     newax = cdms.createAxis(numpy.array(newaxvals), bounds=numpy.array(bounds), id=ax.id)

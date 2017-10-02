@@ -938,8 +938,8 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
     # Check the weight = option. This is done for backward compatibility since
     # weights= is the current default syntax.
     #
-    if not weight is None:
-        if not weights is None:
+    if weight is not None:
+        if weights is not None:
             raise AveragerError(
                 'Error: You cannot set both weight and weights!. weight is obsolete please use weights only !!!')
         else:
@@ -1022,7 +1022,7 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
             newaxorder.append(i)
         # end of for i in axis:
         for i in range(len(V.shape)):
-            if not i in newaxorder:
+            if i not in newaxorder:
                 newaxorder.append(i)
             # if not i in newaxorder:
         # end of for i in range(len(numpy.ma.shape(V))):
@@ -1031,17 +1031,6 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
             x = numpy.ma.transpose(V, newaxorder)
             if __DEBUG__:
                 print 'Reordered shape = ', x.shape
-            # osh=list(x.shape)
-            # na=len(axis)
-            # if n!=x.rank():
-            #    nsh=osh[:na] # the axes of operations....
-            #    n=1
-            #    for m in osh[na:]:
-            #        n*=m
-            #    nsh.append(n)
-            #    x = numpy.ma.reshape(x,nsh)
-            #    if n>35000000:
-            #        doloop=
         else:
             x = V
 
@@ -1244,6 +1233,7 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
             if __DEBUG__:
                 print 'Averaging axis #', i
             #
+            """
             if i > len(filled_wtoptions) - 1:
                 if sumwts is None:
                     raise AveragerError('An unknown error occurred (sumwts). Report this bug.')
@@ -1251,6 +1241,7 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
                     filled_wtoptions.append(sumwts)
                 # end of if not sumwts:
             # end of if i > len(filled_wtoptions):
+            """
             V, sumwts = average_engine(V, filled_wtoptions[i])
             if __DEBUG__:
                 print 'Finished Averaging axis #', i

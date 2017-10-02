@@ -61,7 +61,7 @@ def custom1D(x, filter, axis=0):
             setattr(out, k, xatt[k])
         for i in range(1, len(sh)):
             out.setAxis(i, newx.getAxis(i))
-        if not bnds is None:
+        if bnds is not None:
             bnds = numpy.ma.array(bnds)
         ax = cdms2.createAxis(ax, bounds=bnds)
         a = newx.getAxis(0)

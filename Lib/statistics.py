@@ -184,15 +184,10 @@ def _treat_missing(out, x, max_pct_missing=100.):
     # Max_pct_missing to missing data specified, calculate new mask
     # If fraction of data that is missing is more than the max_pct_missing allows mask point out
     """
-##     xmask=numpy.ma.less_equal((1. - max_pct_missing/100.),(numpy.ma.size(x,axis=0)-numpy.ma.count(x,axis=0))/float(numpy.ma.size(x,axis=0)))
-# print 'X:',x.shape,numpy.ma.size(x,axis=0),numpy.ma.count(x,axis=0)
     xmask = numpy.ma.less_equal((max_pct_missing / 100.), (numpy.ma.size(x, axis=0) -
                                                            numpy.ma.count(x, axis=0)) / float(numpy.ma.size(x, axis=0)))
     # numpy.ma.sum ignores missing_data, mask out results where amount of missing_data
     # is over the specified max_pct_missing
-##     inverse_mask=numpy.choose(numpy.ma.getmaskarray(out),(1.0,0,0)) * xmask
-# return numpy.ma.masked_where(numpy.choose(inverse_mask,(1.0,0.0)),out)
-# print 'TM:',xmask.shape,out.shape
     return numpy.ma.masked_where(xmask, out)
 
 
@@ -204,7 +199,7 @@ def __covariance(x, y, weights=None, centered=1, biased=1):
         Does the main computation for returning covariance. See documentation
         of covariance() for details.
     """
-    if not weights is None and biased != 1:
+    if weights is not None and biased != 1:
         raise StatisticsError('Error in covariance, you cannot have weights and unbiased together')
 
     if centered == 1:
@@ -219,8 +214,6 @@ def __covariance(x, y, weights=None, centered=1, biased=1):
         weights = numpy.ma.ones(x.shape, dtype=x.dtype.char)
     if not ((x.mask is None) or (x.mask is MV2.nomask)):
         weights = numpy.ma.masked_where(x.mask, weights)
-# if not ((y.mask is None) or (y.mask is MV2.nomask)) :
-# weights=numpy.ma.masked_where(y.mask,weights)
     if biased == 1:
         cov = numpy.ma.sum(x * y * weights, axis=0) / numpy.ma.sum(weights, axis=0)
     else:
@@ -413,7 +406,7 @@ def __linearregression(y, x, error=None, probability=None, noslope=None, nointer
         raise StatisticsError(
             'Error in __linearregression, error must not be None if probability is defined, probability is:' +
             str(probability))
-    if not error is None:
+    if error is not None:
         if error > 3:
             raise StatisticsError("Error in __linearregression, error must be None (0), 1, ,2 or 3")
     xmean = numpy.ma.average(x, axis=0)
@@ -567,9 +560,9 @@ def __checker(x, y, w, axes, smally=0):
     ax = None
     if not numpy.ma.isarray(x):
         x = numpy.ma.array(x, copy=0)
-    if not numpy.ma.isarray(y) and not y is None:
+    if not numpy.ma.isarray(y) and y is not None:
         y = numpy.ma.array(y, copy=0)
-    if not numpy.ma.isarray(w) and not w is None and not isinstance(w, type('')):
+    if not numpy.ma.isarray(w) and w is not None and not isinstance(w, type('')):
         if not isinstance(w[0], type('')):
             w = numpy.ma.array(w, copy=0)
         else:
@@ -577,7 +570,7 @@ def __checker(x, y, w, axes, smally=0):
                 raise StatisticsError('Error if weights are a list then x must be an MV2 !!!')
             w = __makeweights(x, w, axes)
             wismv = 1
-    elif not w is None:
+    elif w is not None:
         if not xismv:
             raise StatisticsError('Error if weights are a list then x must be an MV2 !!!')
         w = __makeweights(x, w, axes)
@@ -623,18 +616,18 @@ def __checker(x, y, w, axes, smally=0):
                 raise StatisticsError('Error you have ' + str(len(x.shape)) +
                                       ' dimensions and try to work on dim:' + str(i))
     else:
-        if not y is None:
+        if y is not None:
             x, y = grower(x, y)
             if x.shape != y.shape:
                 raise StatisticsError('Error x and y have different shapes' + str(x.shape) + ', ' + str(y.shape))
         ax = x.getAxisList()
         xorder = x.getOrder(ids=1)
         # Now grows w
-        if not w is None:
+        if w is not None:
             worder = w.getOrder(ids=1)
             waxes = w.getAxisList()
             for o in worder:
-                if not o in xorder:
+                if o not in xorder:
                     raise StatisticsError('Error weights have a dimension that is neither in x or y:' + o)
             x, w = grower(x, w)
             if x.shape != w.shape:
@@ -671,32 +664,32 @@ def __checker(x, y, w, axes, smally=0):
     fsh = [n0]
     ax2 = []
     for i in range(len(x.shape)):
-        if not i in forder:
+        if i not in forder:
             forder.append(i)
             fsh.append(xsh[i])
-            if not ax is None:
+            if ax is not None:
                 ax2.append(ax[i])
-    if not ax is None:
+    if ax is not None:
         ax = ax2
     x = numpy.ma.transpose(x, forder)
     x = numpy.ma.resize(x, fsh)
-    if not y is None:
+    if y is not None:
         y = numpy.ma.transpose(y, forder)
         y = numpy.ma.resize(y, fsh)
-    if not w is None:
+    if w is not None:
         w = numpy.ma.transpose(w, forder)
         w = numpy.ma.resize(w, fsh)
     # Now mask everything correctly (union of masks)
-    if not y is None:
+    if y is not None:
         m = y.mask
-        if not m is numpy.ma.nomask:
+        if m is not numpy.ma.nomask:
             x = numpy.ma.masked_where(m, x)
         m = x.mask
-        if not m is numpy.ma.nomask:
+        if m is not numpy.ma.nomask:
             y = numpy.ma.masked_where(m, y)
-    if not w is None:
+    if w is not None:
         m = x.mask
-        if not m is numpy.ma.nomask:
+        if m is not numpy.ma.nomask:
             w = numpy.ma.masked_where(m, w)
 
     # IF y has to be 1D less than x, then it is shrunk back
@@ -760,7 +753,7 @@ def covariance(x, y, weights=None, axis=0, centered=1, biased=1, max_pct_missing
 
     cov = __covariance(x, y, weights=weights, centered=centered, biased=biased)
     cov = _treat_missing(cov, x, max_pct_missing=max_pct_missing)
-    if not ax is None:
+    if ax is not None:
         cov = cdms2.createVariable(cov, axes=ax, id='covariance', copy=0)
         if 'units' in xatt.keys() and 'units' in yatt.keys():
             cov.units = xatt['units'] + '*' + yatt['units']
@@ -820,7 +813,7 @@ def variance(x, weights=None, axis=0, centered=1, biased=1, max_pct_missing=100.
 
     var = __variance(x, weights=weights, centered=centered, biased=biased)
     var = _treat_missing(var, x, max_pct_missing=max_pct_missing)
-    if not ax is None:
+    if ax is not None:
         var = cdms2.createVariable(var, axes=ax, id='variance', copy=0)
         if 'units' in xatt.keys():
             var.units = xatt['units'] + '*' + xatt['units']
@@ -887,7 +880,7 @@ def std(x, weights=None, axis=0, centered=1, biased=1, max_pct_missing=100.):
     x, dum, weights, axis, ax = __checker(x, None, weights, axis)
     std = __std(x, weights=weights, centered=centered, biased=biased)
     std = _treat_missing(std, x, max_pct_missing=max_pct_missing)
-    if not ax is None:
+    if ax is not None:
         std = cdms2.createVariable(std, axes=ax, id='standard_deviation', copy=0)
         if 'units' in xatt.keys():
             std.units = xatt['units']
@@ -948,7 +941,7 @@ def correlation(x, y, weights=None, axis=0, centered=1, biased=1, max_pct_missin
 
     cor = __correlation(x, y, weights=weights, centered=centered, biased=biased)
     cor = _treat_missing(cor, x, max_pct_missing=max_pct_missing)
-    if not ax is None:
+    if ax is not None:
         cor = cdms2.createVariable(cor, axes=ax, id='correlation', copy=0)
         cor.units = '-'
     return cor
@@ -1009,7 +1002,7 @@ def rms(x, y, weights=None, axis=0, centered=0, biased=1, max_pct_missing=100.):
     x, y, weights, axis, ax = __checker(x, y, weights, axis)
     rmsans = __rms(x, y, weights=weights, centered=centered, biased=biased)
     rmsans = _treat_missing(rmsans, x, max_pct_missing=max_pct_missing)
-    if not ax is None:
+    if ax is not None:
         rmsans = cdms2.createVariable(rmsans, axes=ax, id='RMS_difference', copy=0)
         if 'units' in xatt.keys():
             rms.units = xatt['units']
@@ -1098,7 +1091,7 @@ def laggedcovariance(x, y, lag=None, axis=0, centered=1, partial=1, noloop=0, ma
             lcovs = numpy.ma.concatenate((lcovs, lcov), 0)
 
     # lcovs=_treat_missing(lcovs,x,max_pct_missing=max_pct_missing)
-    if not ax is None:
+    if ax is not None:
         newax = cdms2.createAxis(lags)
         newax.id = 'lag'
         ax.insert(0, newax)
@@ -1185,7 +1178,7 @@ def laggedcorrelation(x, y, lag=None, axis=0, centered=1, partial=1, biased=1, n
             lcors = lcor
         else:
             lcors = numpy.ma.concatenate((lcors, lcor), 0)
-    if not ax is None:
+    if ax is not None:
         newax = cdms2.createAxis(lags)
         newax.id = 'lag'
         ax.insert(0, newax)
@@ -1269,7 +1262,7 @@ def autocovariance(x, lag=None, axis=0, centered=1, partial=1, noloop=0, max_pct
             acovs = acov
         else:
             acovs = numpy.ma.concatenate((acovs, acov), 0)
-    if not ax is None:
+    if ax is not None:
         newax = cdms2.createAxis(lags)
         newax.id = 'lag'
         ax.insert(0, newax)
@@ -1351,7 +1344,7 @@ def autocorrelation(x, lag=None, axis=0, centered=1, partial=1, biased=1, noloop
             acovs = acov
         else:
             acovs = numpy.ma.concatenate((acovs, acov), 0)
-    if not ax is None:
+    if ax is not None:
         newax = cdms2.createAxis(lags)
         newax.id = 'lag'
         ax.insert(0, newax)
@@ -1407,7 +1400,7 @@ def meanabsdiff(x, y, weights=None, axis=0, centered=1, max_pct_missing=100.):
     x, y, weights, axis, ax = __checker(x, y, weights, axis)
     mad = __meanabsdiff(x, y, weights=weights, centered=centered)
     mad = _treat_missing(mad, x, max_pct_missing=max_pct_missing)
-    if not ax is None:
+    if ax is not None:
         mad = cdms2.createVariable(mad, axes=ax, id='mean_absolute_difference', copy=0)
         if 'units' in xatt.keys():
             mad.units = xatt['units']
@@ -1555,11 +1548,11 @@ def linearregression(y, axis=None, x=None, error=None, probability=None, nointer
     yisV = cdms2.isVariable(y)
     if yisV:
         yatt = y.attributes
-    if not axis is None and not x is None:
+    if axis is not None and x is not None:
         raise StatisticsError('Error you cannot pass an indepedent variable and an axis')
     if x is None and axis is None:
         axis = 0
-    if not axis is None:
+    if axis is not None:
         if not isinstance(axis, type([])):
             ax = cdms2.orderparse(str(axis))
         if len(ax) > 1:
@@ -1616,7 +1609,8 @@ def linearregression(y, axis=None, x=None, error=None, probability=None, nointer
                     setattr(
                         err[0],
                         'long_name',
-                        'standard error for regression coefficient adjusted with residual (using centered autocorrelation)')
+                        'standard error for regression coefficient '+
+                        'adjusted with residual (using centered autocorrelation)')
                 elif error == 3:
                     setattr(
                         err[0],
@@ -1651,7 +1645,8 @@ def linearregression(y, axis=None, x=None, error=None, probability=None, nointer
                     setattr(
                         err[0],
                         'long_name',
-                        'standard error for regression coefficient adjusted with residual (using centered autocorrelation)')
+                        'standard error for regression coefficient adjusted with residual' +
+                        '(using centered autocorrelation)')
                 elif error == 3:
                     setattr(
                         err[0],
@@ -1676,16 +1671,18 @@ def linearregression(y, axis=None, x=None, error=None, probability=None, nointer
                 if error > 1:
                     pt1[0] = cdms2.createVariable(pt1[0], axes=axs, id='p-value', copy=0)
                     pt1[0].units = '-'
-                    pt1[
-                        0].long_name = 'p-value for regression coefficient t-value. Effective sample size adjustment for standard error (seb).'
+                    pt1[0].long_name = 'p-value for regression coefficient t-value.'+\
+                        'Effective sample size adjustment for standard error (seb).'
                     pt2[0] = cdms2.createVariable(pt2[0], axes=axs, id='p-value', copy=0)
                     pt2[0].units = '-'
                     pt2[
-                        0].long_name = 'p-value for regression coefficient t-value. Effective sample size adjustment for standard error (seb) and critical t-value.'
+                        0].long_name = 'p-value for regression coefficient t-value. '+
+                        'Effective sample size adjustment for standard error (seb) and critical t-value.'
                 else:
                     pt1[0] = cdms2.createVariable(pt1[0], axes=axs, id='p-value', copy=0)
                     pt1[0].units = '-'
-                    pt1[0].long_name = 'p-value for regression coefficient t-value. No adjustment for standard error or critical t-value.'
+                    pt1[0].long_name = 'p-value for regression coefficient t-value. '+
+                    'No adjustment for standard error or critical t-value.'
                 pf1[0] = cdms2.createVariable(pf1[0], axes=axs, id='p-value', copy=0)
                 pf1[0].unit = '-'
                 pf1[0].long_name = 'p-value for regression coefficient F-value (one-tailed)'
@@ -1696,14 +1693,17 @@ def linearregression(y, axis=None, x=None, error=None, probability=None, nointer
                 if error > 1:
                     pt1[-1] = cdms2.createVariable(pt1[-1], axes=axs, id='p-value', copy=0)
                     pt1[-1].units = '-'
-                    pt1[-1].long_name = 'p-value for regression coefficient t-value. Effective sample size adjustment for standard error (seb).'
+                    pt1[-1].long_name = 'p-value for regression coefficient t-value. ' +
+                    'Effective sample size adjustment for standard error (seb).'
                     pt2[-1] = cdms2.createVariable(pt2[-1], axes=axs, id='p-value', copy=0)
                     pt2[-1].units = '-'
-                    pt2[-1].long_name = 'p-value for regression coefficient t-value. Effective sample size adjustment for standard error (seb) and critical t-value.'
+                    pt2[-1].long_name = 'p-value for regression coefficient t-value. '+
+                    'Effective sample size adjustment for standard error (seb) and critical t-value.'
                 else:
                     pt1[-1] = cdms2.createVariable(pt1[-1], axes=axs, id='p-value', copy=0)
                     pt1[-1].units = '-'
-                    pt1[-1].long_name = 'p-value for regression coefficient t-value. No adjustment for standard error or critical t-value.'
+                    pt1[-1].long_name = 'p-value for regression coefficient t-value. '+
+                    'No adjustment for standard error or critical t-value.'
                 pf1[-1] = cdms2.createVariable(pf1[-1], axes=axs, id='p-value', copy=0)
                 pf1[-1].unit = '-'
                 pf1[-1].long_name = 'p-value for regression coefficient F-value (one-tailed)'
@@ -1750,7 +1750,7 @@ def geometricmean(x, axis=0, max_pct_missing=100.):
     x, dum, weights, axis, ax = __checker(x, None, None, axis)
     gmean = __geometricmean(x)
     gmean = _treat_missing(gmean, x, max_pct_missing=max_pct_missing)
-    if not ax is None:
+    if ax is not None:
         gmean = cdms2.createVariable(gmean, axes=ax, id='geometric_mean', copy=0)
         if 'units' in xatt.keys():
             gmean.units = xatt['units']
@@ -1841,7 +1841,7 @@ def percentiles(x, percentiles=[50.], axis=0):
         xatt = x.attributes
     x, dum, weights, axis, ax = __checker(x, None, None, axis)
     p = _percentiles(x, percentiles)
-    if not ax is None and ax != []:
+    if ax is not None and ax != []:
         pax = cdms2.createAxis(percentiles)
         pax.id = 'percentiles'
         pax.units = '%'
@@ -1931,7 +1931,7 @@ def rank(x, axis=0):
     # Make sure b and a0 are of the right type
     b = array_indexing.rank(b, a0)
     m = x.mask
-    if not m is numpy.ma.nomask:
+    if m is not numpy.ma.nomask:
         b = MV2.masked_where(m, b)
     else:
         b = MV2.array(b)
@@ -1942,7 +1942,7 @@ def rank(x, axis=0):
 
 # print 'Axis:',axis
     # Now reorders everything
-    if not ax is None:
+    if ax is not None:
         # First set the unchanged axes
         sh = []
         for i in range(len(ax)):
