@@ -281,7 +281,7 @@ class udunits(object):
             try:
                 s, i = udunits_wrap.convert(other.units, self.units)
                 out.value = self.value * (other.value * s + i)
-            except:  # Ok uncompatible units, just do the produce
+            except BaseException:  # Ok uncompatible units, just do the produce
                 out = udunits(
                     self.units + '*' + other.units,
                     self.value * other.value)
@@ -297,7 +297,7 @@ class udunits(object):
             try:
                 s, i = udunits_wrap.convert(other.units, self.units)
                 out.value = self.value * (other.value * s + i)
-            except:  # Ok uncompatible units, just do the produce
+            except BaseException:  # Ok uncompatible units, just do the produce
                 out = udunits(
                     self.units + '*' + other.units,
                     self.value * other.value)
@@ -313,7 +313,7 @@ class udunits(object):
             try:
                 s, i = udunits_wrap.convert(other.units, self.units)
                 out = self.value / (other.value * s + i)
-            except:  # Ok uncompatible units, just do the produce
+            except BaseException:  # Ok uncompatible units, just do the produce
                 out = udunits(
                     self.value / other.value,
                     self.units + '/' + other.units)
@@ -329,7 +329,7 @@ class udunits(object):
             try:
                 s, i = udunits_wrap.convert(other.units, self.units)
                 out = (other.value * s + i) / self.value
-            except:  # Ok uncompatible units, just do the produce
+            except BaseException:  # Ok uncompatible units, just do the produce
                 out = udunits(
                     other.value / self.value,
                     other.units + '/' + self.units)
