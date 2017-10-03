@@ -30,12 +30,14 @@ def minmax(*data):
 
     def myfunction(d, mx, mn):
         from numpy.ma import maximum, minimum, count
+        if isinstance(d, (int, float)):
+            return maximum(d, mx), minimum(d, mn)
         try:
             if count(d) == 0:
                 return mx, mn
-            mx = float(maximum(mx, float(maximum(d))))
-            mn = float(minimum(mn, float(minimum(d))))
-        except BaseException:
+            mx = float(maximum(mx, maximum.reduce(d, axis=None)))
+            mn = float(minimum(mn, minimum.reduce(d, axis=None)))
+        except:
             for i in d:
                 mx, mn = myfunction(i, mx, mn)
         return mx, mn
