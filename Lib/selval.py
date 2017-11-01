@@ -27,7 +27,8 @@ class PickComponent(SelectorComponent):
         self.kargs = kargs
         self.match = kargs.get('match', 1)
         if self.match not in [0, 1, -1]:
-            raise Exception('Error match must be 1 (strict matching), 0 (missing value) or -1 (skip inexistant values)')
+            raise Exception(
+                'Error match must be 1 (strict matching), 0 (missing value) or -1 (skip inexistant values)')
 
     def __str__(self):
         s = 'Specific non contiguous values Selector\n'
@@ -46,7 +47,8 @@ class PickComponent(SelectorComponent):
         """ First part: confine the slab within a Domain wide enough to do the exact in post"""
         import copy
         from numpy.ma import minimum, maximum
-        # myconfined is for later, we can't confine a dimension twice with an argument plus a keyword or 2 keywords
+        # myconfined is for later, we can't confine a dimension twice with an
+        # argument plus a keyword or 2 keywords
         myconfined = [None] * len(axes)
         self.aux = copy.copy(specification)
         # First look at the arguments (i.e not keywords) and confine the dimensions
@@ -54,10 +56,14 @@ class PickComponent(SelectorComponent):
         for i in range(len(self.args)):
             if confined_by[i] is None:  # Check it hasn't been confined by somebody else
                 myconfined[i] = 1  # dim confined by argument list
-                confined_by[i] = self  # for cdms I want to confine this dimension
-                self.aux[i] = specs = list(self.args[i])  # How do we want to confine this dim ?
+                # for cdms I want to confine this dimension
+                confined_by[i] = self
+                # How do we want to confine this dim ?
+                self.aux[i] = specs = list(self.args[i])
                 if not (isinstance(specs, list) or isinstance(specs, tuple)):
-                    raise Exception("Error in Selector, you must specify a list or a tuple, you passed:" + str(specs))
+                    raise Exception(
+                        "Error in Selector, you must specify a list or a tuple, you passed:" +
+                        str(specs))
                 elif isinstance(specs[0], type(cdtime.comptime(1999)))\
                         or isinstance(specs[0], type(cdtime.reltime(0, 'days since 1999')))\
                         or isinstance(specs[0], type('')):
@@ -66,12 +72,17 @@ class PickComponent(SelectorComponent):
                         if not isinstance(l, type('')):
                             list2.append(l.torel('days since 1900').value)
                         else:
-                            list2.append(cdtime.s2r(l, 'days since 1900').value)
+                            list2.append(
+                                cdtime.s2r(
+                                    l, 'days since 1900').value)
                     min = minimum(list2)
                     max = maximum(list2)
-                    specification[i] = cdtime.reltime(min, 'days since 1900'), cdtime.reltime(max, 'days since 1900')
+                    specification[i] = cdtime.reltime(
+                        min, 'days since 1900'), cdtime.reltime(
+                        max, 'days since 1900')
                 else:  # But if it's not...
-                    specification[i] = minimum(specs), maximum(specs)  # sets the specifications
+                    specification[i] = minimum(specs), maximum(
+                        specs)  # sets the specifications
             else:
                 return 1
         for kw in list(self.kargs.keys()):
@@ -96,8 +107,10 @@ class PickComponent(SelectorComponent):
                     for i in range(len(axes)):
                         if axes[i].isLatitude():
                             axis = i
-                elif kw not in ['match']:  # keyword not a recognised keyword or dimension name
-                    raise Exception('Error, keyword: ' + kw + ' not recognized')
+                # keyword not a recognised keyword or dimension name
+                elif kw not in ['match']:
+                    raise Exception(
+                        'Error, keyword: ' + kw + ' not recognized')
             # At this point, if axis is None:
             # we are dealing with a keyword for the selector
             # so we'll skip it
@@ -113,7 +126,9 @@ class PickComponent(SelectorComponent):
                             if not isinstance(l, type('')):
                                 list2.append(l.torel('days since 1900').value)
                             else:
-                                list2.append(cdtime.s2r(l, 'days since 1900').value)
+                                list2.append(
+                                    cdtime.s2r(
+                                        l, 'days since 1900').value)
                         min = minimum(list2)
                         max = maximum(list2)
                         specification[axis] = cdtime.reltime(
@@ -124,12 +139,14 @@ class PickComponent(SelectorComponent):
 
                 else:
                     if myconfined[axis] == 1:
-                        raise 'Error you are attempting to set the axis: ' + str(axes[axis].id) + ' more than once'
+                        raise 'Error you are attempting to set the axis: ' + \
+                            str(axes[axis].id) + ' more than once'
                     else:
                         return 1
         return 0
 
-    def post(self, fetched, slab, axes, specifications, confined_by, aux, axismap):
+    def post(self, fetched, slab, axes, specifications,
+             confined_by, aux, axismap):
         """ Post processing retouches the bounds and later will deal with the mask"""
         import cdms2 as cdms
         fetched = cdms.createVariable(fetched, copy=1)
@@ -164,9 +181,11 @@ class PickComponent(SelectorComponent):
                             if isinstance(l, type(cdtime.comptime(1999))) or isinstance(
                                     l, type(cdtime.reltime(0, 'days since 1999'))) or isinstance(l, type('')):
                                 if not isinstance(l, type('')):
-                                    newaxvals.append(l.torel(faxes[i].units).value)
+                                    newaxvals.append(
+                                        l.torel(faxes[i].units).value)
                                 else:
-                                    newaxvals.append(cdtime.s2r(l, faxes[i].units).value)
+                                    newaxvals.append(cdtime.s2r(
+                                        l, faxes[i].units).value)
                             else:
                                 newaxvals.append(l)
                             if bounds is not None:
@@ -179,7 +198,8 @@ class PickComponent(SelectorComponent):
                         else:
                             a = MV2.concatenate((a, tmp), i)
                 if bounds is not None:
-                    newax = cdms.createAxis(numpy.array(newaxvals), bounds=numpy.array(bounds), id=ax.id)
+                    newax = cdms.createAxis(
+                        numpy.array(newaxvals), bounds=numpy.array(bounds), id=ax.id)
                 else:
                     newax = cdms.createAxis(numpy.array(newaxvals), id=ax.id)
                 for att in list(faxes[i].attributes.keys()):

@@ -125,6 +125,7 @@ def run_nose(test_name):
     if args.coverage:
         opts += ["--with-coverage"]
     command = ["nosetests", ] + opts + ["-s", test_name]
+    print("Command:",command)
     start = time.time()
     P, out = run_command(command)
     end = time.time()

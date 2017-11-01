@@ -267,3 +267,5 @@ class GENUTIL(unittest.TestCase):
         self.assertTrue( numpy.ma.allclose(clt_sum, clt3))
         print("ALL RAN!")
         f.close()
+if __name__=="__main__":
+    GENUTIL().testAverager()

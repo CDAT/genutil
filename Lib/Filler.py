@@ -40,7 +40,8 @@ class StringConstructor:
         """
         cdat_info.pingPCMDIdb("cdat", "genutil.StringConstructor")
         self.template = template
-        # ok we need to generate the keys and set them to empty it seems like a better idea
+        # ok we need to generate the keys and set them to empty it seems like a
+        # better idea
         keys = list(self.keys())
         for k in keys:
             setattr(self, k, "")
@@ -96,7 +97,14 @@ class StringConstructor:
         keys = list(self.keys())
         # Now replace the keywords with their values
         for k in keys:
-            template = template.replace('%(' + k + ')', kw.get(k, getattr(self, k, '')))
+            template = template.replace(
+                '%(' + k + ')',
+                kw.get(
+                    k,
+                    getattr(
+                        self,
+                        k,
+                        '')))
 # cmd='template=string.replace(template,\'%('+k+')\',self.'+k+')'
 # exec(cmd)
         return template

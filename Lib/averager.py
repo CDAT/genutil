@@ -3,8 +3,6 @@
 import numpy
 import numpy.ma
 import cdms2
-import types
-import string
 import MV2
 import cdat_info
 
@@ -31,12 +29,14 @@ def _check_axisoptions(x, axisoptions):
     """
     axlist = cdms2.orderparse(axisoptions)
     if Ellipsis in axlist:
-        raise AveragerError('Error: Ellipsis (...) not allowed in axis options')
+        raise AveragerError(
+            'Error: Ellipsis (...) not allowed in axis options')
     try:
         cdms2.order2index(x.getAxisList(), axisoptions)
         return axlist
     except BaseException:
-        raise AveragerError('Error: You have specified an invalid axis= option.')
+        raise AveragerError(
+            'Error: You have specified an invalid axis= option.')
 
 
 def __myGetAxisWeights(x, i, axisoptions=None):
@@ -47,12 +47,24 @@ def __myGetAxisWeights(x, i, axisoptions=None):
     """
     if x.getAxis(i).isLatitude():
         Lataxis = x.getAxis(i)
-        xgr = cdms2.createGenericGrid(Lataxis[:], numpy.array(list(range(1)), numpy.float), latBounds=Lataxis.getBounds())
+        xgr = cdms2.createGenericGrid(
+            Lataxis[:],
+            numpy.array(
+                list(
+                    range(1)),
+                numpy.float),
+            latBounds=Lataxis.getBounds())
         xlatwt, xlonwt = xgr.getWeights()
         return xlatwt
     elif x.getAxis(i).isLongitude():
         Lonaxis = x.getAxis(i)
-        xgr = cdms2.createGenericGrid(numpy.array(list(range(1)), numpy.float), Lonaxis[:], lonBounds=Lonaxis.getBounds())
+        xgr = cdms2.createGenericGrid(
+            numpy.array(
+                list(
+                    range(1)),
+                numpy.float),
+            Lonaxis[:],
+            lonBounds=Lonaxis.getBounds())
         xlatwt, xlonwt = xgr.getWeights()
         return xlonwt
     else:
@@ -63,11 +75,13 @@ def __myGetAxisWeights(x, i, axisoptions=None):
                 axo = cdms2.orderparse(axisoptions)
                 if (i in axo) or (ax.isTime() and 't' in axo) or (
                         ax.isLevel() and 'z' in axo) or ('(' + ax.id + ')' in axo):
-                    raise AveragerError('Bounds not available to compute weights on dimension: ' + ax.id)
+                    raise AveragerError(
+                        'Bounds not available to compute weights on dimension: ' + ax.id)
                 else:
                     axis_wts = numpy.ones(x.getAxis(i)[:].shape)
             else:
-                raise AveragerError('Bounds not available to compute weights for dimension: ' + ax.id)
+                raise AveragerError(
+                    'Bounds not available to compute weights for dimension: ' + ax.id)
         else:
             axis_wts = abs(axis_bounds[..., 1] - axis_bounds[..., 0])
         return axis_wts
@@ -108,12 +122,24 @@ def __myGetAxisWeightsByName(x, name):
     """
     if x.getAxisList(axes=name)[0].isLatitude():
         Lataxis = x.getAxisList(axes=name)[0]
-        xgr = cdms2.createGenericGrid(Lataxis[:], numpy.array(list(range(1)), numpy.float), latBounds=Lataxis.getBounds())
+        xgr = cdms2.createGenericGrid(
+            Lataxis[:],
+            numpy.array(
+                list(
+                    range(1)),
+                numpy.float),
+            latBounds=Lataxis.getBounds())
         xlatwt, xlonwt = xgr.getWeights()
         return xlatwt
     elif x.getAxisList(axes=name)[0].isLongitude():
         Lonaxis = x.getAxisList(axes=name)[0]
-        xgr = cdms2.createGenericGrid(numpy.array(list(range(1)), numpy.float), Lonaxis[:], lonBounds=Lonaxis.getBounds())
+        xgr = cdms2.createGenericGrid(
+            numpy.array(
+                list(
+                    range(1)),
+                numpy.float),
+            Lonaxis[:],
+            lonBounds=Lonaxis.getBounds())
         xlatwt, xlonwt = xgr.getWeights()
         return xlonwt
     else:
@@ -190,7 +216,7 @@ def area_weights(ds, axisoptions=None):
             loc = initial_order_list.index('-')
             axisid = '(' + ds.getAxis(loc).id + ')'
             initial_order_list[loc] = axisid
-            initial_order = string.joinfields(initial_order_list, '')
+            initial_order = "".join(initial_order_list, '')
             if __DEBUG__:
                 print('Changed initial_order = ', initial_order)
         # end of if '-' in initial_order_list:
@@ -201,7 +227,11 @@ def area_weights(ds, axisoptions=None):
         Lataxisindex = list(dsorder).index('y')
         Lonaxisindex = list(dsorder).index('x')
         if __DEBUG__:
-            print('Lataxisindex = ', Lataxisindex, ' Lonaxisindex = ', Lonaxisindex)
+            print(
+                'Lataxisindex = ',
+                Lataxisindex,
+                ' Lonaxisindex = ',
+                Lonaxisindex)
         dsgr = ds.getGrid()
         latwts, lonwts = dsgr.getWeights()
         wt = numpy.outer(numpy.array(latwts), numpy.array(lonwts))
@@ -223,7 +253,11 @@ def area_weights(ds, axisoptions=None):
                 new_wtshape = tuple(wtlist)
                 wt = numpy.resize(wt, new_wtshape)
                 if __DEBUG__:
-                    print('After inserting dimension ', i, ' shape of wt = ', wt.shape)
+                    print(
+                        'After inserting dimension ',
+                        i,
+                        ' shape of wt = ',
+                        wt.shape)
                 new_newaxiswt_shape = list(newaxiswt.shape)
                 for nn in range(1, len(wt.shape), 1):
                     new_newaxiswt_shape.append(1)
@@ -231,7 +265,11 @@ def area_weights(ds, axisoptions=None):
                 wt = wt * newaxiswt
             # end of if (i != Lataxisindex) and (i != Lonaxisindex):
         # end of for i in range(len(s)):
-        wt = cdms2.createVariable(numpy.ma.masked_array(wt, numpy.ma.getmask(ds)), axes=ds.getAxisList())
+        wt = cdms2.createVariable(
+            numpy.ma.masked_array(
+                wt,
+                numpy.ma.getmask(ds)),
+            axes=ds.getAxisList())
         result = wt(order=initial_order)
         if __DEBUG__:
             print('Returning something of order', result.getOrder())
@@ -255,7 +293,8 @@ def area_weights(ds, axisoptions=None):
         # end of for i in range(2, len(ds.shape)):
         if __DEBUG__:
             print('Final Shape of Weight = ', wt.shape)
-        return cdms2.createVariable(numpy.ma.masked_array(wt, numpy.ma.getmask(ds)), axes=ds.getAxisList())
+        return cdms2.createVariable(numpy.ma.masked_array(
+            wt, numpy.ma.getmask(ds)), axes=ds.getAxisList())
     # end of if seenlat and seenlon:
 
 
@@ -268,8 +307,8 @@ def __check_each_weight_option(x, ax, index, wtopt):
     __DEBUG__ = 0
     #
     if __DEBUG__:
-        print('Inside __check_each_weight_option, index = ', \
-            index, 'axis = ', ax, ' wtopt = ', wtopt)
+        print('Inside __check_each_weight_option, index = ',
+              index, 'axis = ', ax, ' wtopt = ', wtopt)
     #
     # Check the types etc.....
     #
@@ -282,17 +321,25 @@ def __check_each_weight_option(x, ax, index, wtopt):
         #
         try:
             if __DEBUG__:
-                print('****Order of axes in wtopt (originally) = ', MV2.getorder(wtopt))
+                print(
+                    '****Order of axes in wtopt (originally) = ',
+                    MV2.getorder(wtopt))
             wtopt = wtopt(order=ax)
             if __DEBUG__:
-                print('****Order of axes in wtopt    (finally) = ', MV2.getorder(wtopt))
+                print(
+                    '****Order of axes in wtopt    (finally) = ',
+                    MV2.getorder(wtopt))
         except BaseException:
-            raise AveragerError('The MV2 passed does not have an axis matching ' + str(ax))
+            raise AveragerError(
+                'The MV2 passed does not have an axis matching ' + str(ax))
         # end of try:
         if numpy.ma.shape(wtopt(order=ax)[:])[0] != len(x.getAxis(index)[:]):
-            # We have an MV2 whose length is not the same as that of the corresponding axis for x
-            raise AveragerError('The Masked Variable passed does not match the length of axis ' + str(ax))
-        # end of if numpy.ma.shape(wtopt(order=ax)[:])[0] != len(x.getAxis(index)[:]):
+            # We have an MV2 whose length is not the same as that of the
+            # corresponding axis for x
+            raise AveragerError(
+                'The Masked Variable passed does not match the length of axis ' + str(ax))
+        # end of if numpy.ma.shape(wtopt(order=ax)[:])[0] !=
+        # len(x.getAxis(index)[:]):
         if len(numpy.ma.shape(wtopt)) == 1:
             #
             # Coerce the MV2 to numpy type..... only if the wtopt is 1-d!!
@@ -309,7 +356,8 @@ def __check_each_weight_option(x, ax, index, wtopt):
             print('I have a Masked Array of rank', wtopt.ndim)
         #
         if wtopt.ndim > 1:
-            raise AveragerError('Error: The Masked Array of more than 1 dimension lacks sufficient information')
+            raise AveragerError(
+                'Error: The Masked Array of more than 1 dimension lacks sufficient information')
         # end of if numpy.ma.rank(wtopt) > 1:
         if numpy.ma.shape(wtopt)[0] != len(x.getAxis(index)[:]):
             raise AveragerError('Error: Axis is of length %d, weights passed of length %d.' %
@@ -329,7 +377,8 @@ def __check_each_weight_option(x, ax, index, wtopt):
             print('I have a numpy Array of rank', len(numpy.shape(wtopt)))
         #
         if len(numpy.shape(wtopt)) > 1:
-            raise AveragerError('Error: The numpy Array of more than 1 dimension lacks sufficient information')
+            raise AveragerError(
+                'Error: The numpy Array of more than 1 dimension lacks sufficient information')
         if numpy.shape(wtopt)[0] != len(x.getAxis(index)[:]):
             raise AveragerError('Error: Axis is of length %d, weights passed of length %d' %
                                 (len(x.getAxis(index)[:]), numpy.shape(wtopt)[0]))
@@ -345,7 +394,8 @@ def __check_each_weight_option(x, ax, index, wtopt):
                 print('Equal weights specified')
             wtopt = 'unweighted'
         elif wtopt.lower() in ['generate', 'weighted']:
-            # NOTE: THIS FUNCTION CAN BE CHANGED WHEN BOB PUTS THE FUNCTION getAxisWeights() INTO cdms2
+            # NOTE: THIS FUNCTION CAN BE CHANGED WHEN BOB PUTS THE FUNCTION
+            # getAxisWeights() INTO cdms2
             if __DEBUG__:
                 print('GENERATE weights specified')
             wtopt = __myGetAxisWeights(x, index)
@@ -399,7 +449,8 @@ def __check_weightoptions(x, axisoptions, weightoptions):
             # Weight passed is an MV2. Probably OK
             #
             try:
-                # We had required that the weights be of the same rank as the variable to be averaged.
+                # We had required that the weights be of the same rank as the
+                # variable to be averaged.
                 weightoptions = weightoptions(order=axisoptions)
                 #
                 # KRISHNA : check this for combinewts!!
@@ -407,7 +458,8 @@ def __check_weightoptions(x, axisoptions, weightoptions):
                 if __DEBUG__:
                     print('... definitely OK')
             except BaseException:
-                raise AveragerError('Error: Did not find the axes requested in the Masked variable.')
+                raise AveragerError(
+                    'Error: Did not find the axes requested in the Masked variable.')
         elif len(axislist) == 1:
             #
             # Only one axis to reduce over....'
@@ -415,7 +467,8 @@ def __check_weightoptions(x, axisoptions, weightoptions):
             #
             if __DEBUG__:
                 print('I have only 1 axis and 1 option')
-            weightoptions = __check_each_weight_option(x, axislist[0], axisindex[0], weightoptions)
+            weightoptions = __check_each_weight_option(
+                x, axislist[0], axisindex[0], weightoptions)
         else:
             #
             # More than 1 axis to reduce over, and not an MV2 of the same dimensionality as x!
@@ -423,8 +476,10 @@ def __check_weightoptions(x, axisoptions, weightoptions):
             if weightoptions in ['generate', 'weighted']:
                 weightoptions = area_weights(x, axisoptions)
             else:
-                # Cannot do this because 'generate' was not passed with multiple axes.
-                raise AveragerError('Error: Multiple axes passed without weights to match')
+                # Cannot do this because 'generate' was not passed with
+                # multiple axes.
+                raise AveragerError(
+                    'Error: Multiple axes passed without weights to match')
             # end of if weightoptions == 'generate':
     else:
         #
@@ -434,12 +489,14 @@ def __check_weightoptions(x, axisoptions, weightoptions):
         # We have multiple axes to deal with each with a weight....
         #
         for i in range(len(axislist)):
-            weightoptions[i] = __check_each_weight_option(x, axislist[i], axisindex[i], weightoptions[i])
+            weightoptions[i] = __check_each_weight_option(
+                x, axislist[i], axisindex[i], weightoptions[i])
         # end of for i in range(len(axislist)):
         #
         if len(axislist) < len(weightoptions):
             for j in range(len(axislist), len(weightoptions), 1):
-                weightoptions[j] = __check_each_weight_option(x, None, j, weightoptions[j])
+                weightoptions[j] = __check_each_weight_option(
+                    x, None, j, weightoptions[j])
         # end of if len(axislist) < len(weightoptions):
     # end of if not isinstance(weightoptions, types.ListType):
     #
@@ -488,8 +545,10 @@ def _check_MA_weight_options(weightoptions, shx, N_axisopt):
             if __DEBUG__:
                 print('numpy Array weights')
             if (wt.shape != shx) and (wt.ndim == 1 and len(wt) != shx[i]):
-                raise AveragerError('The passed weight is not of the appropriate shape')
-            # end of if (wt.shape != shx) or (numpy.ma.rank(wt) == 1 and len(wt) != shx[i]):
+                raise AveragerError(
+                    'The passed weight is not of the appropriate shape')
+            # end of if (wt.shape != shx) or (numpy.ma.rank(wt) == 1 and
+            # len(wt) != shx[i]):
         elif numpy.ma.isMA(wt):
             if __DEBUG__:
                 print('numpy.ma Array weights')
@@ -504,7 +563,8 @@ def _check_MA_weight_options(weightoptions, shx, N_axisopt):
             if (wt.shape != shx) and (wt.ndim == 1 and len(wt) != shx[i]):
                 if __DEBUG__:
                     print('The passed weight is not of the appropriate shape')
-                raise AveragerError('The passed weight is not of the appropriate shape')
+                raise AveragerError(
+                    'The passed weight is not of the appropriate shape')
             # end of if (wt.shape != shx) or (numpy.ma.rank(wt) == 1 and len(wt) != shx[i]):
         # end of if isinstance(wt, types.StringType):
     # end of for i in range(len(weightoptions)):
@@ -527,7 +587,7 @@ def _combine_weights(x, weightoptions):
       weight_array  : In the same shape as x but assuming that the remaining weights are equal.
     """
     #
-    __DEBUG__ = 0
+    __DEBUG__ = 1
     #
     xsh = x.shape
     if __DEBUG__:
@@ -546,7 +606,8 @@ def _combine_weights(x, weightoptions):
         if __DEBUG__:
             print('Dimensions to add = ', n_dimstoadd)
         if n_dimstoadd < 0:
-            raise AveragerError('Error in weights list - too many weights passed!')
+            raise AveragerError(
+                'Error in weights list - too many weights passed!')
         elif n_dimstoadd > 0:
             init_shape = x.shape[-n_dimstoadd:]
             if __DEBUG__:
@@ -628,7 +689,11 @@ def _combine_weights(x, weightoptions):
         weightoptions = [wt_init]
         #
         if __DEBUG__:
-            print('Are my weight and area_weights the same?', numpy.ma.allclose(weightoptions[0], area_weights(x)))
+            print(
+                'Are my weight and area_weights the same?',
+                numpy.ma.allclose(
+                    weightoptions[0],
+                    area_weights(x)))
     # end of if isinstance(weightoptions, types.ListType):
     #
     return weightoptions
@@ -661,19 +726,26 @@ def _check_MA_axisoptions(axisoption, N_dim):
             axisoption[i] = 0
         elif isinstance(axis, int):
             if axis not in list(range(N_dim)):
-                raise AveragerError('Specified dimension \'%d\' not valid in array of rank %d' % (axis, N_dim))
+                raise AveragerError(
+                    'Specified dimension \'%d\' not valid in array of rank %d' %
+                    (axis, N_dim))
             # end of if axis >= len(N_dim):
         elif isinstance(axis, bytes):
             try:
                 axisoption[i] = int(axis)
             except BaseException:
-                raise AveragerError('%s is not a valid axis for an MA. You must pass an MV2' % axis)
+                raise AveragerError(
+                    '%s is not a valid axis for an MA. You must pass an MV2' %
+                    axis)
             # end of try:
         # end of if axis is None:
     # end of for axis in axisoption:
     #
     if __DEBUG__:
-        print('axisoption after _check_MA_axisoptions = ', axisoption, len(axisoption))
+        print(
+            'axisoption after _check_MA_axisoptions = ',
+            axisoption,
+            len(axisoption))
     #
     return axisoption
 
@@ -779,7 +851,8 @@ def average_engine(x, wts):
     # end of if MV2.isMaskedVariable(wts) or isinstance(wts, numpy.ndarray):
 
 
-def averager(V, axis=None, weights=None, action='average', returned=0, weight=None, combinewts=None):
+def averager(V, axis=None, weights=None, action='average',
+             returned=0, weight=None, combinewts=None):
     """
     The averager() function provides a convenient way of averaging your data giving
     you control over the order of operations (i.e which dimensions are averaged
@@ -916,7 +989,9 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
             In general, the above can be substituted with arrays of weights where
             the 'weighted' keyword appears.
     """
-    __DEBUG__ = 0
+    import pdb
+    pdb.set_trace()
+    __DEBUG__ = 1
     cdat_info.pingPCMDIdb("cdat", "genutil.averager")
     #
     # Check the weight = option. This is done for backward compatibility since
@@ -941,12 +1016,13 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
     #
     # Check the action = options
     #
-    if string.upper(action) in ['AVERAGE', 'AVE', 'AVG']:
+    if action.upper() in ['AVERAGE', 'AVE', 'AVG']:
         action = 'average'
-    elif string.upper(action) in ['SUM', 'ADD']:
+    elif action.upper() in ['SUM', 'ADD']:
         action = 'sum'
     else:
-        raise AveragerError('Error: Invalid option for action. Pass \'average\' or \'sum\'')
+        raise AveragerError(
+            'Error: Invalid option for action. Pass \'average\' or \'sum\'')
     # end of if string.upper(action) in ['AVERAGE', 'AVE', 'AVG']:
     #
     # Check the combinewts option
@@ -956,7 +1032,7 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
     elif combinewts not in [0, 1]:
         raise AveragerError("Error: combinewts must be set to 0 or 1")
     # end of if not combinewts :
-    # ************************* End of option checking *************************
+    # ************************* End of option checking ***********************
     #
     # Account for MV2, numpy.ma or numpy arrays sent in by users. Return result of same type.
     #
@@ -1046,6 +1122,7 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
                 if __DEBUG__:
                     print('Averaging axis # = ', i, end=' ')
                 #
+                print(i,"TYPE WEI:",type(weights[1]))
                 if isinstance(weights[i], bytes) or (weights[i] is None):
                     pass
                 else:
@@ -1054,13 +1131,15 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
                 # end of if not isinstance(weights[i] , types.StringType):
                 if i > len(weights) - 1:
                     if not retwts:  # noqa
-                        raise AveragerError('An unknown error occurred (retwts). Report this bug.')
+                        raise AveragerError(
+                            'An unknown error occurred (retwts). Report this bug.')
                     else:
                         weights.append(retwts)  # noqa
                     # end of if not retwts:
                 # end of if i > len(weights)-1:
                 try:
-                    x, retwts = numpy.ma.average(x, weights=weights[i], returned=1, axis=0)
+                    x, retwts = numpy.ma.average(
+                        x, weights=weights[i], returned=1, axis=0)
                 except BaseException:
                     raise AveragerError('Some problem with averaging MA')
                 #
@@ -1077,14 +1156,17 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
                         x = numpy.ma.sum(x, returned=0, axis=0)
                         retwts = numpy.ma.sum(retwts, axis=0)
                     except BaseException:
-                        raise AveragerError('Some problem with summing numpy.ma')
+                        raise AveragerError(
+                            'Some problem with summing numpy.ma')
                     # end of try:
                 else:
                     try:
-                        x, retwts = numpy.ma.average(x, weights=weights[i], returned=1, axis=0)
+                        x, retwts = numpy.ma.average(
+                            x, weights=weights[i], returned=1, axis=0)
                         x = x * retwts
                     except BaseException:
-                        raise AveragerError('Some problem with summing numpy.ma')
+                        raise AveragerError(
+                            'Some problem with summing numpy.ma')
                     # end of try:
                 # end of if i > len(filled_wtoptions):
                 if __DEBUG__:
@@ -1136,17 +1218,19 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
         for an in range(len(axis_order)):
             item = axis_order[an]
             if isinstance(item, int):
-                loc = string.find(axis, str(item))
+                loc = axis.find(str(item))
                 if loc != -1:
                     xlist = list(axis)
                     xlist[loc] = V.getOrder()[item]
                     if xlist[loc] == '-':
                         xlist[loc] = '(' + V.getAxis(item).id + ')'
                     if __DEBUG__:
-                        print('*** the axisoption is about to be modified. Before mod  = ', axis)
-                    axis = string.joinfields(xlist, '')
+                        print(
+                            '*** the axisoption is about to be modified. Before mod  = ', axis)
+                    axis = xlist.join('')
                     if __DEBUG__:
-                        print('*** the axisoption has been modified. It is = ', axis)
+                        print(
+                            '*** the axisoption has been modified. It is = ', axis)
             # end of if type(item) = type(1):
         # end of for an in range(len(axis_order)):
         if __DEBUG__:
@@ -1177,6 +1261,7 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
         print('Checking weights= options:', weights)
     #
     filled_wtoptions = __check_weightoptions(V, axis, weights)
+    print("FFILLED OPTA:",filled_wtoptions)
     if __DEBUG__:
         print('The weights options are ', filled_wtoptions)
     #
@@ -1209,7 +1294,8 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
             #
             if i > len(filled_wtoptions) - 1:
                 if sumwts is None:  # noqa # flake8 claims it does not exists
-                    raise AveragerError('An unknown error occurred (sumwts). Report this bug.')
+                    raise AveragerError(
+                        'An unknown error occurred (sumwts). Report this bug.')
                 else:
                     filled_wtoptions.append(sumwts)  # noqa # flake8 claims it does not exists
                 # end of if not sumwts:

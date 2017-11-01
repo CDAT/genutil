@@ -52,22 +52,46 @@ def __betacf1(a, b, x):
         m2 = 2 * m
         aa = m * (b - m) * x / ((qam + m2) * (a + m2))
         d = 1. + aa * d
-        d = numpy.ma.where(numpy.ma.less(numpy.ma.absolute(d), FPMIN), FPMIN, d)
+        d = numpy.ma.where(
+            numpy.ma.less(
+                numpy.ma.absolute(d),
+                FPMIN),
+            FPMIN,
+            d)
         c = 1. + aa / c
-        c = numpy.ma.where(numpy.ma.less(numpy.ma.absolute(c), FPMIN), FPMIN, c)
+        c = numpy.ma.where(
+            numpy.ma.less(
+                numpy.ma.absolute(c),
+                FPMIN),
+            FPMIN,
+            c)
         d = 1. / d
         h = h * d * c
         aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2))
         d = 1. + aa * d
-        d = numpy.ma.where(numpy.ma.less(numpy.ma.absolute(d), FPMIN), FPMIN, d)
+        d = numpy.ma.where(
+            numpy.ma.less(
+                numpy.ma.absolute(d),
+                FPMIN),
+            FPMIN,
+            d)
         c = 1. + aa / c
-        c = numpy.ma.where(numpy.ma.less(numpy.ma.absolute(c), FPMIN), FPMIN, c)
+        c = numpy.ma.where(
+            numpy.ma.less(
+                numpy.ma.absolute(c),
+                FPMIN),
+            FPMIN,
+            c)
         d = 1. / d
         delet = d * c
         h = h * delet
-        if numpy.ma.allclose(delet, numpy.ones(delet.shape), atol=EPS, rtol=0.):
+        if numpy.ma.allclose(delet, numpy.ones(
+                delet.shape), atol=EPS, rtol=0.):
             break
-    h = numpy.ma.masked_where(numpy.ma.greater(numpy.ma.absolute(delet - 1.), EPS), h)
+    h = numpy.ma.masked_where(
+        numpy.ma.greater(
+            numpy.ma.absolute(
+                delet - 1.), EPS), h)
     return h
 
 
@@ -169,7 +193,13 @@ def __geometricmean(x):
     Usage:
     geo=__geometricmean(x)
     """
-    g = numpy.ma.exp(numpy.ma.sum(numpy.ma.log(x) / numpy.ma.count(x, axis=0), 0))
+    g = numpy.ma.exp(
+        numpy.ma.sum(
+            numpy.ma.log(x) /
+            numpy.ma.count(
+                x,
+                axis=0),
+            0))
     # Now check for negative values
     t = numpy.ma.sum(numpy.ma.less(x, 0.), axis=0)
     g = numpy.ma.masked_where(numpy.ma.greater(t, 0.), g)
@@ -199,7 +229,8 @@ def __covariance(x, y, weights=None, centered=1, biased=1):
         of covariance() for details.
     """
     if weights is not None and biased != 1:
-        raise StatisticsError('Error in covariance, you cannot have weights and unbiased together')
+        raise StatisticsError(
+            'Error in covariance, you cannot have weights and unbiased together')
 
     if centered == 1:
         xmean = numpy.ma.average(x, weights=weights, axis=0)
@@ -214,7 +245,8 @@ def __covariance(x, y, weights=None, centered=1, biased=1):
     if not ((x.mask is None) or (x.mask is MV2.nomask)):
         weights = numpy.ma.masked_where(x.mask, weights)
     if biased == 1:
-        cov = numpy.ma.sum(x * y * weights, axis=0) / numpy.ma.sum(weights, axis=0)
+        cov = numpy.ma.sum(x * y * weights, axis=0) / \
+            numpy.ma.sum(weights, axis=0)
     else:
         cov = numpy.ma.sum(x * y, axis=0) / (numpy.ma.count(x * y, axis=0) - 1)
 
@@ -229,7 +261,8 @@ def __variance(x, weights=None, centered=1, biased=1):
         Does the main computation for returning variance. See documentation
         of variance() for details.
     """
-    return __covariance(x, x, weights=weights, centered=centered, biased=biased)
+    return __covariance(x, x, weights=weights,
+                        centered=centered, biased=biased)
 
 
 def __std(x, weights=None, centered=1, biased=1):
@@ -240,7 +273,8 @@ def __std(x, weights=None, centered=1, biased=1):
         Does the main computation for returning standard deviation. See
         documentation of std() for details.
     """
-    return numpy.ma.sqrt(__variance(x, weights=weights, centered=centered, biased=biased))
+    return numpy.ma.sqrt(__variance(x, weights=weights,
+                                    centered=centered, biased=biased))
 
 
 def __correlation(x, y, weights=None, centered=1, biased=1):
@@ -358,7 +392,8 @@ def __autocorrelation(x, lag, centered=1, partial=1):
         x1 = x[:-lag] - mean1
         x2 = x[lag:] - mean2
         num = numpy.ma.sum(x1 * x2, axis=0)
-        den = numpy.ma.sum(numpy.ma.power(x1, 2), axis=0) * numpy.ma.sum(numpy.ma.power(x2, 2), axis=0)
+        den = numpy.ma.sum(numpy.ma.power(x1, 2), axis=0) * \
+            numpy.ma.sum(numpy.ma.power(x2, 2), axis=0)
         return num / numpy.ma.sqrt(den)
     else:
         return __autocovariance(x, lag, centered=centered, partial=partial) / \
@@ -390,15 +425,18 @@ def __meanabsdiff(x, y, weights=None, centered=1):
     if not ((y.mask is None) or (y.mask is MV2.nomask)):
         weights = numpy.ma.masked_where(y.mask, weights)
 
-    return numpy.ma.sum(numpy.ma.absolute(x - y) * weights, axis=0) / numpy.ma.sum(weights, axis=0)
+    return numpy.ma.sum(numpy.ma.absolute(x - y) * weights,
+                        axis=0) / numpy.ma.sum(weights, axis=0)
 
 
-def __linearregression(y, x, error=None, probability=None, noslope=None, nointercept=None):
+def __linearregression(y, x, error=None, probability=None,
+                       noslope=None, nointercept=None):
     """
     returns slope/intercept for linear regression of dependant var y and indep var x
     also possibly returns error and P values.
     """
-    if (not (noslope is None or noslope == 0)) and (not (nointercept is None or nointercept == 0)):
+    if (not (noslope is None or noslope == 0)) and (
+            not (nointercept is None or nointercept == 0)):
         raise StatisticsError(
             'Error in __linearregression, at least one of the following argument as to be None:' +
             'noslope or nointercept, you are requesting nothing back !')
@@ -408,7 +446,8 @@ def __linearregression(y, x, error=None, probability=None, noslope=None, nointer
             str(probability))
     if error is not None:
         if error > 3:
-            raise StatisticsError("Error in __linearregression, error must be None (0), 1, ,2 or 3")
+            raise StatisticsError(
+                "Error in __linearregression, error must be None (0), 1, ,2 or 3")
     xmean = numpy.ma.average(x, axis=0)
     ymean = numpy.ma.average(y, axis=0)
     x = x - xmean
@@ -428,7 +467,8 @@ def __linearregression(y, x, error=None, probability=None, noslope=None, nointer
         E = []
         n1 = numpy.ma.count(y, axis=0)
         # Unadjusted errors
-        res = (y + ymean) - (intercept + (x + xmean) * numpy.ma.resize(slope, numpy.ma.shape(y)))  # x2
+        res = (y + ymean) - (intercept + (x + xmean) *
+                             numpy.ma.resize(slope, numpy.ma.shape(y)))  # x2
         ssd = numpy.ma.sum(res * res, axis=0)
         amsd1 = ssd / (n1 - 2.)  # amsd1=ssd/idfd1
         if noslope is None or noslope == 0:
@@ -465,7 +505,8 @@ def __linearregression(y, x, error=None, probability=None, noslope=None, nointer
         E = []
         # Adjusted error from residual
         n1 = numpy.ma.count(y, axis=0)
-        res = (y + ymean) - (intercept + numpy.ma.resize(slope, numpy.ma.shape(y)) * (x + xmean))  # x2
+        res = (y + ymean) - (intercept + numpy.ma.resize(slope,
+                                                         numpy.ma.shape(y)) * (x + xmean))  # x2
         ssd = numpy.ma.sum(res * res, axis=0)
         if error == 2:
             ac = __autocorrelation(res, 1, centered=1, partial=0)
@@ -562,17 +603,20 @@ def __checker(x, y, w, axes, smally=0):
         x = numpy.ma.array(x, copy=0)
     if not numpy.ma.isarray(y) and y is not None:
         y = numpy.ma.array(y, copy=0)
-    if not numpy.ma.isarray(w) and w is not None and not isinstance(w, type('')):
+    if not numpy.ma.isarray(
+            w) and w is not None and not isinstance(w, type('')):
         if not isinstance(w[0], type('')):
             w = numpy.ma.array(w, copy=0)
         else:
             if not xismv:
-                raise StatisticsError('Error if weights are a list then x must be an MV2 !!!')
+                raise StatisticsError(
+                    'Error if weights are a list then x must be an MV2 !!!')
             w = __makeweights(x, w, axes)
             wismv = 1
     elif w is not None:
         if not xismv:
-            raise StatisticsError('Error if weights are a list then x must be an MV2 !!!')
+            raise StatisticsError(
+                'Error if weights are a list then x must be an MV2 !!!')
         w = __makeweights(x, w, axes)
         wismv = 1
 
@@ -621,7 +665,8 @@ def __checker(x, y, w, axes, smally=0):
         if y is not None:
             x, y = grower(x, y)
             if x.shape != y.shape:
-                raise StatisticsError('Error x and y have different shapes' + str(x.shape) + ', ' + str(y.shape))
+                raise StatisticsError(
+                    'Error x and y have different shapes' + str(x.shape) + ', ' + str(y.shape))
         ax = x.getAxisList()
         xorder = x.getOrder(ids=1)
         # Now grows w
@@ -629,10 +674,12 @@ def __checker(x, y, w, axes, smally=0):
             worder = w.getOrder(ids=1)
             for o in worder:
                 if o not in xorder:
-                    raise StatisticsError('Error weights have a dimension that is neither in x or y:' + o)
+                    raise StatisticsError(
+                        'Error weights have a dimension that is neither in x or y:' + o)
             x, w = grower(x, w)
             if x.shape != w.shape:
-                raise StatisticsError('Error x and weights have different shapes' + str(x.shape) + ', ' + str(w.shape))
+                raise StatisticsError(
+                    'Error x and weights have different shapes' + str(x.shape) + ', ' + str(w.shape))
         # Last thing convert the axes input to numbers
         if isinstance(axes, type(1)):
             axes = str(axes)
@@ -645,15 +692,23 @@ def __checker(x, y, w, axes, smally=0):
                     for j in range(len(xorder)):
                         if xorder[j] == o:
                             axesparse[i] = j
-                    if isinstance(axesparse[i], type('')):  # Well it must be a name for x y t....
+                    # Well it must be a name for x y t....
+                    if isinstance(axesparse[i], type('')):
                         for j in range(len(x.shape)):
                             if o[1:-1] == x.getAxis(j).id:
                                 axesparse[i] = j
-                    # Everything failed the axis id must be not existing in the slab...
+                    # Everything failed the axis id must be not existing in the
+                    # slab...
                     if isinstance(axesparse[i], type('')):
-                        raise StatisticsError('Error axis id :' + o + ' not found in first slab: ' + x.getOrder(ids=1))
+                        raise StatisticsError(
+                            'Error axis id :' +
+                            o +
+                            ' not found in first slab: ' +
+                            x.getOrder(
+                                ids=1))
             axes = axesparse
-    # Now we have array those shape match, and a nice list of axes let's keep going
+    # Now we have array those shape match, and a nice list of axes let's keep
+    # going
     naxes = len(axes)
     n0 = 1
     xsh = x.shape
@@ -699,7 +754,8 @@ def __checker(x, y, w, axes, smally=0):
     return x, y, w, axes, ax
 
 
-def covariance(x, y, weights=None, axis=0, centered=1, biased=1, max_pct_missing=100.):
+def covariance(x, y, weights=None, axis=0, centered=1,
+               biased=1, max_pct_missing=100.):
     """
     Returns the covariance between 2 slabs. By default on the first dimension,
     centered and biased by default.
@@ -761,7 +817,8 @@ def covariance(x, y, weights=None, axis=0, centered=1, biased=1, max_pct_missing
     return cov
 
 
-def variance(x, weights=None, axis=0, centered=1, biased=1, max_pct_missing=100.):
+def variance(x, weights=None, axis=0, centered=1,
+             biased=1, max_pct_missing=100.):
     """
     Returns the variance from a slab. By default  on first dimension,
     centered, and biased.
@@ -879,13 +936,15 @@ def std(x, weights=None, axis=0, centered=1, biased=1, max_pct_missing=100.):
     std = __std(x, weights=weights, centered=centered, biased=biased)
     std = _treat_missing(std, x, max_pct_missing=max_pct_missing)
     if ax is not None:
-        std = cdms2.createVariable(std, axes=ax, id='standard_deviation', copy=0)
+        std = cdms2.createVariable(
+            std, axes=ax, id='standard_deviation', copy=0)
         if 'units' in list(xatt.keys()):
             std.units = xatt['units']
     return std
 
 
-def correlation(x, y, weights=None, axis=0, centered=1, biased=1, max_pct_missing=100.):
+def correlation(x, y, weights=None, axis=0, centered=1,
+                biased=1, max_pct_missing=100.):
     """
     Returns the correlation between 2 slabs. By default on the first
     dimension, centered and biased by default.
@@ -937,7 +996,12 @@ def correlation(x, y, weights=None, axis=0, centered=1, biased=1, max_pct_missin
     cdat_info.pingPCMDIdb("cdat", "genutil.statistics.corelation")
     x, y, weights, axis, ax = __checker(x, y, weights, axis)
 
-    cor = __correlation(x, y, weights=weights, centered=centered, biased=biased)
+    cor = __correlation(
+        x,
+        y,
+        weights=weights,
+        centered=centered,
+        biased=biased)
     cor = _treat_missing(cor, x, max_pct_missing=max_pct_missing)
     if ax is not None:
         cor = cdms2.createVariable(cor, axes=ax, id='correlation', copy=0)
@@ -945,7 +1009,8 @@ def correlation(x, y, weights=None, axis=0, centered=1, biased=1, max_pct_missin
     return cor
 
 
-def rms(x, y, weights=None, axis=0, centered=0, biased=1, max_pct_missing=100.):
+def rms(x, y, weights=None, axis=0, centered=0,
+        biased=1, max_pct_missing=100.):
     """
     Returns the root mean square difference between 2 slabs. By default from
     a slab (on first dimension) "uncentered" and "biased" by default.
@@ -1001,14 +1066,16 @@ def rms(x, y, weights=None, axis=0, centered=0, biased=1, max_pct_missing=100.):
     rmsans = __rms(x, y, weights=weights, centered=centered, biased=biased)
     rmsans = _treat_missing(rmsans, x, max_pct_missing=max_pct_missing)
     if ax is not None:
-        rmsans = cdms2.createVariable(rmsans, axes=ax, id='RMS_difference', copy=0)
+        rmsans = cdms2.createVariable(
+            rmsans, axes=ax, id='RMS_difference', copy=0)
         if 'units' in list(xatt.keys()):
             rms.units = xatt['units']
 
     return rmsans
 
 
-def laggedcovariance(x, y, lag=None, axis=0, centered=1, partial=1, noloop=0, max_pct_missing=100.):
+def laggedcovariance(x, y, lag=None, axis=0, centered=1,
+                     partial=1, noloop=0, max_pct_missing=100.):
     """
     Returns the covariance between 2 slabs at lag k centered and partial by
     default.
@@ -1078,7 +1145,13 @@ def laggedcovariance(x, y, lag=None, axis=0, centered=1, partial=1, noloop=0, ma
         lags = lag
 
     for k in lags:
-        lcov = numpy.ma.array(__laggedcovariance(x, y, lag=k, centered=centered, partial=partial))
+        lcov = numpy.ma.array(
+            __laggedcovariance(
+                x,
+                y,
+                lag=k,
+                centered=centered,
+                partial=partial))
         lcov = _treat_missing(lcov, x, max_pct_missing=max_pct_missing)
         sh = list(lcov.shape)
         sh.insert(0, 1)
@@ -1093,13 +1166,19 @@ def laggedcovariance(x, y, lag=None, axis=0, centered=1, partial=1, noloop=0, ma
         newax = cdms2.createAxis(lags)
         newax.id = 'lag'
         ax.insert(0, newax)
-        lcovs = cdms2.createVariable(lcovs, axes=ax, id='lagged_covariance' + str(lag), copy=0)
+        lcovs = cdms2.createVariable(
+            lcovs,
+            axes=ax,
+            id='lagged_covariance' +
+            str(lag),
+            copy=0)
         if 'units' in list(xatt.keys()) and 'units' in list(yatt.keys()):
             lcovs.units = xatt['units'] + '*' + yatt['units']
     return lcovs
 
 
-def laggedcorrelation(x, y, lag=None, axis=0, centered=1, partial=1, biased=1, noloop=0, max_pct_missing=100.):
+def laggedcorrelation(x, y, lag=None, axis=0, centered=1,
+                      partial=1, biased=1, noloop=0, max_pct_missing=100.):
     """
 
     Returns the correlation between 2 slabs at lag k centered, partial and
@@ -1167,7 +1246,14 @@ def laggedcorrelation(x, y, lag=None, axis=0, centered=1, partial=1, biased=1, n
         lags = lag
 
     for k in lags:
-        lcor = numpy.ma.array(__laggedcorrelation(x, y, lag=k, centered=centered, partial=partial, biased=biased))
+        lcor = numpy.ma.array(
+            __laggedcorrelation(
+                x,
+                y,
+                lag=k,
+                centered=centered,
+                partial=partial,
+                biased=biased))
         lcor = _treat_missing(lcor, x, max_pct_missing=max_pct_missing)
         sh = list(lcor.shape)
         sh.insert(0, 1)
@@ -1180,13 +1266,19 @@ def laggedcorrelation(x, y, lag=None, axis=0, centered=1, partial=1, biased=1, n
         newax = cdms2.createAxis(lags)
         newax.id = 'lag'
         ax.insert(0, newax)
-        lcors = cdms2.createVariable(lcors, axes=ax, id='lagged_correlation' + str(lag), copy=0)
+        lcors = cdms2.createVariable(
+            lcors,
+            axes=ax,
+            id='lagged_correlation' +
+            str(lag),
+            copy=0)
         lcors.units = '-'
 
     return lcors
 
 
-def autocovariance(x, lag=None, axis=0, centered=1, partial=1, noloop=0, max_pct_missing=100.):
+def autocovariance(x, lag=None, axis=0, centered=1,
+                   partial=1, noloop=0, max_pct_missing=100.):
     """
     Returns the autocovariance of a slab. By default over the first dimension,  centered, and partial.
 
@@ -1251,7 +1343,12 @@ def autocovariance(x, lag=None, axis=0, centered=1, partial=1, noloop=0, max_pct
         lags = lag
 
     for k in lags:
-        acov = numpy.ma.array(__autocovariance(x, lag=k, centered=centered, partial=partial))
+        acov = numpy.ma.array(
+            __autocovariance(
+                x,
+                lag=k,
+                centered=centered,
+                partial=partial))
         acov = _treat_missing(acov, x, max_pct_missing=max_pct_missing)
         sh = list(acov.shape)
         sh.insert(0, 1)
@@ -1264,13 +1361,15 @@ def autocovariance(x, lag=None, axis=0, centered=1, partial=1, noloop=0, max_pct
         newax = cdms2.createAxis(lags)
         newax.id = 'lag'
         ax.insert(0, newax)
-        acovs = cdms2.createVariable(acovs, axes=ax, id='autocovariance' + str(lag), copy=0)
+        acovs = cdms2.createVariable(
+            acovs, axes=ax, id='autocovariance' + str(lag), copy=0)
         if 'units' in list(xatt.keys()):
             acovs.units = xatt['units'] + '*' + xatt['units']
     return acovs
 
 
-def autocorrelation(x, lag=None, axis=0, centered=1, partial=1, biased=1, noloop=0, max_pct_missing=100.):
+def autocorrelation(x, lag=None, axis=0, centered=1, partial=1,
+                    biased=1, noloop=0, max_pct_missing=100.):
     """
     Returns the autocorrelation of a slab at lag k centered,partial and
     "biased" by default
@@ -1333,7 +1432,12 @@ def autocorrelation(x, lag=None, axis=0, centered=1, partial=1, biased=1, noloop
         lags = lag
 
     for k in lags:
-        acov = numpy.ma.array(__autocorrelation(x, lag=k, centered=centered, partial=partial))
+        acov = numpy.ma.array(
+            __autocorrelation(
+                x,
+                lag=k,
+                centered=centered,
+                partial=partial))
         acov = _treat_missing(acov, x, max_pct_missing=max_pct_missing)
         sh = list(acov.shape)
         sh.insert(0, 1)
@@ -1346,7 +1450,8 @@ def autocorrelation(x, lag=None, axis=0, centered=1, partial=1, biased=1, noloop
         newax = cdms2.createAxis(lags)
         newax.id = 'lag'
         ax.insert(0, newax)
-        acovs = cdms2.createVariable(acovs, axes=ax, id='autocorrelation' + str(lag), copy=0)
+        acovs = cdms2.createVariable(
+            acovs, axes=ax, id='autocorrelation' + str(lag), copy=0)
         acovs.units = '-'
 
     return acovs
@@ -1399,13 +1504,15 @@ def meanabsdiff(x, y, weights=None, axis=0, centered=1, max_pct_missing=100.):
     mad = __meanabsdiff(x, y, weights=weights, centered=centered)
     mad = _treat_missing(mad, x, max_pct_missing=max_pct_missing)
     if ax is not None:
-        mad = cdms2.createVariable(mad, axes=ax, id='mean_absolute_difference', copy=0)
+        mad = cdms2.createVariable(
+            mad, axes=ax, id='mean_absolute_difference', copy=0)
         if 'units' in list(xatt.keys()):
             mad.units = xatt['units']
     return mad
 
 
-def linearregression(y, axis=None, x=None, error=None, probability=None, nointercept=None, noslope=None):
+def linearregression(y, axis=None, x=None, error=None,
+                     probability=None, nointercept=None, noslope=None):
     """
     Computes the linear regression of y over x or an axis. This function returns
     Values of the slope and intercept, and optionally, Error estimates and
@@ -1547,7 +1654,8 @@ def linearregression(y, axis=None, x=None, error=None, probability=None, nointer
     if yisV:
         yatt = y.attributes
     if axis is not None and x is not None:
-        raise StatisticsError('Error you cannot pass an indepedent variable and an axis')
+        raise StatisticsError(
+            'Error you cannot pass an indepedent variable and an axis')
     if x is None and axis is None:
         axis = 0
     if axis is not None:
@@ -1578,9 +1686,11 @@ def linearregression(y, axis=None, x=None, error=None, probability=None, nointer
             ax2.units = ''
 
     if error is None or error == 0:
-        val = __linearregression(y, x, nointercept=nointercept, noslope=noslope)
+        val = __linearregression(
+            y, x, nointercept=nointercept, noslope=noslope)
     elif probability is None or probability == 0:
-        val, err = __linearregression(y, x, error=error, nointercept=nointercept, noslope=noslope)
+        val, err = __linearregression(
+            y, x, error=error, nointercept=nointercept, noslope=noslope)
     else:
         val, err, pt1, pt2, pf1, pf2 = __linearregression(
             y, x, error=error, probability=probability, nointercept=nointercept, noslope=noslope)
@@ -1588,7 +1698,8 @@ def linearregression(y, axis=None, x=None, error=None, probability=None, nointer
         if noslope is None or noslope == 0:
             val[0] = cdms2.createVariable(val[0], axes=axs, id='slope', copy=0)
         if nointercept is None or nointercept == 0:
-            val[-1] = cdms2.createVariable(val[-1], axes=axs, id='intercept', copy=0)
+            val[-1] = cdms2.createVariable(val[-1],
+                                           axes=axs, id='intercept', copy=0)
         if 'units' in list(yatt.keys()):
             for v in val:
                 v.units = yatt['units'] + ' per ' + ax2.units
@@ -1600,9 +1711,13 @@ def linearregression(y, axis=None, x=None, error=None, probability=None, nointer
     elif probability is None or probability == 0:
         if yisV:
             if noslope is None or noslope == 0:
-                err[0] = cdms2.createVariable(err[0], axes=axs, id='standard_error', copy=0)
+                err[0] = cdms2.createVariable(
+                    err[0], axes=axs, id='standard_error', copy=0)
                 if error == 1:
-                    setattr(err[0], 'long_name', 'standard error for regression coefficient')
+                    setattr(
+                        err[0],
+                        'long_name',
+                        'standard error for regression coefficient')
                 elif error == 2:
                     setattr(
                         err[0],
@@ -1616,9 +1731,11 @@ def linearregression(y, axis=None, x=None, error=None, probability=None, nointer
                         'standard error for regression coefficient adjusted with y (using centered autocorrelation)')
 
             if nointercept is None or nointercept == 0:
-                err[-1] = cdms2.createVariable(err[-1], axes=axs, id='standard_error', copy=0)
+                err[-1] = cdms2.createVariable(err[-1],
+                                               axes=axs, id='standard_error', copy=0)
                 if error == 1:
-                    setattr(err[-1], 'long_name', 'standard error for regression constant')
+                    setattr(err[-1], 'long_name',
+                            'standard error for regression constant')
                 elif error == 2:
                     setattr(
                         err[-1], 'long_name', 'standard error for regression constant adjusted with residual ' +
@@ -1637,9 +1754,13 @@ def linearregression(y, axis=None, x=None, error=None, probability=None, nointer
     else:
         if yisV:
             if noslope is None or noslope == 0:
-                err[0] = cdms2.createVariable(err[0], axes=axs, id='standard_error', copy=0)
+                err[0] = cdms2.createVariable(
+                    err[0], axes=axs, id='standard_error', copy=0)
                 if error == 1:
-                    setattr(err[0], 'long_name', 'standard error for regression coefficient')
+                    setattr(
+                        err[0],
+                        'long_name',
+                        'standard error for regression coefficient')
                 elif error == 2:
                     setattr(
                         err[0],
@@ -1653,9 +1774,11 @@ def linearregression(y, axis=None, x=None, error=None, probability=None, nointer
                         'standard error for regression coefficient adjusted with y (using centered autocorrelation)')
 
             if nointercept is None or nointercept == 0:
-                err[-1] = cdms2.createVariable(err[-1], axes=axs, id='standard_error', copy=0)
+                err[-1] = cdms2.createVariable(err[-1],
+                                               axes=axs, id='standard_error', copy=0)
                 if error == 1:
-                    setattr(err[-1], 'long_name', 'standard error for regression constant')
+                    setattr(err[-1], 'long_name',
+                            'standard error for regression constant')
                 elif error == 2:
                     setattr(
                         err[-1], 'long_name', 'standard error for regression constant adjusted with residual ' +
@@ -1669,45 +1792,55 @@ def linearregression(y, axis=None, x=None, error=None, probability=None, nointer
                     e.units = yatt['units'] + ' per ' + ax2.units
             if noslope is None or noslope == 0:
                 if error > 1:
-                    pt1[0] = cdms2.createVariable(pt1[0], axes=axs, id='p-value', copy=0)
+                    pt1[0] = cdms2.createVariable(
+                        pt1[0], axes=axs, id='p-value', copy=0)
                     pt1[0].units = '-'
                     pt1[0].long_name = 'p-value for regression coefficient t-value.' +\
                         'Effective sample size adjustment for standard error (seb).'
-                    pt2[0] = cdms2.createVariable(pt2[0], axes=axs, id='p-value', copy=0)
+                    pt2[0] = cdms2.createVariable(
+                        pt2[0], axes=axs, id='p-value', copy=0)
                     pt2[0].units = '-'
                     pt2[
                         0].long_name = 'p-value for regression coefficient t-value. ' +\
                         'Effective sample size adjustment for standard error (seb) and critical t-value.'
                 else:
-                    pt1[0] = cdms2.createVariable(pt1[0], axes=axs, id='p-value', copy=0)
+                    pt1[0] = cdms2.createVariable(
+                        pt1[0], axes=axs, id='p-value', copy=0)
                     pt1[0].units = '-'
                     pt1[0].long_name = 'p-value for regression coefficient t-value. ' +\
                         'No adjustment for standard error or critical t-value.'
-                pf1[0] = cdms2.createVariable(pf1[0], axes=axs, id='p-value', copy=0)
+                pf1[0] = cdms2.createVariable(
+                    pf1[0], axes=axs, id='p-value', copy=0)
                 pf1[0].unit = '-'
                 pf1[0].long_name = 'p-value for regression coefficient F-value (one-tailed)'
-                pf2[0] = cdms2.createVariable(pf2[0], axes=axs, id='p-value', copy=0)
+                pf2[0] = cdms2.createVariable(
+                    pf2[0], axes=axs, id='p-value', copy=0)
                 pf2[0].unit = '-'
                 pf2[0].long_name = 'p-value for regression coefficient F-value (two-tailed)'
             if nointercept is None or nointercept == 0:
                 if error > 1:
-                    pt1[-1] = cdms2.createVariable(pt1[-1], axes=axs, id='p-value', copy=0)
+                    pt1[-1] = cdms2.createVariable(pt1[-1],
+                                                   axes=axs, id='p-value', copy=0)
                     pt1[-1].units = '-'
                     pt1[-1].long_name = 'p-value for regression coefficient t-value. ' +\
                         'Effective sample size adjustment for standard error (seb).'
-                    pt2[-1] = cdms2.createVariable(pt2[-1], axes=axs, id='p-value', copy=0)
+                    pt2[-1] = cdms2.createVariable(pt2[-1],
+                                                   axes=axs, id='p-value', copy=0)
                     pt2[-1].units = '-'
                     pt2[-1].long_name = 'p-value for regression coefficient t-value. ' +\
                         'Effective sample size adjustment for standard error (seb) and critical t-value.'
                 else:
-                    pt1[-1] = cdms2.createVariable(pt1[-1], axes=axs, id='p-value', copy=0)
+                    pt1[-1] = cdms2.createVariable(pt1[-1],
+                                                   axes=axs, id='p-value', copy=0)
                     pt1[-1].units = '-'
                     pt1[-1].long_name = 'p-value for regression coefficient t-value. ' +\
                         'No adjustment for standard error or critical t-value.'
-                pf1[-1] = cdms2.createVariable(pf1[-1], axes=axs, id='p-value', copy=0)
+                pf1[-1] = cdms2.createVariable(pf1[-1],
+                                               axes=axs, id='p-value', copy=0)
                 pf1[-1].unit = '-'
                 pf1[-1].long_name = 'p-value for regression coefficient F-value (one-tailed)'
-                pf2[-1] = cdms2.createVariable(pf2[-1], axes=axs, id='p-value', copy=0)
+                pf2[-1] = cdms2.createVariable(pf2[-1],
+                                               axes=axs, id='p-value', copy=0)
                 pf2[-1].unit = '-'
                 pf2[-1].long_name = 'p-value for regression coefficient F-value (two-tailed)'
         if len(val) > 1:
@@ -1751,7 +1884,8 @@ def geometricmean(x, axis=0, max_pct_missing=100.):
     gmean = __geometricmean(x)
     gmean = _treat_missing(gmean, x, max_pct_missing=max_pct_missing)
     if ax is not None:
-        gmean = cdms2.createVariable(gmean, axes=ax, id='geometric_mean', copy=0)
+        gmean = cdms2.createVariable(
+            gmean, axes=ax, id='geometric_mean', copy=0)
         if 'units' in list(xatt.keys()):
             gmean.units = xatt['units']
     return gmean
@@ -1803,7 +1937,8 @@ def _percentiles(out, percent):
             output = numpy.ma.array(tmp)
             output = output.astype(out.dtype.char)
         else:
-            output = numpy.ma.concatenate((output, tmp.astype(numpy.float32)), 0)
+            output = numpy.ma.concatenate(
+                (output, tmp.astype(numpy.float32)), 0)
     return output
 
 

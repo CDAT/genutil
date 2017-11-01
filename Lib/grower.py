@@ -43,7 +43,8 @@ def grower(x, y, singleton=0):
     yorder = y.getOrder(ids=1)
     yaxes = y.getAxisList()
 
-    # Now determine the shape of the final array (matching x and y dims,x first)
+    # Now determine the shape of the final array (matching x and y dims,x
+    # first)
     forder = []
     prev = 0
     txt = ''

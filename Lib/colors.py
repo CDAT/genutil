@@ -739,7 +739,10 @@ def rgb2str(r, g=None, b=None):
         f.close()
         for l in ln[1:]:
             sp = string.split(l)
-            r2, g2, b2 = string.atof(sp[0]), string.atof(sp[1]), string.atof(sp[2])
+            r2, g2, b2 = string.atof(
+                sp[0]), string.atof(
+                sp[1]), string.atof(
+                sp[2])
             rms = (r2 - r)**2. + (b2 - b)**2. + (g2 - g)**2.
             if rms < rmsmin:
                 ret = string.join(sp[3:])

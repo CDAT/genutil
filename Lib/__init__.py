@@ -1,43 +1,45 @@
 """
 genutil -- General utility modules for scientific computing
 """
-## Lean mode does not install xmgrace module
-from .grower import grower
+# Lean mode does not install xmgrace module
+from .grower import grower  # noqa
 try:
-  import xmgrace
-except:
-  pass
-from . import statistics
-from .minmax import minmax
-from .statusbar import statusbar
-from .selval import picker
-from . import filters
-#import salstat
-from . import arrayindexing
-from . import ASCII
-from . import udunits
-from .Filler import Filler,StringConstructor
-from .averager import averager, AveragerError, area_weights, getAxisWeight, getAxisWeightByName,__check_weightoptions
-import cdat_info
-from .ASCII import get_parenthesis_content
-import os
-import sys
+    import xmgrace  # noqa
+except BaseException:
+    pass
+from . import statistics  # noqa
+from .minmax import minmax  # noqa
+from .statusbar import statusbar  # noqa
+from .selval import picker  # noqa
+from . import filters  # noqa
+from . import arrayindexing  # noqa
+from . import ASCII  # noqa
+from . import udunits  # noqa
+from .Filler import Filler, StringConstructor  # noqa
+from .averager import averager, AveragerError, area_weights, getAxisWeight, getAxisWeightByName, __check_weightoptions  # noqa
+import cdat_info  # noqa
+from .ASCII import get_parenthesis_content  # noqa
+import os  # noqa
+import sys  # noqa
 
 # udunits bits
 from .udunits import udunits, addBaseUnit, addDimensionlessUnit, addScaledUnit  # noqa
 from .udunits import addOffsettedUnit, addMultipliedUnits, addInvertedUnit, addDividedUnits  # noqa
 udunits_init = 0  # noqa
 
-xml_pth = os.path.join(sys.prefix,"share","udunits","udunits2.xml")
+xml_pth = os.path.join(sys.prefix, "share", "udunits", "udunits2.xml")
 if os.path.exists(xml_pth):
     os.environ["UDUNITS2_XML_PATH"] = xml_pth
 else:
     try:
-        xml_pth = os.path.join(cdat_info.externals,"share","udunits","udunits2.xml")
+        xml_pth = os.path.join(
+            cdat_info.externals,
+            "share",
+            "udunits",
+            "udunits2.xml")
         if os.path.exists(xml_pth):
             os.environ["UDUNITS2_XML_PATH"] = xml_pth
-    except:
+    except BaseException:
         pass
 
-cdat_info.pingPCMDIdb("cdat","genutil")
-
+cdat_info.pingPCMDIdb("cdat", "genutil")
