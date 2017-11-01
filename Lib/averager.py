@@ -5,6 +5,11 @@ import cdms2
 import MV2
 import cdat_info
 
+try:
+    basestring
+except NameError:
+    basestring = str
+
 
 class AveragerError (Exception):
     def __init__(self, args=None):
@@ -381,7 +386,7 @@ def __check_each_weight_option(x, ax, index, wtopt):
         if numpy.shape(wtopt)[0] != len(x.getAxis(index)[:]):
             raise AveragerError('Error: Axis is of length %d, weights passed of length %d' %
                                 (len(x.getAxis(index)[:]), numpy.shape(wtopt)[0]))
-    elif isinstance(wtopt, bytes):
+    elif isinstance(wtopt, basestring):
         #
         # wtopt is a string
         #
@@ -530,7 +535,7 @@ def _check_MA_weight_options(weightoptions, shx, N_axisopt):
         #
         wt = weightoptions[i]
         #
-        if isinstance(wt, bytes):
+        if isinstance(wt, basestring):
             if __DEBUG__:
                 print('string weights')
             if wt in ['weighted', 'generate']:
@@ -729,7 +734,7 @@ def _check_MA_axisoptions(axisoption, N_dim):
                     'Specified dimension \'%d\' not valid in array of rank %d' %
                     (axis, N_dim))
             # end of if axis >= len(N_dim):
-        elif isinstance(axis, bytes):
+        elif isinstance(axis, basestring):
             try:
                 axisoption[i] = int(axis)
             except BaseException:
@@ -1060,7 +1065,7 @@ def averager(V, axis=None, weights=None, action='average',
             print('!!!!!!Checking weights for numpy.ma', weights)
         #
         #
-        if isinstance(weights, bytes) and weights in ['weighted', 'generate']:
+        if isinstance(weights, basestring) and weights in ['weighted', 'generate']:
             if __DEBUG__:
                 print('VOILA!')
             print('genutil.averager Warning: \n\tNot operating on a TransientVariable.')
@@ -1119,7 +1124,7 @@ def averager(V, axis=None, weights=None, action='average',
                 if __DEBUG__:
                     print('Averaging axis # = ', i, end=' ')
                 #
-                if isinstance(weights[i], bytes) or (weights[i] is None):
+                if isinstance(weights[i], basestring) or (weights[i] is None):
                     pass
                 else:
                     if __DEBUG__:

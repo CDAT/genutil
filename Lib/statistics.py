@@ -7,7 +7,7 @@ import numpy
 import cdat_info
 from . import arrayindexing
 from . import array_indexing_emulate as array_indexing
-from stats_checker import __checker, StatisticsError
+from .stats_checker import __checker, StatisticsError
 
 
 def __gammln1(x):
@@ -1851,7 +1851,6 @@ def rank(x, axis=0):
     b = numpy.ma.zeros(a0.shape, dtype='f')
 
     # Get the indices
-# print 'Indices are:',a0,x
     # Make sure b and a0 are of the right type
     b = array_indexing.rank(b, a0)
     m = x.mask
@@ -1864,7 +1863,6 @@ def rank(x, axis=0):
     b, n = grower(b, n)
     b = 100. * b / (n - 1)
 
-# print 'Axis:',axis
     # Now reorders everything
     if ax is not None:
         # First set the unchanged axes

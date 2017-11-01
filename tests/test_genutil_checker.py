@@ -100,6 +100,3 @@ class GENUTIL(unittest.TestCase):
         a=genutil.statistics.laggedcovariance(self.clt,self.clt,lag=4,axis='(time)(longitude)')
         self.assertEqual(a.shape,(5,46))
 
-
-
-
