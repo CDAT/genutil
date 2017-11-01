@@ -3,13 +3,14 @@
 import string
 import cdms2 as cdms
 
+
 def grower(x, y, singleton=0):
     """
     This function takes 2 transient variables and grows them to
     match their axes.
     The final order will be the order of the first variables
     followed by all/any dimension(s) from the second variable not present in the first variable.
-    
+
     :Example:
 
         .. doctest:: genutil_grower
@@ -36,99 +37,98 @@ def grower(x, y, singleton=0):
     :rtype: cdms.tvariable.TransientVariable
     """
     # Parse the x axes
-    xorder=x.getOrder(ids=1)
-    xaxes=x.getAxisList()
+    xorder = x.getOrder(ids=1)
+    xaxes = x.getAxisList()
     # Parse the y axes
-    yorder=y.getOrder(ids=1)
-    yaxes=y.getAxisList()
+    yorder = y.getOrder(ids=1)
+    yaxes = y.getAxisList()
 
     # Now determine the shape of the final array (matching x and y dims,x first)
-    forder=[]
-    prev=0
-    txt=''
+    forder = []
+    prev = 0
+    txt = ''
     for o in xorder:
-        if o=='(' :
-            prev=1
-        elif prev==1:
-            if o!=')':
-               txt=txt+o
+        if o == '(':
+            prev = 1
+        elif prev == 1:
+            if o != ')':
+                txt = txt + o
             else:
                 forder.append('(%s)' % txt)
-                prev=0
-                txt=''
+                prev = 0
+                txt = ''
         else:
             forder.append(o)
 
-    prev=0
-    txt=''
-    xorder=forder[:]
-    nyorder=[]
+    prev = 0
+    txt = ''
+    xorder = forder[:]
+    nyorder = []
     for o in yorder:
-        if o=='(' :
-            prev=1
-        elif prev==1:
-            if o!=')':
-               txt=txt+o
+        if o == '(':
+            prev = 1
+        elif prev == 1:
+            if o != ')':
+                txt = txt + o
             else:
                 nyorder.append('(%s)' % txt)
-                if not '(%s)' % txt in forder:
+                if '(%s)' % txt not in forder:
                     forder.append('(%s)' % txt)
-                prev=0
-                txt=''
+                prev = 0
+                txt = ''
         else:
             nyorder.append(o)
-            if not o in forder:
+            if o not in forder:
                 forder.append(o)
-    yorder=nyorder
+    yorder = nyorder
     # Now grow x
-    #print forder,xorder,yorder,nyorder
+    # print forder,xorder,yorder,nyorder
     for o in forder:
-        if not o in xorder:
+        if o not in xorder:
             for i in range(len(yorder)):
-                if yorder[i]==o :
-                    newaxes=x.getAxisList()
-                    ax=yaxes[i]
-                    if len(ax)>1 and singleton==1:
-                        raise 'Error, dimension:'+ax.id+'is not a singleton dimension,(len is:'+ \
-                              str(len(ax))+ \
+                if yorder[i] == o:
+                    newaxes = x.getAxisList()
+                    ax = yaxes[i]
+                    if len(ax) > 1 and singleton == 1:
+                        raise 'Error, dimension:' + ax.id + 'is not a singleton dimension,(len is:' + \
+                              str(len(ax)) + \
                               ') you specified to grow only singleton dims, exiting'
-                    xsh=list(x.shape)
-                    xsh.insert(0,len(ax))
-                    x=cdms.MV2.resize(x,xsh)
-                    newaxes.insert(0,ax)
+                    xsh = list(x.shape)
+                    xsh.insert(0, len(ax))
+                    x = cdms.MV2.resize(x, xsh)
+                    newaxes.insert(0, ax)
                     x.setAxisList(newaxes)
-    xorder=x.getOrder(ids=1)
-    sp=string.split(xorder,'(')
-    xorder=[]
+    xorder = x.getOrder(ids=1)
+    sp = string.split(xorder, '(')
+    xorder = []
     for s in sp:
-        if string.find(s,')')==-1:
+        if string.find(s, ')') == -1:
             for t in s:
                 xorder.append(t)
         else:
-            sp2=string.split(s,')')
+            sp2 = string.split(s, ')')
             xorder.append(sp2[0])
             for t in sp2[1]:
                 xorder.append(t)
-    xaxes=x.getAxisList()
-
+    xaxes = x.getAxisList()
 
     # Now grow y
-    #print forder,yorder
+    # print forder,yorder
     for o in forder:
-        if not o in yorder:
+        if o not in yorder:
             for i in range(len(xorder)):
-                if o in ['(%s)' % xorder[i], xorder[i] ] :
-                    newaxes=y.getAxisList()
-                    ax=xaxes[i]
-                    if len(ax)>1 and singleton==1:
-                        raise 'Error, dimension:'+ax.id+'is not a singleton dimension,(len is:'+ \
-                              str(len(ax))+\
-                                  ') you specified to grow only singleton dims, exiting'
-                    ysh=list(y.shape)
-                    ysh.insert(0,len(ax))
-                    y=cdms.MV2.resize(y,ysh)
-                    newaxes.insert(0,ax)
+                if o in ['(%s)' % xorder[i], xorder[i]]:
+                    newaxes = y.getAxisList()
+                    ax = xaxes[i]
+                    if len(ax) > 1 and singleton == 1:
+                        raise 'Error, dimension:' + ax.id + 'is not a singleton dimension,(len is:' + \
+                              str(len(ax)) +\
+                            ') you specified to grow only singleton dims, exiting'
+                    ysh = list(y.shape)
+                    ysh.insert(0, len(ax))
+                    y = cdms.MV2.resize(y, ysh)
+                    newaxes.insert(0, ax)
                     y.setAxisList(newaxes)
     # Figure out the string to reorder x and y
-    #print x.shape,y.shape
-    return x(order=forder),y(order=forder)
+    # print x.shape,y.shape
+    return x(order=forder), y(order=forder)
