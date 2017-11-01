@@ -1,5 +1,4 @@
-# Adapted for numpy/ma/cdms2 by convertcdms.py
-# Adapted for numpy/ma/cdms2 by convertcdms.py
+from __future__ import print_function
 import numpy
 import numpy.ma
 import cdms2
@@ -216,7 +215,7 @@ def area_weights(ds, axisoptions=None):
             loc = initial_order_list.index('-')
             axisid = '(' + ds.getAxis(loc).id + ')'
             initial_order_list[loc] = axisid
-            initial_order = "".join(initial_order_list, '')
+            initial_order = "".join(initial_order_list)
             if __DEBUG__:
                 print('Changed initial_order = ', initial_order)
         # end of if '-' in initial_order_list:
@@ -587,7 +586,7 @@ def _combine_weights(x, weightoptions):
       weight_array  : In the same shape as x but assuming that the remaining weights are equal.
     """
     #
-    __DEBUG__ = 1
+    __DEBUG__ = 0
     #
     xsh = x.shape
     if __DEBUG__:
@@ -989,9 +988,7 @@ def averager(V, axis=None, weights=None, action='average',
             In general, the above can be substituted with arrays of weights where
             the 'weighted' keyword appears.
     """
-    import pdb
-    pdb.set_trace()
-    __DEBUG__ = 1
+    __DEBUG__ = 0
     cdat_info.pingPCMDIdb("cdat", "genutil.averager")
     #
     # Check the weight = option. This is done for backward compatibility since
@@ -1122,7 +1119,6 @@ def averager(V, axis=None, weights=None, action='average',
                 if __DEBUG__:
                     print('Averaging axis # = ', i, end=' ')
                 #
-                print(i,"TYPE WEI:",type(weights[1]))
                 if isinstance(weights[i], bytes) or (weights[i] is None):
                     pass
                 else:
@@ -1227,7 +1223,7 @@ def averager(V, axis=None, weights=None, action='average',
                     if __DEBUG__:
                         print(
                             '*** the axisoption is about to be modified. Before mod  = ', axis)
-                    axis = xlist.join('')
+                    axis = "".join(xlist)
                     if __DEBUG__:
                         print(
                             '*** the axisoption has been modified. It is = ', axis)
@@ -1261,7 +1257,7 @@ def averager(V, axis=None, weights=None, action='average',
         print('Checking weights= options:', weights)
     #
     filled_wtoptions = __check_weightoptions(V, axis, weights)
-    print("FFILLED OPTA:",filled_wtoptions)
+    print("FFILLED OPTA:", filled_wtoptions)
     if __DEBUG__:
         print('The weights options are ', filled_wtoptions)
     #

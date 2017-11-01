@@ -1,6 +1,6 @@
 # Adapted for numpy/ma/cdms2 by convertcdms.py
 import numpy
-from . import statistics
+from .stats_checker import __checker
 import numpy.ma
 import cdms2
 import genutil
@@ -46,7 +46,7 @@ def get(Array, Indices, axis=0):
         id = Array.id
 
     if len(Array.shape) != len(Indices.shape):
-        Array, Indices, weights, axis, ax = statistics.__checker(
+        Array, Indices, weights, axis, ax = __checker(
             Array, Indices, None, axis, smally=1)
         if isinstance(Indices, int):
             return Array[Indices]
@@ -54,7 +54,7 @@ def get(Array, Indices, axis=0):
             raise "Error incompatible shapes: " + \
                 str(Array.shape) + " and " + str(Indices.shape)
     else:
-        Array, Indices, weights, axis, ax = statistics.__checker(
+        Array, Indices, weights, axis, ax = __checker(
             Array, Indices, None, axis)
         if Indices.shape != Array.shape:
             raise "Error incompatible shapes: " + \
@@ -118,15 +118,15 @@ def set(Array, Indices, Values, axis=0):
         xatt = Array.attributes
         id = Array.id
     if len(Array.shape) != len(Indices.shape):
-        crap, Indices, crap, axis, ax = statistics.__checker(
+        crap, Indices, crap, axis, ax = __checker(
             Array, Indices, None, axis, smally=1)
-        Array, Values, crap, axis, ax = statistics.__checker(
+        Array, Values, crap, axis, ax = __checker(
             Array, Values, None, axis, smally=1)
         if Indices.shape != Array.shape[1:]:
             raise "Error uncompatible shapes: " + \
                 str(Array.shape) + " and " + str(Indices.shape)
     else:
-        Array, Indices, Values, axis, ax = statistics.__checker(
+        Array, Indices, Values, axis, ax = __checker(
             Array, Indices, Values, axis)
         if Indices.shape != Array.shape:
             raise "Error uncompatible shapes: " + \

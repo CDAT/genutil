@@ -7,12 +7,12 @@ try:
     import xmgrace  # noqa
 except BaseException:
     pass
-from . import statistics  # noqa
 from .minmax import minmax  # noqa
 from .statusbar import statusbar  # noqa
 from .selval import picker  # noqa
 from . import filters  # noqa
 from . import arrayindexing  # noqa
+from . import statistics  # noqa
 from . import ASCII  # noqa
 from . import udunits  # noqa
 from .Filler import Filler, StringConstructor  # noqa
