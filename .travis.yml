@@ -20,7 +20,7 @@ script:
 - python setup.py install 
 - python run_tests.py -v2
 - rm -rf build
-- conda create -n py3 -c nesii/channel/dev-esmf -c uvcdat/label/nightly -c conda-forge -c uvcdat cdms2 nose flake8 "python>3"
+- conda create -n py3 -c nesii/channel/dev-esmf -c uvcdat/label/nightly -c conda-forge -c uvcdat cdms2 nose flake8 "python>3" udunits2 
 - source activate py3
 - python setup.py install 
 - python run_tests.py -v2
