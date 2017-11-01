@@ -58,7 +58,7 @@ def statusbar(status, total=1., prev=-1, title='Done', tk=None):
         status = float(status)
         while status > total:
             status = status / 100.  # Makes sure status is < total
-        for n in xrange(int(ntot + 15 + len(title))):
+        for n in range(int(ntot + 15 + len(title))):
             sys.stdout.write('\b')  # Remove the previous line
         sys.stdout.write(title[:10] + ' : ')
         for n in range(int(ntot)):  # Plot a character
@@ -87,7 +87,7 @@ def statusbar(status, total=1., prev=-1, title='Done', tk=None):
         # the tk part
         # Allows control over multiple task, just pass a list for status and total
         import Pmw
-        import Tkinter
+        import tkinter
         if not type(status) in [type([]), type(())]:
             status = [status]
             total = [total]
@@ -101,12 +101,12 @@ def statusbar(status, total=1., prev=-1, title='Done', tk=None):
         hsave = 20.
         wsave = 10.
         if prev == [0, 0]:
-            master = Tkinter.Toplevel()
+            master = tkinter.Toplevel()
             # Pmw.Blt._checkForBlt(master)
             master.geometry('200x' + sheigth)
             master.resizable(0, 0)
             master.update()
-            canvas = Tkinter.Canvas(master, bg='white')
+            canvas = tkinter.Canvas(master, bg='white')
             g = master.geometry()
             w = string.split(g, 'x')[0]
             h = string.split(string.split(g, 'x')[1], '+')[0]

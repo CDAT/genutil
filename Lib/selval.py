@@ -38,7 +38,7 @@ class PickComponent(SelectorComponent):
             s += ')\n'
         if self.kargs != {}:
             s += 'Keywords:\n'
-            for k in self.kargs.keys():
+            for k in list(self.kargs.keys()):
                 s += '\t' + str(k) + ':' + str(self.kargs[k]) + '\n'
         return s
 
@@ -74,7 +74,7 @@ class PickComponent(SelectorComponent):
                     specification[i] = minimum(specs), maximum(specs)  # sets the specifications
             else:
                 return 1
-        for kw in self.kargs.keys():
+        for kw in list(self.kargs.keys()):
             axis = None
             for i in range(len(axes)):
                 if axes[i].id == kw:
@@ -182,7 +182,7 @@ class PickComponent(SelectorComponent):
                     newax = cdms.createAxis(numpy.array(newaxvals), bounds=numpy.array(bounds), id=ax.id)
                 else:
                     newax = cdms.createAxis(numpy.array(newaxvals), id=ax.id)
-                for att in faxes[i].attributes.keys():
+                for att in list(faxes[i].attributes.keys()):
                     setattr(newax, att, faxes[i].attributes.get(att))
                 for j in range(len(fetched.shape)):
                     if j == i:

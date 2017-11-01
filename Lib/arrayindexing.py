@@ -1,6 +1,6 @@
 # Adapted for numpy/ma/cdms2 by convertcdms.py
 import numpy
-import statistics
+from . import statistics
 import numpy.ma
 import cdms2
 import genutil
@@ -68,7 +68,7 @@ def get(Array, Indices, axis=0):
         C = numpy.ma.array(C, copy=0, mask=None)
     if ax is not None:
         C = cdms2.createVariable(C, axes=ax, id=id, copy=0)
-        for at in xatt.keys():
+        for at in list(xatt.keys()):
             setattr(C, at, xatt[at])
     return C
 
@@ -138,6 +138,6 @@ def set(Array, Indices, Values, axis=0):
             Array = numpy.ma.masked_where(m, Array, copy=0)
     if ax is not None:
         Array = cdms2.createVariable(Array, axes=ax, id=id, copy=0)
-        for at in xatt.keys():
+        for at in list(xatt.keys()):
             setattr(Array, at, xatt[at])
     return Array

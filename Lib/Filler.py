@@ -41,7 +41,7 @@ class StringConstructor:
         cdat_info.pingPCMDIdb("cdat", "genutil.StringConstructor")
         self.template = template
         # ok we need to generate the keys and set them to empty it seems like a better idea
-        keys = self.keys()
+        keys = list(self.keys())
         for k in keys:
             setattr(self, k, "")
 
@@ -93,7 +93,7 @@ class StringConstructor:
         if template is None:
             template = self.template
         # Now determine the keywords in the template:
-        keys = self.keys()
+        keys = list(self.keys())
         # Now replace the keywords with their values
         for k in keys:
             template = template.replace('%(' + k + ')', kw.get(k, getattr(self, k, '')))
@@ -129,7 +129,7 @@ class StringConstructor:
         """
         out = {}
         template = self.template
-        for k in self.keys():
+        for k in list(self.keys()):
             sp = template.split("%%(%s)" % k)
             i1 = name.find(sp[0]) + len(sp[0])
             j1 = sp[1].find("%(")
@@ -140,24 +140,24 @@ class StringConstructor:
                     i2 = name.find(sp[1])
                     val = name[i1:i2]
                 if debug:
-                    print k, j1, sp[1], "****", sp
-                    print k, name[i1:i2]
-                    print k, i1, i2, val
+                    print(k, j1, sp[1], "****", sp)
+                    print(k, name[i1:i2])
+                    print(k, i1, i2, val)
             else:
                 i2 = name[i1:].find(sp[1][:j1])
                 val = name[i1:i1 + i2]
                 if debug:
-                    print k, j1, sp[1][:j1]
-                    print k, name[i1:]
-                    print k, i1, i2, val
+                    print(k, j1, sp[1][:j1])
+                    print(k, name[i1:])
+                    print(k, i1, i2, val)
             if debug:
-                print '-----------------'
+                print('-----------------')
             template = template.replace("%%(%s)" % k, val)
             if debug:
-                print template
+                print(template)
             out[k] = val
         if debug:
-            print out
+            print(out)
         if self.construct(self.template, **out) != name:
             raise "Invalid pattern sent"
         return out

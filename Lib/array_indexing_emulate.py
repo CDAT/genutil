@@ -1,6 +1,6 @@
 # Emulate array_indexing
 
-import array_indexing
+from . import array_indexing
 import numpy
 
 

@@ -2,12 +2,12 @@
 import MV2
 import numpy.ma
 import cdms2
-from grower import grower
+from .grower import grower
 import numpy
 import cdat_info
-import arrayindexing
-import array_indexing_emulate as array_indexing
-from averager import __check_weightoptions
+from . import arrayindexing
+from . import array_indexing_emulate as array_indexing
+from .averager import __check_weightoptions
 
 
 class StatisticsError (Exception):
@@ -597,7 +597,7 @@ def __checker(x, y, w, axes, smally=0):
             for anaxis in myaxes[::-1]:
                 shy.insert(0, shx[anaxis])
             y = numpy.ma.resize(y, shy)
-            sh = range(len(x.shape))
+            sh = list(range(len(x.shape)))
             if axes != 0:
                 for i in range(len(myaxes)):
                     sh[myaxes[i]] = i
@@ -657,7 +657,7 @@ def __checker(x, y, w, axes, smally=0):
     naxes = len(axes)
     n0 = 1
     xsh = x.shape
-    xorder = range(len(x.shape))
+    xorder = list(range(len(x.shape)))
     forder = []
     for i in range(naxes):
         forder.append(axes[i])
@@ -756,7 +756,7 @@ def covariance(x, y, weights=None, axis=0, centered=1, biased=1, max_pct_missing
     cov = _treat_missing(cov, x, max_pct_missing=max_pct_missing)
     if ax is not None:
         cov = cdms2.createVariable(cov, axes=ax, id='covariance', copy=0)
-        if 'units' in xatt.keys() and 'units' in yatt.keys():
+        if 'units' in list(xatt.keys()) and 'units' in list(yatt.keys()):
             cov.units = xatt['units'] + '*' + yatt['units']
     return cov
 
@@ -816,7 +816,7 @@ def variance(x, weights=None, axis=0, centered=1, biased=1, max_pct_missing=100.
     var = _treat_missing(var, x, max_pct_missing=max_pct_missing)
     if ax is not None:
         var = cdms2.createVariable(var, axes=ax, id='variance', copy=0)
-        if 'units' in xatt.keys():
+        if 'units' in list(xatt.keys()):
             var.units = xatt['units'] + '*' + xatt['units']
     return var
 
@@ -880,7 +880,7 @@ def std(x, weights=None, axis=0, centered=1, biased=1, max_pct_missing=100.):
     std = _treat_missing(std, x, max_pct_missing=max_pct_missing)
     if ax is not None:
         std = cdms2.createVariable(std, axes=ax, id='standard_deviation', copy=0)
-        if 'units' in xatt.keys():
+        if 'units' in list(xatt.keys()):
             std.units = xatt['units']
     return std
 
@@ -1002,7 +1002,7 @@ def rms(x, y, weights=None, axis=0, centered=0, biased=1, max_pct_missing=100.):
     rmsans = _treat_missing(rmsans, x, max_pct_missing=max_pct_missing)
     if ax is not None:
         rmsans = cdms2.createVariable(rmsans, axes=ax, id='RMS_difference', copy=0)
-        if 'units' in xatt.keys():
+        if 'units' in list(xatt.keys()):
             rms.units = xatt['units']
 
     return rmsans
@@ -1066,10 +1066,10 @@ def laggedcovariance(x, y, lag=None, axis=0, centered=1, partial=1, noloop=0, ma
         yatt = y.attributes
     x, y, w, axis, ax = __checker(x, y, None, axis)
     if lag is None:
-        lags = range(x.shape[0])
-    elif isinstance(lag, (int, long)):
+        lags = list(range(x.shape[0]))
+    elif isinstance(lag, int):
         if not noloop:
-            lags = range(lag + 1)
+            lags = list(range(lag + 1))
         else:
             lags = [lag]
     elif not isinstance(lag, (list, tuple)):
@@ -1094,7 +1094,7 @@ def laggedcovariance(x, y, lag=None, axis=0, centered=1, partial=1, noloop=0, ma
         newax.id = 'lag'
         ax.insert(0, newax)
         lcovs = cdms2.createVariable(lcovs, axes=ax, id='lagged_covariance' + str(lag), copy=0)
-        if 'units' in xatt.keys() and 'units' in yatt.keys():
+        if 'units' in list(xatt.keys()) and 'units' in list(yatt.keys()):
             lcovs.units = xatt['units'] + '*' + yatt['units']
     return lcovs
 
@@ -1155,10 +1155,10 @@ def laggedcorrelation(x, y, lag=None, axis=0, centered=1, partial=1, biased=1, n
     cdat_info.pingPCMDIdb("cdat", "genutil.statistics.laggedcorrelation")
     x, y, w, axis, ax = __checker(x, y, None, axis)
     if lag is None:
-        lags = range(x.shape[0])
-    elif isinstance(lag, (int, long)):
+        lags = list(range(x.shape[0]))
+    elif isinstance(lag, int):
         if not noloop:
-            lags = range(lag + 1)
+            lags = list(range(lag + 1))
         else:
             lags = [lag]
     elif not isinstance(lag, (list, tuple)):
@@ -1239,10 +1239,10 @@ def autocovariance(x, lag=None, axis=0, centered=1, partial=1, noloop=0, max_pct
         xatt = x.attributes
     x, dum, dum, axis, ax = __checker(x, None, None, axis)
     if lag is None:
-        lags = range(x.shape[0])
-    elif isinstance(lag, (int, long)):
+        lags = list(range(x.shape[0]))
+    elif isinstance(lag, int):
         if not noloop:
-            lags = range(lag + 1)
+            lags = list(range(lag + 1))
         else:
             lags = [lag]
     elif not isinstance(lag, (list, tuple)):
@@ -1265,7 +1265,7 @@ def autocovariance(x, lag=None, axis=0, centered=1, partial=1, noloop=0, max_pct
         newax.id = 'lag'
         ax.insert(0, newax)
         acovs = cdms2.createVariable(acovs, axes=ax, id='autocovariance' + str(lag), copy=0)
-        if 'units' in xatt.keys():
+        if 'units' in list(xatt.keys()):
             acovs.units = xatt['units'] + '*' + xatt['units']
     return acovs
 
@@ -1321,10 +1321,10 @@ def autocorrelation(x, lag=None, axis=0, centered=1, partial=1, biased=1, noloop
     cdat_info.pingPCMDIdb("cdat", "genutil.statistics.autocorrelation")
     x, dum, dum, axis, ax = __checker(x, None, None, axis)
     if lag is None:
-        lags = range(x.shape[0])
-    elif isinstance(lag, (int, long)):
+        lags = list(range(x.shape[0]))
+    elif isinstance(lag, int):
         if not noloop:
-            lags = range(lag + 1)
+            lags = list(range(lag + 1))
         else:
             lags = [lag]
     elif not isinstance(lag, (list, tuple)):
@@ -1400,7 +1400,7 @@ def meanabsdiff(x, y, weights=None, axis=0, centered=1, max_pct_missing=100.):
     mad = _treat_missing(mad, x, max_pct_missing=max_pct_missing)
     if ax is not None:
         mad = cdms2.createVariable(mad, axes=ax, id='mean_absolute_difference', copy=0)
-        if 'units' in xatt.keys():
+        if 'units' in list(xatt.keys()):
             mad.units = xatt['units']
     return mad
 
@@ -1589,7 +1589,7 @@ def linearregression(y, axis=None, x=None, error=None, probability=None, nointer
             val[0] = cdms2.createVariable(val[0], axes=axs, id='slope', copy=0)
         if nointercept is None or nointercept == 0:
             val[-1] = cdms2.createVariable(val[-1], axes=axs, id='intercept', copy=0)
-        if 'units' in yatt.keys():
+        if 'units' in list(yatt.keys()):
             for v in val:
                 v.units = yatt['units'] + ' per ' + ax2.units
     if error is None or error == 0:
@@ -1627,7 +1627,7 @@ def linearregression(y, axis=None, x=None, error=None, probability=None, nointer
                     setattr(err[-1],
                             'long_name',
                             'standard error for regression constant adjusted with y (using centered autocorrelation)')
-            if 'units' in yatt.keys():
+            if 'units' in list(yatt.keys()):
                 for e in err:
                     e.units = yatt['units'] + ' per ' + ax2.units
         if len(val) > 1:
@@ -1664,7 +1664,7 @@ def linearregression(y, axis=None, x=None, error=None, probability=None, nointer
                     setattr(err[-1],
                             'long_name',
                             'standard error for regression constant adjusted with y (using centered autocorrelation)')
-            if 'units' in yatt.keys():
+            if 'units' in list(yatt.keys()):
                 for e in err:
                     e.units = yatt['units'] + ' per ' + ax2.units
             if noslope is None or noslope == 0:
@@ -1752,7 +1752,7 @@ def geometricmean(x, axis=0, max_pct_missing=100.):
     gmean = _treat_missing(gmean, x, max_pct_missing=max_pct_missing)
     if ax is not None:
         gmean = cdms2.createVariable(gmean, axes=ax, id='geometric_mean', copy=0)
-        if 'units' in xatt.keys():
+        if 'units' in list(xatt.keys()):
             gmean.units = xatt['units']
     return gmean
 
@@ -1848,7 +1848,7 @@ def percentiles(x, percentiles=[50.], axis=0):
         ax.insert(0, pax)
         p = MV2.array(p)
         p = cdms2.createVariable(p, axes=ax, id='percentiles', copy=0)
-        if 'units' in xatt.keys():
+        if 'units' in list(xatt.keys()):
             p.units = xatt['units']
     return p
 
@@ -1956,12 +1956,12 @@ def rank(x, axis=0):
         for i in range(len(axis)):
             b.setAxis(i, axs[axis[i]])
         b = b(order=o)
-        for a in xatt.keys():
+        for a in list(xatt.keys()):
             if a[0] != '_':
                 setattr(b, a, xatt[a])
         b.units = '%'
     elif len(axis) == 1:
-        sh = range(b.rank())
+        sh = list(range(b.rank()))
         sh[0] = axis[0]
         sh[axis[0]] = 0
         b = numpy.ma.transpose(b, sh)

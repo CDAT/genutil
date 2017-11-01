@@ -47,12 +47,12 @@ def __myGetAxisWeights(x, i, axisoptions=None):
     """
     if x.getAxis(i).isLatitude():
         Lataxis = x.getAxis(i)
-        xgr = cdms2.createGenericGrid(Lataxis[:], numpy.array(range(1), numpy.float), latBounds=Lataxis.getBounds())
+        xgr = cdms2.createGenericGrid(Lataxis[:], numpy.array(list(range(1)), numpy.float), latBounds=Lataxis.getBounds())
         xlatwt, xlonwt = xgr.getWeights()
         return xlatwt
     elif x.getAxis(i).isLongitude():
         Lonaxis = x.getAxis(i)
-        xgr = cdms2.createGenericGrid(numpy.array(range(1), numpy.float), Lonaxis[:], lonBounds=Lonaxis.getBounds())
+        xgr = cdms2.createGenericGrid(numpy.array(list(range(1)), numpy.float), Lonaxis[:], lonBounds=Lonaxis.getBounds())
         xlatwt, xlonwt = xgr.getWeights()
         return xlonwt
     else:
@@ -108,12 +108,12 @@ def __myGetAxisWeightsByName(x, name):
     """
     if x.getAxisList(axes=name)[0].isLatitude():
         Lataxis = x.getAxisList(axes=name)[0]
-        xgr = cdms2.createGenericGrid(Lataxis[:], numpy.array(range(1), numpy.float), latBounds=Lataxis.getBounds())
+        xgr = cdms2.createGenericGrid(Lataxis[:], numpy.array(list(range(1)), numpy.float), latBounds=Lataxis.getBounds())
         xlatwt, xlonwt = xgr.getWeights()
         return xlatwt
     elif x.getAxisList(axes=name)[0].isLongitude():
         Lonaxis = x.getAxisList(axes=name)[0]
-        xgr = cdms2.createGenericGrid(numpy.array(range(1), numpy.float), Lonaxis[:], lonBounds=Lonaxis.getBounds())
+        xgr = cdms2.createGenericGrid(numpy.array(list(range(1)), numpy.float), Lonaxis[:], lonBounds=Lonaxis.getBounds())
         xlatwt, xlonwt = xgr.getWeights()
         return xlonwt
     else:
@@ -169,9 +169,9 @@ def area_weights(ds, axisoptions=None):
     __DEBUG__ = 0
     #
     if __DEBUG__:
-        print 'Incoming axisoptions = ', axisoptions
+        print('Incoming axisoptions = ', axisoptions)
     if __DEBUG__:
-        print 'Shape of Incoming data = ', ds.shape
+        print('Shape of Incoming data = ', ds.shape)
     seenlon = 0
     seenlat = 0
     if 'x' in list(ds.getOrder()):
@@ -181,10 +181,10 @@ def area_weights(ds, axisoptions=None):
     #
     if seenlat and seenlon:
         if __DEBUG__:
-            print 'Found both latitude and longitude'
+            print('Found both latitude and longitude')
         initial_order = ds.getOrder()
         if __DEBUG__:
-            print 'initial_order= ', initial_order
+            print('initial_order= ', initial_order)
         initial_order_list = list(initial_order)
         if '-' in initial_order_list:
             loc = initial_order_list.index('-')
@@ -192,16 +192,16 @@ def area_weights(ds, axisoptions=None):
             initial_order_list[loc] = axisid
             initial_order = string.joinfields(initial_order_list, '')
             if __DEBUG__:
-                print 'Changed initial_order = ', initial_order
+                print('Changed initial_order = ', initial_order)
         # end of if '-' in initial_order_list:
         ds = ds(order='...yx')
         dsorder = ds.getOrder()
         if __DEBUG__:
-            print 'Reordered ds ', dsorder
+            print('Reordered ds ', dsorder)
         Lataxisindex = list(dsorder).index('y')
         Lonaxisindex = list(dsorder).index('x')
         if __DEBUG__:
-            print 'Lataxisindex = ', Lataxisindex, ' Lonaxisindex = ', Lonaxisindex
+            print('Lataxisindex = ', Lataxisindex, ' Lonaxisindex = ', Lonaxisindex)
         dsgr = ds.getGrid()
         latwts, lonwts = dsgr.getWeights()
         wt = numpy.outer(numpy.array(latwts), numpy.array(lonwts))
@@ -216,14 +216,14 @@ def area_weights(ds, axisoptions=None):
                 newaxiswt = __myGetAxisWeights(ds, i, axisoptions)
                 wtlist = list(wt.shape)
                 if __DEBUG__:
-                    print 'Before Inserting newdim', wtlist
+                    print('Before Inserting newdim', wtlist)
                 wtlist.insert(0, newaxiswt.shape[0])
                 if __DEBUG__:
-                    print 'After inserting newdim ', wtlist
+                    print('After inserting newdim ', wtlist)
                 new_wtshape = tuple(wtlist)
                 wt = numpy.resize(wt, new_wtshape)
                 if __DEBUG__:
-                    print 'After inserting dimension ', i, ' shape of wt = ', wt.shape
+                    print('After inserting dimension ', i, ' shape of wt = ', wt.shape)
                 new_newaxiswt_shape = list(newaxiswt.shape)
                 for nn in range(1, len(wt.shape), 1):
                     new_newaxiswt_shape.append(1)
@@ -234,27 +234,27 @@ def area_weights(ds, axisoptions=None):
         wt = cdms2.createVariable(numpy.ma.masked_array(wt, numpy.ma.getmask(ds)), axes=ds.getAxisList())
         result = wt(order=initial_order)
         if __DEBUG__:
-            print 'Returning something of order', result.getOrder()
+            print('Returning something of order', result.getOrder())
         return result
     else:
         wt = __myGetAxisWeights(ds, 0, axisoptions)
         if __DEBUG__:
-            print 'Initial', wt.shape
+            print('Initial', wt.shape)
         for i in range(1, len(ds.shape)):
             wt_newshape = tuple(list(ds.shape)[:i + 1])
             if __DEBUG__:
-                print 'wt_newshape = ', wt_newshape
+                print('wt_newshape = ', wt_newshape)
             wt = numpy.resize(wt, wt_newshape)
             if __DEBUG__:
-                print 'After wt resize wt.shape = ', wt.shape
+                print('After wt resize wt.shape = ', wt.shape)
             newaxiswt = __myGetAxisWeights(ds, i)
             newaxiswt = numpy.resize(newaxiswt, wt.shape)
             wt = wt * newaxiswt
             if __DEBUG__:
-                print 'After axis ', i, ' wt has shape ', wt.shape
+                print('After axis ', i, ' wt has shape ', wt.shape)
         # end of for i in range(2, len(ds.shape)):
         if __DEBUG__:
-            print 'Final Shape of Weight = ', wt.shape
+            print('Final Shape of Weight = ', wt.shape)
         return cdms2.createVariable(numpy.ma.masked_array(wt, numpy.ma.getmask(ds)), axes=ds.getAxisList())
     # end of if seenlat and seenlon:
 
@@ -268,8 +268,8 @@ def __check_each_weight_option(x, ax, index, wtopt):
     __DEBUG__ = 0
     #
     if __DEBUG__:
-        print 'Inside __check_each_weight_option, index = ', \
-            index, 'axis = ', ax, ' wtopt = ', wtopt
+        print('Inside __check_each_weight_option, index = ', \
+            index, 'axis = ', ax, ' wtopt = ', wtopt)
     #
     # Check the types etc.....
     #
@@ -278,14 +278,14 @@ def __check_each_weight_option(x, ax, index, wtopt):
         # wtopt is an MV2
         #
         if __DEBUG__:
-            print 'I have a Masked Variable of shape', wtopt.shape
+            print('I have a Masked Variable of shape', wtopt.shape)
         #
         try:
             if __DEBUG__:
-                print '****Order of axes in wtopt (originally) = ', MV2.getorder(wtopt)
+                print('****Order of axes in wtopt (originally) = ', MV2.getorder(wtopt))
             wtopt = wtopt(order=ax)
             if __DEBUG__:
-                print '****Order of axes in wtopt    (finally) = ', MV2.getorder(wtopt)
+                print('****Order of axes in wtopt    (finally) = ', MV2.getorder(wtopt))
         except BaseException:
             raise AveragerError('The MV2 passed does not have an axis matching ' + str(ax))
         # end of try:
@@ -298,7 +298,7 @@ def __check_each_weight_option(x, ax, index, wtopt):
             # Coerce the MV2 to numpy type..... only if the wtopt is 1-d!!
             #
             if __DEBUG__:
-                print 'Returning a numeric array from MV2!!'
+                print('Returning a numeric array from MV2!!')
             wtopt = numpy.ma.filled(wtopt)
         # end of if len(numpy.ma.shape(wtopt)) == 1:
     elif numpy.ma.isMA(wtopt):
@@ -306,7 +306,7 @@ def __check_each_weight_option(x, ax, index, wtopt):
         # wtopt is an numpy.ma
         #
         if __DEBUG__:
-            print 'I have a Masked Array of rank', wtopt.ndim
+            print('I have a Masked Array of rank', wtopt.ndim)
         #
         if wtopt.ndim > 1:
             raise AveragerError('Error: The Masked Array of more than 1 dimension lacks sufficient information')
@@ -319,38 +319,38 @@ def __check_each_weight_option(x, ax, index, wtopt):
         # Coerce the numpy.ma to numpy type.....
         #
         if __DEBUG__:
-            print 'Returning a numeric array from numpy.ma!!'
+            print('Returning a numeric array from numpy.ma!!')
         wtopt = wtopt.filled()
     elif isinstance(wtopt, numpy.ndarray):
         #
         # wtopt is a numpy Array
         #
         if __DEBUG__:
-            print 'I have a numpy Array of rank', len(numpy.shape(wtopt))
+            print('I have a numpy Array of rank', len(numpy.shape(wtopt)))
         #
         if len(numpy.shape(wtopt)) > 1:
             raise AveragerError('Error: The numpy Array of more than 1 dimension lacks sufficient information')
         if numpy.shape(wtopt)[0] != len(x.getAxis(index)[:]):
             raise AveragerError('Error: Axis is of length %d, weights passed of length %d' %
                                 (len(x.getAxis(index)[:]), numpy.shape(wtopt)[0]))
-    elif isinstance(wtopt, types.StringType):
+    elif isinstance(wtopt, bytes):
         #
         # wtopt is a string
         #
         if __DEBUG__:
-            print 'I have a string =', wtopt
+            print('I have a string =', wtopt)
         #
         if wtopt.lower() in ['equal', 'unweighted']:
             if __DEBUG__:
-                print 'Equal weights specified'
+                print('Equal weights specified')
             wtopt = 'unweighted'
         elif wtopt.lower() in ['generate', 'weighted']:
             # NOTE: THIS FUNCTION CAN BE CHANGED WHEN BOB PUTS THE FUNCTION getAxisWeights() INTO cdms2
             if __DEBUG__:
-                print 'GENERATE weights specified'
+                print('GENERATE weights specified')
             wtopt = __myGetAxisWeights(x, index)
             if __DEBUG__:
-                print wtopt
+                print(wtopt)
         else:
             raise AveragerError('Error: Unrecognised string option specified')
     # end of if MV2.isMaskedVariable(wtopt):
@@ -380,17 +380,17 @@ def __check_weightoptions(x, axisoptions, weightoptions):
     __DEBUG__ = 0
     #
     if __DEBUG__:
-        print 'Axis options entering __check_weightoptions = ', axisoptions
+        print('Axis options entering __check_weightoptions = ', axisoptions)
     #
     axisindex = cdms2.order2index(x.getAxisList(), axisoptions)
     if __DEBUG__:
-        print 'This should be 0,1,2... etc. is it? ', axisindex
+        print('This should be 0,1,2... etc. is it? ', axisindex)
     #
     axislist = cdms2.orderparse(axisoptions)
     if __DEBUG__:
-        print 'axislist = ', axislist
+        print('axislist = ', axislist)
     #
-    if not isinstance(weightoptions, types.ListType):
+    if not isinstance(weightoptions, list):
         #
         # We have either 1 axis only or multiple axes and one MV2 of weights
         #
@@ -405,7 +405,7 @@ def __check_weightoptions(x, axisoptions, weightoptions):
                 # KRISHNA : check this for combinewts!!
                 #
                 if __DEBUG__:
-                    print '... definitely OK'
+                    print('... definitely OK')
             except BaseException:
                 raise AveragerError('Error: Did not find the axes requested in the Masked variable.')
         elif len(axislist) == 1:
@@ -414,7 +414,7 @@ def __check_weightoptions(x, axisoptions, weightoptions):
             # figure out if it is an array (numpy or numpy.ma) or 'equal' or 'generate' or something else
             #
             if __DEBUG__:
-                print 'I have only 1 axis and 1 option'
+                print('I have only 1 axis and 1 option')
             weightoptions = __check_each_weight_option(x, axislist[0], axisindex[0], weightoptions)
         else:
             #
@@ -444,7 +444,7 @@ def __check_weightoptions(x, axisoptions, weightoptions):
     # end of if not isinstance(weightoptions, types.ListType):
     #
     if __DEBUG__:
-        print 'Successful with __check_weightoptions'
+        print('Successful with __check_weightoptions')
     #
     return weightoptions
 
@@ -461,12 +461,12 @@ def _check_MA_weight_options(weightoptions, shx, N_axisopt):
     __DEBUG__ = 0
     #
     if __DEBUG__:
-        print 'Entered _check_MA_weight_options:', weightoptions
+        print('Entered _check_MA_weight_options:', weightoptions)
     #
     if weightoptions is None:
         weightoptions = [None] * N_axisopt
     #
-    if not isinstance(weightoptions, types.ListType):
+    if not isinstance(weightoptions, list):
         weightoptions = [weightoptions]
     # end of if not isinstance(weightoptions, types.ListType):
     #
@@ -474,9 +474,9 @@ def _check_MA_weight_options(weightoptions, shx, N_axisopt):
         #
         wt = weightoptions[i]
         #
-        if isinstance(wt, types.StringType):
+        if isinstance(wt, bytes):
             if __DEBUG__:
-                print 'string weights'
+                print('string weights')
             if wt in ['weighted', 'generate']:
                 raise AveragerError(
                     'Cannot generate weights for an numpy.ma. %s is not a valid option when you do not pass an MV2. ' %
@@ -486,31 +486,31 @@ def _check_MA_weight_options(weightoptions, shx, N_axisopt):
             # end of if wt in ['weighted', 'generate']:
         elif isinstance(wt, numpy.ndarray):
             if __DEBUG__:
-                print 'numpy Array weights'
+                print('numpy Array weights')
             if (wt.shape != shx) and (wt.ndim == 1 and len(wt) != shx[i]):
                 raise AveragerError('The passed weight is not of the appropriate shape')
             # end of if (wt.shape != shx) or (numpy.ma.rank(wt) == 1 and len(wt) != shx[i]):
         elif numpy.ma.isMA(wt):
             if __DEBUG__:
-                print 'numpy.ma Array weights'
+                print('numpy.ma Array weights')
             if __DEBUG__:
-                print 'wt.shape = ', wt.shape
+                print('wt.shape = ', wt.shape)
             if __DEBUG__:
-                print 'numpy.ma.rank(wt) = ', wt.ndim
+                print('numpy.ma.rank(wt) = ', wt.ndim)
             if __DEBUG__:
-                print 'len(wt) = ', len(wt)
+                print('len(wt) = ', len(wt))
             if __DEBUG__:
-                print 'shx[i] = ', shx[i]
+                print('shx[i] = ', shx[i])
             if (wt.shape != shx) and (wt.ndim == 1 and len(wt) != shx[i]):
                 if __DEBUG__:
-                    print 'The passed weight is not of the appropriate shape'
+                    print('The passed weight is not of the appropriate shape')
                 raise AveragerError('The passed weight is not of the appropriate shape')
             # end of if (wt.shape != shx) or (numpy.ma.rank(wt) == 1 and len(wt) != shx[i]):
         # end of if isinstance(wt, types.StringType):
     # end of for i in range(len(weightoptions)):
     #
     if __DEBUG__:
-        print 'weightoptions after _check_MA_weight_options', weightoptions
+        print('weightoptions after _check_MA_weight_options', weightoptions)
     return weightoptions
 
 
@@ -531,26 +531,26 @@ def _combine_weights(x, weightoptions):
     #
     xsh = x.shape
     if __DEBUG__:
-        print 'Shape of incoming data x ', xsh
+        print('Shape of incoming data x ', xsh)
     if __DEBUG__:
-        print 'Type of x ', x.__class__
+        print('Type of x ', x.__class__)
     #
-    if isinstance(weightoptions, types.ListType):
+    if isinstance(weightoptions, list):
         if __DEBUG__:
-            print 'weightoptions is a list'
+            print('weightoptions is a list')
         #
         # Note the weight options have already gone through checks against the
         # reordered data. So nofurther checks are necessary!
         #
         n_dimstoadd = len(x.shape) - len(weightoptions)
         if __DEBUG__:
-            print 'Dimensions to add = ', n_dimstoadd
+            print('Dimensions to add = ', n_dimstoadd)
         if n_dimstoadd < 0:
             raise AveragerError('Error in weights list - too many weights passed!')
         elif n_dimstoadd > 0:
             init_shape = x.shape[-n_dimstoadd:]
             if __DEBUG__:
-                print 'Initialized shape = ', init_shape
+                print('Initialized shape = ', init_shape)
             #
             wt_init = numpy.ones(init_shape, numpy.float)
             #
@@ -565,11 +565,11 @@ def _combine_weights(x, weightoptions):
             wgt = numpy.ones(xsh[-dim], numpy.float)
         else:
             if __DEBUG__:
-                print wgt
+                print(wgt)
         # end of if wgt in ['equal', 'unweighted']:
         #
         if __DEBUG__:
-            print 'wgt.shape = ', wgt.shape
+            print('wgt.shape = ', wgt.shape)
         #
         if wt_init is None:
             wt_init = wgt
@@ -577,25 +577,25 @@ def _combine_weights(x, weightoptions):
                 raise AveragerError('Wrong Weight!!!')
         else:
             if __DEBUG__:
-                print 'list(init_shape) = ', list(init_shape)
+                print('list(init_shape) = ', list(init_shape))
             newshape = list(init_shape)
             newshape.insert(0, wgt.shape[0])
             if __DEBUG__:
-                print 'Pre-loop newshape ', newshape
+                print('Pre-loop newshape ', newshape)
             wt_init = numpy.resize(wt_init, tuple(newshape))
             if __DEBUG__:
-                print 'Pre-loop wt_init.shape ', wt_init.shape
+                print('Pre-loop wt_init.shape ', wt_init.shape)
             wgtsh = list(wgt.shape)
             for nn in range(1, len(wt_init.shape), 1):
                 wgtsh.append(1)
             if __DEBUG__:
-                print 'wgt resized to ', tuple(wgtsh)
+                print('wgt resized to ', tuple(wgtsh))
             wgt = numpy.resize(wgt, tuple(wgtsh))
             wt_init = wt_init * wgt
         # end of if not wt_init:
         #
         if __DEBUG__:
-            print 'Pre-loop wt_init.shape ', wt_init.shape
+            print('Pre-loop wt_init.shape ', wt_init.shape)
         #
         for i in range(len(weightoptions) - 2, -1, -1):
             dim_wt = weightoptions[i]
@@ -603,23 +603,23 @@ def _combine_weights(x, weightoptions):
                 dim_wt = numpy.ones(xsh[i], numpy.float)
             # end of if dim_wt in ['equal', 'weighted']:
             if __DEBUG__:
-                print 'At step ', i, dim_wt
+                print('At step ', i, dim_wt)
             newshape = list(wt_init.shape)
             newshape.insert(0, dim_wt.shape[0])
             wt_init = numpy.resize(wt_init, tuple(newshape))
             if __DEBUG__:
-                print 'Shape of wt_init = ', wt_init.shape
+                print('Shape of wt_init = ', wt_init.shape)
             dim_wtsh = list(dim_wt.shape)
             for nn in range(1, len(wt_init.shape), 1):
                 dim_wtsh.append(1)
             if __DEBUG__:
-                print 'dim_wt resized to ', tuple(dim_wtsh)
+                print('dim_wt resized to ', tuple(dim_wtsh))
             dim_wt = numpy.resize(dim_wt, tuple(dim_wtsh))
             wt_init = wt_init * dim_wt
         # end of for i in range(len(weightoptions)-1, -1, -1):
         #
         if __DEBUG__:
-            print 'wt_init after all dimensions adeed has shape ', wt_init.shape
+            print('wt_init after all dimensions adeed has shape ', wt_init.shape)
         if wt_init.shape != xsh:
             raise AveragerError('SOMETHING SCREWY HAPPENED!!')
         #
@@ -628,7 +628,7 @@ def _combine_weights(x, weightoptions):
         weightoptions = [wt_init]
         #
         if __DEBUG__:
-            print 'Are my weight and area_weights the same?', numpy.ma.allclose(weightoptions[0], area_weights(x))
+            print('Are my weight and area_weights the same?', numpy.ma.allclose(weightoptions[0], area_weights(x)))
     # end of if isinstance(weightoptions, types.ListType):
     #
     return weightoptions
@@ -649,9 +649,9 @@ def _check_MA_axisoptions(axisoption, N_dim):
     __DEBUG__ = 0
     #
     if __DEBUG__:
-        print 'Inside _check_MA_axisoptions:', axisoption
+        print('Inside _check_MA_axisoptions:', axisoption)
     #
-    if not isinstance(axisoption, types.ListType):
+    if not isinstance(axisoption, list):
         axisoption = [axisoption]
     # end of if not isinstance(axis, types.ListType):
     #
@@ -659,11 +659,11 @@ def _check_MA_axisoptions(axisoption, N_dim):
         axis = axisoption[i]
         if not axis:
             axisoption[i] = 0
-        elif isinstance(axis, types.IntType):
-            if axis not in range(N_dim):
+        elif isinstance(axis, int):
+            if axis not in list(range(N_dim)):
                 raise AveragerError('Specified dimension \'%d\' not valid in array of rank %d' % (axis, N_dim))
             # end of if axis >= len(N_dim):
-        elif isinstance(axis, types.StringType):
+        elif isinstance(axis, bytes):
             try:
                 axisoption[i] = int(axis)
             except BaseException:
@@ -673,7 +673,7 @@ def _check_MA_axisoptions(axisoption, N_dim):
     # end of for axis in axisoption:
     #
     if __DEBUG__:
-        print 'axisoption after _check_MA_axisoptions = ', axisoption, len(axisoption)
+        print('axisoption after _check_MA_axisoptions = ', axisoption, len(axisoption))
     #
     return axisoption
 
@@ -706,16 +706,16 @@ def sum_engine(x, wts):
     shx = numpy.ma.shape(x)
     #
     if __DEBUG__:
-        print '\tInside sum_engine.'
+        print('\tInside sum_engine.')
     if __DEBUG__:
-        print '\tIncoming data of shape ', shx
+        print('\tIncoming data of shape ', shx)
     #
     if MV2.isMaskedVariable(wts) or isinstance(wts, numpy.ndarray):
         #
         # wts is an MV2 or numpy array
         #
         if __DEBUG__:
-            print '\t********** Weight is an MV2 or numpy array! **********'
+            print('\t********** Weight is an MV2 or numpy array! **********')
         #
         xavg, return_wts = MV2.average(x, weights=wts, returned=1, axis=0)
         y = xavg * return_wts
@@ -725,7 +725,7 @@ def sum_engine(x, wts):
         # Equal weights
         #
         if __DEBUG__:
-            print '\t********** Weight is Equal! **********'
+            print('\t********** Weight is Equal! **********')
         xavg, return_wts = MV2.average(x, returned=1, axis=0)
         y = xavg * return_wts
         return y, return_wts
@@ -764,9 +764,9 @@ def average_engine(x, wts):
     #
     shx = numpy.ma.shape(x)
     if __DEBUG__:
-        print '\tInside average_engine.'
+        print('\tInside average_engine.')
     if __DEBUG__:
-        print '\tIncoming data of shape ', shx
+        print('\tIncoming data of shape ', shx)
     #
     if MV2.isMaskedVariable(wts) or isinstance(wts, numpy.ndarray):
         y, return_wts = MV2.average(x, weights=wts, returned=1, axis=0)
@@ -967,7 +967,7 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
     #
     if isinstance(V, numpy.ndarray):
         if __DEBUG__:
-            print 'Converting to numpy.ma so I can do an numpy.ma.average or sum'
+            print('Converting to numpy.ma so I can do an numpy.ma.average or sum')
         V = numpy.ma.array(V)
         _NUM_FLAG = 1
     else:
@@ -982,16 +982,16 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
         # The passed array is an numpy.ma
         #
         if __DEBUG__:
-            print 'Entered numpy.ma only....'
+            print('Entered numpy.ma only....')
         if __DEBUG__:
-            print '!!!!!!Checking weights for numpy.ma', weights
+            print('!!!!!!Checking weights for numpy.ma', weights)
         #
         #
-        if isinstance(weights, types.StringType) and weights in ['weighted', 'generate']:
+        if isinstance(weights, bytes) and weights in ['weighted', 'generate']:
             if __DEBUG__:
-                print 'VOILA!'
-            print 'genutil.averager Warning: \n\tNot operating on a TransientVariable.'
-            print '\tChanging default weights to \'unweighted\' (equally weighted)'
+                print('VOILA!')
+            print('genutil.averager Warning: \n\tNot operating on a TransientVariable.')
+            print('\tChanging default weights to \'unweighted\' (equally weighted)')
             weights = None
         # end of if weights == 'weighted':
         #
@@ -1010,10 +1010,10 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
                 newaxorder.append(i)
             # if not i in newaxorder:
         # end of for i in range(len(numpy.ma.shape(V))):
-        if newaxorder != range(len(V.shape)):
+        if newaxorder != list(range(len(V.shape))):
             x = numpy.ma.transpose(V, newaxorder)
             if __DEBUG__:
-                print 'Reordered shape = ', x.shape
+                print('Reordered shape = ', x.shape)
         else:
             x = V
 
@@ -1025,9 +1025,9 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
         #
         #
         if __DEBUG__:
-            print 'Length of axis = ', len(axis)
+            print('Length of axis = ', len(axis))
         if __DEBUG__:
-            print 'Length of weights = ', len(weights)
+            print('Length of weights = ', len(weights))
         #
         # If the user has passed combinewts = 1, then do the combining of weights here
         #
@@ -1044,13 +1044,13 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
             for i in range(len(axis)):
                 #
                 if __DEBUG__:
-                    print 'Averaging axis # = ', i,
+                    print('Averaging axis # = ', i, end=' ')
                 #
-                if isinstance(weights[i], types.StringType) or (weights[i] is None):
+                if isinstance(weights[i], bytes) or (weights[i] is None):
                     pass
                 else:
                     if __DEBUG__:
-                        print weights[i].shape
+                        print(weights[i].shape)
                 # end of if not isinstance(weights[i] , types.StringType):
                 if i > len(weights) - 1:
                     if not retwts:  # noqa
@@ -1071,7 +1071,7 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
             #
             for i in range(len(axis)):
                 if __DEBUG__:
-                    print 'Summing axis #', i
+                    print('Summing axis #', i)
                 if i > len(weights) - 1:
                     try:
                         x = numpy.ma.sum(x, returned=0, axis=0)
@@ -1088,7 +1088,7 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
                     # end of try:
                 # end of if i > len(filled_wtoptions):
                 if __DEBUG__:
-                    print 'Finished Summing axis #', i
+                    print('Finished Summing axis #', i)
             # end of for i in range(N_axes):
         # end of if action == 'sum':
         #
@@ -1121,10 +1121,10 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
     #
     axis_order = []
     if __DEBUG__:
-        print 'Inside averager axis = ', axis
+        print('Inside averager axis = ', axis)
     if axis is None:
         if __DEBUG__:
-            print 'Default axis is the first axis.........'
+            print('Default axis is the first axis.........')
         axis = V.getOrder()[0]
         axis_order.append(axis)
     else:
@@ -1132,10 +1132,10 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
             axis = str(axis)
         axis_order = _check_axisoptions(V, axis)
         if __DEBUG__:
-            print 'Axes to be addressed in the order ', axis_order
+            print('Axes to be addressed in the order ', axis_order)
         for an in range(len(axis_order)):
             item = axis_order[an]
-            if isinstance(item, types.IntType):
+            if isinstance(item, int):
                 loc = string.find(axis, str(item))
                 if loc != -1:
                     xlist = list(axis)
@@ -1143,29 +1143,29 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
                     if xlist[loc] == '-':
                         xlist[loc] = '(' + V.getAxis(item).id + ')'
                     if __DEBUG__:
-                        print '*** the axisoption is about to be modified. Before mod  = ', axis
+                        print('*** the axisoption is about to be modified. Before mod  = ', axis)
                     axis = string.joinfields(xlist, '')
                     if __DEBUG__:
-                        print '*** the axisoption has been modified. It is = ', axis
+                        print('*** the axisoption has been modified. It is = ', axis)
             # end of if type(item) = type(1):
         # end of for an in range(len(axis_order)):
         if __DEBUG__:
-            print 'NEW! Axes to be addressed in the order ', axis_order
+            print('NEW! Axes to be addressed in the order ', axis_order)
         if axis_order is not None:
             if __DEBUG__:
-                print 'axis = ', axis
+                print('axis = ', axis)
             V = V(order=axis)
             if __DEBUG__:
-                print '********** I have reordered V= V(order=axis) **********'
+                print('********** I have reordered V= V(order=axis) **********')
         else:
             return None
         # end of if axis_order != None:
     # end of if axis == None:
     #
     if __DEBUG__:
-        print 'Passed axis checks......'
+        print('Passed axis checks......')
     if __DEBUG__:
-        print 'Axes to be addressed in the order ', axis_order
+        print('Axes to be addressed in the order ', axis_order)
     #
     # Number of axes to average/sum over = len(axis_order)
     #
@@ -1174,21 +1174,21 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
     # Parse the weights = options
     #
     if __DEBUG__:
-        print 'Checking weights= options:', weights
+        print('Checking weights= options:', weights)
     #
     filled_wtoptions = __check_weightoptions(V, axis, weights)
     if __DEBUG__:
-        print 'The weights options are ', filled_wtoptions
+        print('The weights options are ', filled_wtoptions)
     #
-    if not isinstance(filled_wtoptions, types.ListType):
+    if not isinstance(filled_wtoptions, list):
         filled_wtoptions = [filled_wtoptions]
     # end of if not isinstance(filled_wtoptions, types.ListType):
     #
     #
     if __DEBUG__:
-        print 'Length of axis_order = ', N_axes
+        print('Length of axis_order = ', N_axes)
     if __DEBUG__:
-        print 'Length of filled_wtoptions = ', len(filled_wtoptions)
+        print('Length of filled_wtoptions = ', len(filled_wtoptions))
     #
     # If the user has passed combinewts = 1, then do the combining of weights here
     #
@@ -1205,7 +1205,7 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
         for i in range(N_axes):
             #
             if __DEBUG__:
-                print 'Averaging axis #', i
+                print('Averaging axis #', i)
             #
             if i > len(filled_wtoptions) - 1:
                 if sumwts is None:  # noqa # flake8 claims it does not exists
@@ -1216,7 +1216,7 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
             # end of if i > len(filled_wtoptions):
             V, sumwts = average_engine(V, filled_wtoptions[i])
             if __DEBUG__:
-                print 'Finished Averaging axis #', i
+                print('Finished Averaging axis #', i)
         # end of for i in range(N_axes):
         if returned == 1:
             return V, sumwts
@@ -1229,7 +1229,7 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
         #
         for i in range(N_axes):
             if __DEBUG__:
-                print 'Summing axis #', i
+                print('Summing axis #', i)
             if i > len(filled_wtoptions) - 1:
                 V, dummy_wts = sum_engine(V, 'unweighted')
                 sumwts = MV2.sum(sumwts, axis=0)
@@ -1237,7 +1237,7 @@ def averager(V, axis=None, weights=None, action='average', returned=0, weight=No
                 V, sumwts = sum_engine(V, filled_wtoptions[i])
             # end of if i > len(filled_wtoptions):
             if __DEBUG__:
-                print 'Finished Summing axis #', i
+                print('Finished Summing axis #', i)
         # end of for i in range(N_axes):
         y = V
         # end of if len(filled_wtoptions) == 1:

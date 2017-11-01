@@ -699,7 +699,7 @@ def str2rgb(col):
             ret[i] = string.atoi(ret[i])
         return ret
     except BaseException:
-        ky = cols.keys()
+        ky = list(cols.keys())
         for k in ky:
             c = string.replace(k, ' ', '')
             if c == col:
@@ -748,7 +748,7 @@ def rgb2str(r, g=None, b=None):
                 return ret
         return ret
     except BaseException:
-        ky = cols.keys()
+        ky = list(cols.keys())
         rmsmin = 200000.0
         for k in ky:
             r2, g2, b2 = cols[k]
