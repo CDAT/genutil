@@ -322,6 +322,8 @@ class udunits(object):
             out.value /= other
         return out
 
+    __div__ = __truediv__
+
     def __rtruediv__(self, other):
         if not isinstance(other, (udunits, int, float)):
             raise "Error must divide by a number or a udunit object"
@@ -338,6 +340,8 @@ class udunits(object):
             out.value = other / self.value
             out._units = '1/(' + self.units + ')'
         return out
+
+    __rdiv__ = __rtruediv__
 
     def __pow__(self, other):
         if not isinstance(other, (int, float)):
