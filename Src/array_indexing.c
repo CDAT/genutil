@@ -799,7 +799,7 @@ MODULE_INIT_FUNC(array_indexing) {
       return(NULL);
   }
 #ifdef import_array
-  import_array();
+  import_array1(NULL);
 #endif
   if(PyErr_Occurred())
     Py_FatalError("can't initialize module array_indexing");
