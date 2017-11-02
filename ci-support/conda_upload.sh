@@ -15,6 +15,7 @@ else
 fi
 
 mkdir ~/conda-bld
+source activate root
 conda install -q anaconda-client conda-build
 conda config --set anaconda_upload no
 export CONDA_BLD_PATH=${HOME}/conda-bld
