@@ -1,3 +1,4 @@
+from __future__ import division
 from . import udunits_wrap
 import sys
 import genutil
@@ -305,7 +306,7 @@ class udunits(object):
             out = udunits(other * self.value, self.units)
         return out
 
-    def __div__(self, other):
+    def __truediv__(self, other):
         if not isinstance(other, (udunits, int, float)):
             raise "Error must divide by a number or a udunit object"
         out = udunits(self.units, self.value)
@@ -321,7 +322,7 @@ class udunits(object):
             out.value /= other
         return out
 
-    def __rdiv__(self, other):
+    def __rtruediv__(self, other):
         if not isinstance(other, (udunits, int, float)):
             raise "Error must divide by a number or a udunit object"
         out = udunits(self.units, self.value)

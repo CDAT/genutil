@@ -115,7 +115,7 @@ def run_command(command, join_stderr=True):
     out = []
     while P.poll() is None:
         read = P.stdout.readline().rstrip()
-        out.append(read)
+        out.append(read.decode())
         if args.verbosity > 1 and len(read) != 0:
             print(read)
     return P, out
@@ -126,7 +126,6 @@ def run_nose(test_name):
     if args.coverage:
         opts += ["--with-coverage"]
     command = ["nosetests", ] + opts + ["-s", test_name]
-    print("Command:",command)
     start = time.time()
     P, out = run_command(command)
     end = time.time()
@@ -237,8 +236,7 @@ if args.html or args.package or args.dropbox:
                 print("<div id='diff'><img src='%s' alt='diff file'></div>" % abspath(
                     diff, nm, "diff"), file=fe)
                 print("<div><a href='index.html'>Back To Results List</a></div>", file=fe)
-        print('<div id="output"><h1>Log</h1><pre>%s</pre></div>' % "\n".join(result[
-                                                                                  "log"]), file=fe)
+        print('<div id="output"><h1>Log</h1><pre>{}</pre></div>'.format("\n".join(result["log"])), file=fe)
         print("<a href='index.html'>Back To Results List</a>", file=fe)
         print("</body></html>", file=fe)
         fe.close()

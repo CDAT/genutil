@@ -1262,7 +1262,6 @@ def averager(V, axis=None, weights=None, action='average',
         print('Checking weights= options:', weights)
     #
     filled_wtoptions = __check_weightoptions(V, axis, weights)
-    print("FFILLED OPTA:", filled_wtoptions)
     if __DEBUG__:
         print('The weights options are ', filled_wtoptions)
     #
