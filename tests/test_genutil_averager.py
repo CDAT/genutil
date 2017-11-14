@@ -100,7 +100,7 @@ class GENUTIL(unittest.TestCase):
             averager(x, axis='tx', weight='equal') 
 
         with self.assertRaises(AveragerError):
-            a = numpy.array(range(10), numpy.float)
+            a = numpy.array(list(range(10)), numpy.float)
             averager(x, axis='tx', weight=['equal', a]) 
 
         with self.assertRaises(AveragerError):
@@ -265,5 +265,7 @@ class GENUTIL(unittest.TestCase):
         clt2 = averager(clt1, axis='x', action='sum')
         clt3 = averager(clt2, axis='y', action='sum')
         self.assertTrue( numpy.ma.allclose(clt_sum, clt3))
-        print "ALL RAN!"
+        print("ALL RAN!")
         f.close()
+if __name__=="__main__":
+    GENUTIL().testAverager()

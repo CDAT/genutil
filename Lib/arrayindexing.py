@@ -1,6 +1,6 @@
 # Adapted for numpy/ma/cdms2 by convertcdms.py
 import numpy
-import statistics
+from .stats_checker import __checker
 import numpy.ma
 import cdms2
 import genutil
@@ -46,19 +46,24 @@ def get(Array, Indices, axis=0):
         id = Array.id
 
     if len(Array.shape) != len(Indices.shape):
-        Array, Indices, weights, axis, ax = statistics.__checker(Array, Indices, None, axis, smally=1)
+        Array, Indices, weights, axis, ax = __checker(
+            Array, Indices, None, axis, smally=1)
         if isinstance(Indices, int):
             return Array[Indices]
         if Indices.shape != Array.shape[1:]:
-            raise "Error incompatible shapes: " + str(Array.shape) + " and " + str(Indices.shape)
+            raise "Error incompatible shapes: " + \
+                str(Array.shape) + " and " + str(Indices.shape)
     else:
-        Array, Indices, weights, axis, ax = statistics.__checker(Array, Indices, None, axis)
+        Array, Indices, weights, axis, ax = __checker(
+            Array, Indices, None, axis)
         if Indices.shape != Array.shape:
-            raise "Error incompatible shapes: " + str(Array.shape) + " and " + str(Indices.shape)
+            raise "Error incompatible shapes: " + \
+                str(Array.shape) + " and " + str(Indices.shape)
 
     m = Array.mask
     if not isinstance(Indices, int):
-        Indices = Indices.data.astype('i')  # Sometihng happened with masking of y by x mask
+        # Sometihng happened with masking of y by x mask
+        Indices = Indices.data.astype('i')
     # print Array.data.dtype.char,Indices.dtype.char
     C = genutil.array_indexing.extract(Array.data, Indices)
     if m is not numpy.ma.nomask:
@@ -68,7 +73,7 @@ def get(Array, Indices, axis=0):
         C = numpy.ma.array(C, copy=0, mask=None)
     if ax is not None:
         C = cdms2.createVariable(C, axes=ax, id=id, copy=0)
-        for at in xatt.keys():
+        for at in list(xatt.keys()):
             setattr(C, at, xatt[at])
     return C
 
@@ -113,14 +118,19 @@ def set(Array, Indices, Values, axis=0):
         xatt = Array.attributes
         id = Array.id
     if len(Array.shape) != len(Indices.shape):
-        crap, Indices, crap, axis, ax = statistics.__checker(Array, Indices, None, axis, smally=1)
-        Array, Values, crap, axis, ax = statistics.__checker(Array, Values, None, axis, smally=1)
+        crap, Indices, crap, axis, ax = __checker(
+            Array, Indices, None, axis, smally=1)
+        Array, Values, crap, axis, ax = __checker(
+            Array, Values, None, axis, smally=1)
         if Indices.shape != Array.shape[1:]:
-            raise "Error uncompatible shapes: " + str(Array.shape) + " and " + str(Indices.shape)
+            raise "Error uncompatible shapes: " + \
+                str(Array.shape) + " and " + str(Indices.shape)
     else:
-        Array, Indices, Values, axis, ax = statistics.__checker(Array, Indices, Values, axis)
+        Array, Indices, Values, axis, ax = __checker(
+            Array, Indices, Values, axis)
         if Indices.shape != Array.shape:
-            raise "Error uncompatible shapes: " + str(Array.shape) + " and " + str(Indices.shape)
+            raise "Error uncompatible shapes: " + \
+                str(Array.shape) + " and " + str(Indices.shape)
 
     m = numpy.ma.getmask(Array)
     mv = numpy.ma.getmask(Values)
@@ -138,6 +148,6 @@ def set(Array, Indices, Values, axis=0):
             Array = numpy.ma.masked_where(m, Array, copy=0)
     if ax is not None:
         Array = cdms2.createVariable(Array, axes=ax, id=id, copy=0)
-        for at in xatt.keys():
+        for at in list(xatt.keys()):
             setattr(Array, at, xatt[at])
     return Array

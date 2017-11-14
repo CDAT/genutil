@@ -37,7 +37,7 @@ def minmax(*data):
                 return mx, mn
             mx = float(maximum(mx, maximum.reduce(d, axis=None)))
             mn = float(minimum(mn, minimum.reduce(d, axis=None)))
-        except:
+        except BaseException:
             for i in d:
                 mx, mn = myfunction(i, mx, mn)
         return mx, mn

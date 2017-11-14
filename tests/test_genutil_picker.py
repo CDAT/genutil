@@ -28,6 +28,8 @@ class GENUTIL(unittest.TestCase):
         t1= cdtime.componenttime(1987,7)
         t2= cdtime.componenttime(1988,1)
         t3= cdtime.componenttime(1988,3)
-        self.assertEqual(s3.getTime().asComponentTime(),[t1,t2,t3])
+        tc = s3.getTime().asComponentTime()
+        for i,g in enumerate([t1, t2, t3]):
+            self.assertEqual(tc[i].cmp(g),0)
         test = s3.getLevel()[:]!=levels
         self.assertFalse(test.any())

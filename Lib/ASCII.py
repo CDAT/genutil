@@ -28,7 +28,8 @@ def make_var(lap, id=None, shape=None):
 
 
 # TODO: need an actual 'vars.txt' file for the doctests
-def readAscii(text_file, header=0, ids=None, shape=None, next='------', separators=[';', ',', ':']):
+def readAscii(text_file, header=0, ids=None, shape=None,
+              next='------', separators=[';', ',', ':']):
     """
     Reads data from an ascii file to generate a list of transient(s)/varable(s)
 
@@ -74,10 +75,10 @@ def readAscii(text_file, header=0, ids=None, shape=None, next='------', separato
         ids = [ids]
     vars = []
     lap = []
-    for l in lst[header:]:
+    for ln in lst[header:]:
         for s in sep:
-            l = l.replace(s, ' ')
-        for s in l.split():
+            ln = ln.replace(s, ' ')
+        for s in ln.split():
             if s == next:
                 if len(vars) > len(ids) - 1:
                     Id = None
@@ -163,12 +164,12 @@ def read_col(text_file, header=0, cskip=0, cskip_type='columns', axis=False, ids
     if not isinstance(ids, (tuple, list)):
         ids = [ids]
     vars = None
-    for l in lst:
+    for ln in lst:
         if cskip_type == 'characters':
-            l = l[cskip:]
+            ln = ln[cskip:]
         for s in sep:
-            l = l.replace(s, ' ')
-        sp = l.split()
+            ln = ln.replace(s, ' ')
+        sp = ln.split()
         if cskip_type == 'columns':
             sp = sp[cskip:]
         if vars is None:

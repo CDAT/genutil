@@ -41,51 +41,51 @@ class GENUTIL(unittest.TestCase):
         eq = genutil.udunits(1,"eq")
 
         o=p.to("dimless")
-        print o
+        print(o)
         self.assertEqual(o.units,"dimless")
         self.assertEqual(o.value , 0.01)
 
         fC = genutil.udunits(2,"fakeCelsius")
         o=fC.to("dimless")
-        print o
+        print(o)
         self.assertEqual(o.units,"dimless")
         self.assertTrue(numpy.allclose(o.value,275.15))
         o=fC.to("pourcent")
-        print o
+        print(o)
         self.assertEqual(o.units,"pourcent")
         self.assertTrue(numpy.allclose(o.value,27515))
 
         #Trying multiplied
         o=eq*fC
-        print o
+        print(o)
         self.assertEqual(o.units,"eq*fakeCelsius")
         self.assertEqual(o.value , 2)
         o=o.to("efC")
-        print o
+        print(o)
         self.assertEqual(o.units,"efC")
         self.assertEqual(o.value , 2)
         o=o.to("efP")
-        print o
+        print(o)
         self.assertEqual(o.units,"efP")
         self.assertEqual(o.value , 200)
 
         #Trying divided
         o=eq/fC
-        print o
+        print(o)
         self.assertEqual(o.units,"eq/fakeCelsius")
         self.assertEqual(o.value , .5)
         o=o.to("defC")
-        print o
+        print(o)
         self.assertEqual(o.units,"defC")
         self.assertEqual(o.value , .5)
         o=o.to("defP")
-        print o
+        print(o)
         self.assertEqual(o.units,"defP")
         self.assertEqual(o.value , 5E-3)
 
         ## Trying inverted
         o=fC/eq
         o=o.to("iefC")
-        print o
+        print(o)
         self.assertEqual(o.units,"iefC")
         self.assertEqual(o.value , 2)

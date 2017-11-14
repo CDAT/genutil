@@ -1,6 +1,10 @@
 #include <Python.h>
 #include "numpy/arrayobject.h"
+#include "py3c.h"
 
+static PyObject *extract(PyObject *, PyObject *);
+static PyObject *rank(PyObject *, PyObject *);
+static PyObject *set(PyObject *, PyObject *);
 
 
 int extract_function_double(int n1, int n2 ,
@@ -780,16 +784,33 @@ static PyMethodDef MyExtractMethods[]= {
   {NULL, NULL} /*sentinel */
 };
 
-void 
-initarray_indexing()
-{
-  (void) Py_InitModule("array_indexing", MyExtractMethods);
-  import_array();
+static struct PyModuleDef moduledef = {
+PyModuleDef_HEAD_INIT,
+"array_indexing",
+NULL,
+-1,
+MyExtractMethods
+};
+
+MODULE_INIT_FUNC(array_indexing) {
+  PyObject *m;
+  m = PyModule_Create(&moduledef);
+  if(m == NULL) {
+      return(NULL);
+  }
+#ifdef import_array
+  import_array1(NULL);
+#endif
+  if(PyErr_Occurred())
+    Py_FatalError("can't initialize module array_indexing");
+
+  return(m);
 }
 
-int main(int argc,char **argv)
-{
-  Py_SetProgramName(argv[0]);
+int main(int argc,char **argv) {
+  Py_SetProgramName((wchar_t *) argv[0]);
   Py_Initialize();
-  initarray_indexing();}
+  PyInit_array_indexing();
+  return(0);
+}
 

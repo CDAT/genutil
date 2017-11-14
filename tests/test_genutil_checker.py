@@ -1,4 +1,4 @@
-# Adapted for numpy/ma/cdms2 by convertcdms.py
+from __future__ import print_function
 import cdms2,genutil,os,sys
 import unittest
 import cdat_info
@@ -48,7 +48,7 @@ class GENUTIL(unittest.TestCase):
     def testChecker_1(self):
         axistest=[0,[1,2],'xy','12','(longitude)(latitude)']
         for ax in axistest:
-            print 'testing:',ax
+            print('testing:',ax)
             v=genutil.statistics.variance(self.tas,axis=ax)
 
         ax='(dsffd)(latitude)'
@@ -56,7 +56,7 @@ class GENUTIL(unittest.TestCase):
             v=genutil.statistics.variance(self.tas,axis=ax)
 
     def testChecker_2(self):
-        print "####################### Test 2 ################################"
+        print("####################### Test 2 ################################")
         v=genutil.statistics.variance(self.tas,axis='012',weights=['unweighted','weighted','unweighted'])
         self.assertEqual(v.ndim,0)
         self.assertTrue(numpy.allclose(float(v),218.880632191))
@@ -65,13 +65,13 @@ class GENUTIL(unittest.TestCase):
         self.assertTrue(numpy.allclose(v,[220.10595800589059, 217.5567693498757]))
 
     def testChecker_3(self):
-        print "####################### Test 3 ################################"
+        print("####################### Test 3 ################################")
         v=genutil.statistics.covariance(self.clt,self.clt,axis='(latitude)(longitude)',weights=['generate','generate'])
         self.assertEqual(v.ndim,1)
         self.assertTrue(numpy.allclose(v,self.varResult))
 
     def testChecker_4(self):
-        print "####################### Test 4 ################################"
+        print("####################### Test 4 ################################")
         a=genutil.statistics.variance(self.clt, axis='tyx',weights=['equal', 'generate', 'equal'])
         self.assertEqual(a.ndim,0)
         self.assertTrue(numpy.allclose(a,630.549411264))
@@ -96,10 +96,7 @@ class GENUTIL(unittest.TestCase):
 
 
     def testChecker_5(self):
-        print "####################### Test 5 ################################"
+        print("####################### Test 5 ################################")
         a=genutil.statistics.laggedcovariance(self.clt,self.clt,lag=4,axis='(time)(longitude)')
         self.assertEqual(a.shape,(5,46))
-
-
-
 

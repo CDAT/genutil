@@ -28,7 +28,7 @@ class TestFlake8(unittest.TestCase):
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE)
         P.wait()
-        out = P.stdout.read()
+        out = P.stdout.read().decode()
         if out != "":
             print(out)
         self.assertEqual(out, "")

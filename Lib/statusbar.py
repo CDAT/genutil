@@ -58,7 +58,7 @@ def statusbar(status, total=1., prev=-1, title='Done', tk=None):
         status = float(status)
         while status > total:
             status = status / 100.  # Makes sure status is < total
-        for n in xrange(int(ntot + 15 + len(title))):
+        for n in range(int(ntot + 15 + len(title))):
             sys.stdout.write('\b')  # Remove the previous line
         sys.stdout.write(title[:10] + ' : ')
         for n in range(int(ntot)):  # Plot a character
@@ -72,7 +72,8 @@ def statusbar(status, total=1., prev=-1, title='Done', tk=None):
                         prev[1] = (prev[1] + 1) % len(chardic)
                         sys.stdout.write(a)  # Character for animation
                     else:
-                        sys.stdout.write(' ')  # Character for 'to be accomplished'
+                        # Character for 'to be accomplished'
+                        sys.stdout.write(' ')
                 else:
                     sys.stdout.write(' ')  # Character for 'to be accomplished'
         # add some counter at the end of the line
@@ -85,9 +86,10 @@ def statusbar(status, total=1., prev=-1, title='Done', tk=None):
         return prev
     else:
         # the tk part
-        # Allows control over multiple task, just pass a list for status and total
+        # Allows control over multiple task, just pass a list for status and
+        # total
         import Pmw
-        import Tkinter
+        import tkinter
         if not type(status) in [type([]), type(())]:
             status = [status]
             total = [total]
@@ -101,12 +103,12 @@ def statusbar(status, total=1., prev=-1, title='Done', tk=None):
         hsave = 20.
         wsave = 10.
         if prev == [0, 0]:
-            master = Tkinter.Toplevel()
+            master = tkinter.Toplevel()
             # Pmw.Blt._checkForBlt(master)
             master.geometry('200x' + sheigth)
             master.resizable(0, 0)
             master.update()
-            canvas = Tkinter.Canvas(master, bg='white')
+            canvas = tkinter.Canvas(master, bg='white')
             g = master.geometry()
             w = string.split(g, 'x')[0]
             h = string.split(string.split(g, 'x')[1], '+')[0]
@@ -124,7 +126,14 @@ def statusbar(status, total=1., prev=-1, title='Done', tk=None):
                 x1 = x0 + X * status[i] / total[i]
                 y0 = h * .1 / float(nbar + 1) * i + h2 * i
                 y1 = y0 + h2 * (i + 1)
-                bars.append(canvas.create_rectangle(x0, y0, x1, y1, fill=colorList[i], outline=colorList[i]))
+                bars.append(
+                    canvas.create_rectangle(
+                        x0,
+                        y0,
+                        x1,
+                        y1,
+                        fill=colorList[i],
+                        outline=colorList[i]))
                 txts.append(canvas.create_text(x0 + X / 2., y0 + h2 / 2.))
             canvas.pack()
 

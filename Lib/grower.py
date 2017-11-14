@@ -1,6 +1,5 @@
 # Adapted for numpy/ma/cdms2 by convertcdms.py
 # Adapted for numpy/ma/cdms2 by convertcdms.py
-import string
 import cdms2 as cdms
 
 
@@ -43,7 +42,8 @@ def grower(x, y, singleton=0):
     yorder = y.getOrder(ids=1)
     yaxes = y.getAxisList()
 
-    # Now determine the shape of the final array (matching x and y dims,x first)
+    # Now determine the shape of the final array (matching x and y dims,x
+    # first)
     forder = []
     prev = 0
     txt = ''
@@ -99,14 +99,14 @@ def grower(x, y, singleton=0):
                     newaxes.insert(0, ax)
                     x.setAxisList(newaxes)
     xorder = x.getOrder(ids=1)
-    sp = string.split(xorder, '(')
+    sp = xorder.split('(')
     xorder = []
     for s in sp:
-        if string.find(s, ')') == -1:
+        if s.find(')') == -1:
             for t in s:
                 xorder.append(t)
         else:
-            sp2 = string.split(s, ')')
+            sp2 = s.split(')')
             xorder.append(sp2[0])
             for t in sp2[1]:
                 xorder.append(t)

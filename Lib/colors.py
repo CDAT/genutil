@@ -678,30 +678,29 @@ def str2rgb(col):
     :returns: A three-tuple with red, green, and blue values of the specified color, or None, None, None if the color
             does not exist.
     """
-    import string
     ret = []
-    col = string.lower(col)
-    col = string.replace(col, ' ', '')
+    col = col.lower()
+    col = col.replace(' ', '')
     try:
         f = open('/usr/X11R6/lib/X11/rgb.txt', 'r')
         ln = f.readlines()
         f.close()
         for l in ln[1:]:
-            c = string.split(l)[3:]
-            c = string.join(c)
-            c = string.lower(c)
-            c = string.replace(c, ' ', '')
+            c = l.split()[3:]
+            c = " ".join(c)
+            c = c.lower()
+            c = c.replace(' ', '')
             if c == col:
-                ret = string.split(l)[:3]
+                ret = l.split()[:3]
         if len(ret) != 3:
             ret = [None, None, None]
         for i in range(3):
-            ret[i] = string.atoi(ret[i])
+            ret[i] = int(ret[i])
         return ret
     except BaseException:
-        ky = cols.keys()
+        ky = list(cols.keys())
         for k in ky:
-            c = string.replace(k, ' ', '')
+            c = k.replace(' ', '')
             if c == col:
                 return list(cols[k])
     return [None, None, None]
@@ -727,7 +726,6 @@ def rgb2str(r, g=None, b=None):
     :param b: Integer representing b value.
     :type b: int
     """
-    import string
     if g is None and len(r) == 3:
         r, g, b = r
 
@@ -738,17 +736,17 @@ def rgb2str(r, g=None, b=None):
         ln = f.readlines()
         f.close()
         for l in ln[1:]:
-            sp = string.split(l)
-            r2, g2, b2 = string.atof(sp[0]), string.atof(sp[1]), string.atof(sp[2])
+            sp = l.split()
+            r2, g2, b2 = float(sp[0]), float(sp[1]), float(sp[2])
             rms = (r2 - r)**2. + (b2 - b)**2. + (g2 - g)**2.
             if rms < rmsmin:
-                ret = string.join(sp[3:])
+                ret = " ".join(sp[3:])
                 rmsmin = rms
             if rms == 0.:
                 return ret
         return ret
     except BaseException:
-        ky = cols.keys()
+        ky = list(cols.keys())
         rmsmin = 200000.0
         for k in ky:
             r2, g2, b2 = cols[k]
