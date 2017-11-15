@@ -25,7 +25,7 @@ git clone git://github.com/UV-CDAT/conda-recipes
 cd conda-recipes
 # uvcdat creates issues for build -c uvcdat confises package and channel
 rm -rf uvcdat
-python ./prep_for_build.py -v `date +%Y.%m.%d` -b python3_continued
+python ./prep_for_build.py -v `date +%Y.%m.%d` 
 echo "Building and uploading now"
 conda build -c ${ESMF_CHANNEL} -c conda-forge -c uvcdat/label/nightly -c uvcdat ${PKG_NAME} --numpy=1.13 --python=2.7
 conda build -c ${ESMF_CHANNEL} -c conda-forge -c uvcdat/label/nightly -c uvcdat ${PKG_NAME} --numpy=1.12 --python=2.7
