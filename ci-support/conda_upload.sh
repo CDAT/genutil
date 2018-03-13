@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 PKG_NAME=genutil
-USER=uvcdat
+USER=cdat
 export PATH="$HOME/miniconda/bin:$PATH"
 echo "Trying to upload conda"
 ESMF_CHANNEL="nesii/label/dev-esmf"
