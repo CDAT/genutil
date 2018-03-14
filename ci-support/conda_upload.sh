@@ -26,5 +26,5 @@ cd conda-recipes
 rm -rf uvcdat
 python ./prep_for_build.py
 echo "Building and uploading now"
-conda build -c ${ESMF_CHANNEL} -c conda-forge -c uvcdat/label/nightly -c uvcdat ${PKG_NAME}
+conda build -c ${ESMF_CHANNEL} -c conda-forge -c cdat/label/nightly -c uvcdat/label/nightly -c uvcdat ${PKG_NAME}
 anaconda -t $CONDA_UPLOAD_TOKEN upload -u $USER -l nightly $CONDA_BLD_PATH/$OS/$PKG_NAME*.tar.bz2 --force
