@@ -2,8 +2,8 @@
 ls
 pwd
 export PATH=${HOME}/miniconda/bin:${PATH}
-conda create -n py2 -c cdat/label/nightly -c uvcdat/label/nightly -c conda-forge -c uvcdat cdms2 cdat_info udunits2 nose flake8 "python<3"
-conda create -n py3 -c cdat/label/nightly -c uvcdat/label/nightly -c nesii/label/dev-esmf -c conda-forge -c uvcdat cdms2 nose flake8 "python>3" cdat_info udunits2
+conda create -n py2 -c cdat/label/nightly -c uvcdat/label/nightly -c conda-forge -c uvcdat cdms2 cdat_info udunits2 nose flake8 "python<3" "numpy>1.14"
+conda create -n py3 -c cdat/label/nightly -c uvcdat/label/nightly -c nesii/label/dev-esmf -c conda-forge -c uvcdat cdms2 nose flake8 "python>3" cdat_info udunits2 "numpy>1.14"
 export UVCDAT_ANONYMOUS_LOG=False
 source activate py3
 python setup.py install
