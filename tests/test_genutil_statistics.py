@@ -15,6 +15,7 @@ class GENUTIL(unittest.TestCase):
         v=f('v',time=slice(0,1),plev1=slice(0,1),squeeze=1)
 
         f=cdms2.open(os.path.join(cdat_info.get_sampledata_path(),"genutil_statistics.nc"))
+        self.out = cdms2.open("genutil_statistics_new.nc","w")
         print('Lagged correlation')
         nm = "lagged_corr"
         self.assertArraysEqual(genutil.statistics.laggedcorrelation(u,v,axis=0), f( nm+"_1"))
@@ -32,8 +33,6 @@ class GENUTIL(unittest.TestCase):
 
         print('Auto correlation')
         nm = "auto_corr"
-        print(genutil.statistics.autocorrelation(u,axis=0) -  f(nm+"_1"))
-        print(numpy.ma.equal(genutil.statistics.autocorrelation(u,axis=0), f(nm+"_1")))
         self.assertArraysEqual(genutil.statistics.autocorrelation(u,axis=0), f(nm+"_1"))
         self.assertArraysEqual(genutil.statistics.autocorrelation(u,axis=0,lag=4), f(nm+"_2"))
         self.assertArraysEqual(genutil.statistics.autocorrelation(u,axis=0,lag=4,noloop=1), f(nm+"_3"))
