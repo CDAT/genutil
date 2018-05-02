@@ -30,7 +30,7 @@ aliases:
     name: setup_genutil
     command: |
        export PATH=$WORKDIR/miniconda/bin:$PATH
-       export CDAT_ANONYMOUS_LOG=False
+       export UVCDAT_ANONYMOUS_LOG=False
        source activate py3
        python setup.py install
        source activate py2
@@ -41,7 +41,7 @@ aliases:
     name: run_genutil_tests
     command: |
        export PATH=$WORKDIR/miniconda/bin:$PATH
-       export CDAT_ANONYMOUS_LOG=False
+       export UVCDAT_ANONYMOUS_LOG=False
        set -e
        source activate py2
        python run_tests.py -H -v2 
