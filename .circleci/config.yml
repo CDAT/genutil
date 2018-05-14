@@ -57,7 +57,7 @@ aliases:
   - &conda_upload
     name: conda_upload
     command: |
-       if [[ $CIRCLE_BRANCH != 'master' ]]; then
+       if [[ $CIRCLE_BRANCH != 'migrateToCircleCI2' ]]; then
           exit 0
        fi
        export PATH=${HOME}/project/$WORKDIR/miniconda/bin:$PATH
@@ -81,6 +81,9 @@ jobs:
       xcode: "9.2.0"
     environment:
       WORKDIR: "workspace/test_macos_genutil"
+    machine:
+      image: circleci/classic:latest
+      OS: "osx-64"
     steps:
       - checkout
       - run: *setup_miniconda
