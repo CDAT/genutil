@@ -45,8 +45,8 @@ aliases:
        set -e
        source activate py2
        python run_tests.py -H -v2 
-       PY2_RESULT=$?
-       echo "*** py2 test result: "${PY2_RESULT}
+       RESULT=$?
+       echo "*** py2 test result: "${RESULT}
        source activate py3
        python run_tests.py -H -v2 
        PY3_RESULT=$?
