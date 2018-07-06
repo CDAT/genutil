@@ -46,11 +46,11 @@ aliases:
        source activate py2
        python run_tests.py -H -v2 
        RESULT=$?
-       echo "*** py2 test result: "${RESULT}
+       echo "**** py2 test result: "${RESULT}
        source activate py3
        python run_tests.py -H -v2 
        PY3_RESULT=$?
-       echo "*** py3 test result: "${PY3_RESULT}
+       echo "**** py3 test result: "${PY3_RESULT}
        RESULT=$(( $RESULT + $PY3_RESULT))
        exit $RESULT
 
