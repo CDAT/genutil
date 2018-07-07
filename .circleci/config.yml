@@ -22,8 +22,8 @@ aliases:
        conda config --set always_yes yes --set changeps1 no
        conda update -y -q conda
        conda config --set anaconda_upload no
-       conda create -n py2 -c cdat/label/nightly -c conda-forge -c cdat cdms2 cdat_info testsrunner udunits2  "python<3" numpy=1.13
-       conda create -n py3 -c cdat/label/nightly -c conda-forge -c cdat cdms2 cdat_info testsrunner "python>3" udunits2 numpy=1.13
+       conda create -n py2 -c cdat/label/nightly -c conda-forge -c cdat cdms2 cdat_info testsrunner udunits2  "python<3" numpy
+       conda create -n py3 -c cdat/label/nightly -c conda-forge -c cdat cdms2 cdat_info testsrunner "python>3" udunits2 numpy
 
 
   - &setup_genutil
