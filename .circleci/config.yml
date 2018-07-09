@@ -22,8 +22,8 @@ aliases:
        conda config --set always_yes yes --set changeps1 no
        conda update -y -q conda
        conda config --set anaconda_upload no
-       conda create -n py2 -c cdat/label/nightly -c conda-forge -c cdat cdms2 cdat_info testsrunner udunits2  "python<3" numpy
-       conda create -n py3 -c cdat/label/nightly -c conda-forge -c cdat cdms2 cdat_info testsrunner "python>3" udunits2 numpy
+       conda create -n py2 -c cdat/label/nightly -c conda-forge -c cdat cdms2 cdat_info testsrunner udunits2 "python<3" $CONDA_COMPILERS
+       conda create -n py3 -c cdat/label/nightly -c conda-forge -c cdat cdms2 cdat_info testsrunner udunits2 "python>3" $CONDA_COMPILERS
 
 
   - &setup_genutil
@@ -32,10 +32,10 @@ aliases:
        export PATH=$WORKDIR/miniconda/bin:$PATH
        export UVCDAT_ANONYMOUS_LOG=False
        source activate py3
-       python setup.py install
+       LDSHARED=${LDSHARED_FLAGS} python setup.py install
        source activate py2
        rm -rf build
-       python setup.py install
+       LDSHARED=${LDSHARED_FLAGS} python setup.py install
 
   - &run_genutil_tests
     name: run_genutil_tests
@@ -82,6 +82,8 @@ jobs:
     environment:
       WORKDIR: "workspace/test_macos_genutil"
       OS: "osx-64"
+      CONDA_COMPILERS: "clang_osx-64 gfortran_osx-64"
+      LDSHARED_FLAGS: "-bundle -undefined dynamic_lookup"
     steps:
       - checkout
       - run: *setup_miniconda
@@ -99,6 +101,8 @@ jobs:
     environment:
       WORKDIR: "workspace/test_linux_genutil"
       OS: "linux-64"
+      CONDA_COMPILERS: "gcc_linux-64 gfortran_linux-64"
+      LDSHARED_FLAGS: "-shared -pthread"
     steps:
       - checkout
       - run: *setup_miniconda 
