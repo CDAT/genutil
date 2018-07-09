@@ -31,10 +31,14 @@ aliases:
     command: |
        export PATH=$WORKDIR/miniconda/bin:$PATH
        export UVCDAT_ANONYMOUS_LOG=False
+       set +e
        source activate py3
+       set -e
        export LDSHARED="$CC ${LDSHARED_FLAGS}"
        LDSHARED=${LDSHARED} python setup.py install
+       set +e
        source activate py2
+       set -e
        rm -rf build
        LDSHARED=${LDSHARED} python setup.py install
 
@@ -43,12 +47,15 @@ aliases:
     command: |
        export PATH=$WORKDIR/miniconda/bin:$PATH
        export UVCDAT_ANONYMOUS_LOG=False
-       set -e
+       set +e
        source activate py2
+       set -e
        python run_tests.py -H -v2 
        RESULT=$?
        echo "**** py2 test result: "${RESULT}
+       set +e
        source activate py3
+       set -e
        python run_tests.py -H -v2 
        PY3_RESULT=$?
        echo "**** py3 test result: "${PY3_RESULT}
