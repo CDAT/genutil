@@ -32,10 +32,11 @@ aliases:
        export PATH=$WORKDIR/miniconda/bin:$PATH
        export UVCDAT_ANONYMOUS_LOG=False
        source activate py3
-       LDSHARED=${LDSHARED_FLAGS} python setup.py install
+       export LDSHARED="$CC ${LDSHARED_FLAGS}"
+       LDSHARED=${LDSHARED} python setup.py install
        source activate py2
        rm -rf build
-       LDSHARED=${LDSHARED_FLAGS} python setup.py install
+       LDSHARED=${LDSHARED} python setup.py install
 
   - &run_genutil_tests
     name: run_genutil_tests
