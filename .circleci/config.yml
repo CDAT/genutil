@@ -22,8 +22,8 @@ aliases:
        conda config --set always_yes yes --set changeps1 no
        conda update -y -q conda
        conda config --set anaconda_upload no
-       conda create -n py2 -c cdat/label/nightly -c conda-forge -c cdat cdms2 cdat_info udunits2 nose flake8 "python<3" numpy
-       conda create -n py3 -c cdat/label/nightly -c conda-forge -c cdat cdms2 nose flake8 "python>3" cdat_info udunits2 numpy
+       conda create -n py2 -c cdat/label/nightly -c conda-forge -c cdat cdms2 cdat_info testsrunner udunits2 "python<3" $CONDA_COMPILERS
+       conda create -n py3 -c cdat/label/nightly -c conda-forge -c cdat cdms2 cdat_info testsrunner udunits2 "python>3" $CONDA_COMPILERS
 
 
   - &setup_genutil
@@ -31,51 +31,104 @@ aliases:
     command: |
        export PATH=$WORKDIR/miniconda/bin:$PATH
        export UVCDAT_ANONYMOUS_LOG=False
+       set +e
        source activate py3
-       python setup.py install
+       set -e
+       export LDSHARED="$CC ${LDSHARED_FLAGS}"
+       LDSHARED=${LDSHARED} python setup.py install
+       set +e
        source activate py2
+       set -e
        rm -rf build
-       python setup.py install
+       LDSHARED=${LDSHARED} python setup.py install
 
   - &run_genutil_tests
     name: run_genutil_tests
     command: |
        export PATH=$WORKDIR/miniconda/bin:$PATH
        export UVCDAT_ANONYMOUS_LOG=False
-       set -e
+       set +e
        source activate py2
+       set -e
        python run_tests.py -H -v2 
-       PY2_RESULT=$?
-       echo "*** py2 test result: "${PY2_RESULT}
+       RESULT=$?
+       echo "**** py2 test result: "${RESULT}
+       set +e
        source activate py3
+       set -e
        python run_tests.py -H -v2 
        PY3_RESULT=$?
-       echo "*** py3 test result: "${PY3_RESULT}
-       if [ $PY2_RESULT -eq 0 -a $PY3_RESULT -eq 0 -a $CIRCLE_BRANCH == "master" ]; then bash ./ci-support/conda_upload.sh ; fi
-       if [ $PY2_RESULT	-ne 0 -o $PY3_RESULT -ne 0]; then
-         exit 1
+       echo "**** py3 test result: "${PY3_RESULT}
+       RESULT=$(( $RESULT + $PY3_RESULT))
+       exit $RESULT
+
+  - &conda_upload
+    name: conda_upload
+    command: |
+       if [[ $CIRCLE_BRANCH != 'master' ]]; then
+          exit 0
        fi
+       export PATH=${HOME}/project/$WORKDIR/miniconda/bin:$PATH
+       conda install conda-build anaconda-client
+       conda config --set anaconda_upload no
+       export CONDA_BLD_PATH=`pwd`/conda_build
+       git clone git://github.com/cdat/conda-recipes
+       cd conda-recipes
+       export PKG_NAME=genutil
+       export USER=cdat
+       export VERSION=8.0
+       export LABEL=nightly
+       python ./prep_for_build.py -l $VERSION
+       conda build $PKG_NAME -c cdat/label/nightly -c conda-forge -c cdat
+       conda build $PKG_NAME -c cdat/label/nightly -c conda-forge -c cdat --python=3.6
+       anaconda -t $CONDA_UPLOAD_TOKEN upload -u $USER -l $LABEL $CONDA_BLD_PATH/$OS/$PKG_NAME-$VERSION.`date +%Y*`0.tar.bz2 --force
+
 jobs:
   macos_genutil:
     macos:
       xcode: "9.2.0"
     environment:
       WORKDIR: "workspace/test_macos_genutil"
+      OS: "osx-64"
+      CONDA_COMPILERS: "clang_osx-64 gfortran_osx-64"
+      LDSHARED_FLAGS: "-bundle -undefined dynamic_lookup"
     steps:
       - checkout
       - run: *setup_miniconda
       - run: *create_conda_env
       - run: *setup_genutil
       - run: *run_genutil_tests
+      - run: *conda_upload
       - store_artifacts:
           path: tests_html
           destination: tests_html
 
+  linux_genutil:
+    machine:
+      image: circleci/classic:latest
+    environment:
+      WORKDIR: "workspace/test_linux_genutil"
+      OS: "linux-64"
+      CONDA_COMPILERS: "gcc_linux-64 gfortran_linux-64"
+      LDSHARED_FLAGS: "-shared -pthread"
+    steps:
+      - checkout
+      - run: *setup_miniconda 
+      - run: *create_conda_env
+      - run: *setup_genutil
+      - run: *run_genutil_tests
+      - run: *conda_upload
+      - store_artifacts:
+          path: tests_html
+          destination: tests_html
+
+
 workflows:
   version: 2
-  nightly:
+  genutil:
     jobs:
       - macos_genutil
+      - linux_genutil
 
 
        
