@@ -65,7 +65,7 @@ aliases:
   - &conda_upload
     name: conda_upload
     command: |
-       if [[ $CIRCLE_BRANCH != 'master' ]]; then
+       if [[ $CIRCLE_BRANCH != 'add_coverage' ]]; then
           exit 0
        fi
        export PATH=${HOME}/project/$WORKDIR/miniconda/bin:$PATH
@@ -77,8 +77,8 @@ aliases:
        export PKG_NAME=genutil
        export USER=cdat
        export VERSION=8.1
-       export LABEL=nightly
-       python ./prep_for_build.py -l $VERSION
+       export LABEL=linatest
+       python ./prep_for_build.py -l $VERSION -b 'add_coverage'
        conda build $PKG_NAME -c cdat/label/nightly -c conda-forge -c cdat
        conda build $PKG_NAME -c cdat/label/nightly -c conda-forge -c cdat --python=3.6
        anaconda -t $CONDA_UPLOAD_TOKEN upload -u $USER -l $LABEL $CONDA_BLD_PATH/$OS/$PKG_NAME-$VERSION.`date +%Y*`0.tar.bz2 --force
