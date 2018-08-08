@@ -22,8 +22,8 @@ aliases:
        conda config --set always_yes yes --set changeps1 no
        conda update -y -q conda
        conda config --set anaconda_upload no
-       conda create -n py2 -c cdat/label/nightly -c conda-forge -c cdat cdms2 cdat_info testsrunner udunits2 "python<3" $CONDA_COMPILERS coverage
-       conda create -n py3 -c cdat/label/nightly -c conda-forge -c cdat cdms2 cdat_info testsrunner udunits2 "python>3" $CONDA_COMPILERS coverage
+       conda create -n py2 -c cdat/label/nightly -c conda-forge -c cdat cdms2 cdat_info testsrunner udunits2 "python<3" $CONDA_COMPILERS coverage coveralls
+       conda create -n py3 -c cdat/label/nightly -c conda-forge -c cdat cdms2 cdat_info testsrunner udunits2 "python>3" $CONDA_COMPILERS coverage coveralls
        conda install -n py2 -c cdat/label/linatest testsrunner
        conda install -n py3 -c cdat/label/linatest testsrunner
 
@@ -65,6 +65,7 @@ aliases:
        PY3_RESULT=$?
        echo "*** py3 test result: "${PY3_RESULT}
        RESULT=$(( $RESULT + $PY3_RESULT))
+       coveralls
        COVERAGE_SRC=$WORKDIR/miniconda/envs/py3/lib/python3.6/site-packages/genutil
        $WORKDIR/cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $RESULT --prefix $COVERAGE_SRC
        # $WORKDIR/cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $RESULT
