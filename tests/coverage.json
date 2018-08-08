@@ -1,4 +1,4 @@
 {
-   "include": ["cdms2", "genutil", "cdtime", "cdat_info", "testsrunner"]
+   "include": ["cdtime", "cdms2", "genutil", "cdat_info", "testsrunner"]
 }
 
