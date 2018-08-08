@@ -52,23 +52,19 @@ aliases:
        set +e
        source activate py2
        set -e
-       python run_tests.py -H -v2 -c 
+       python run_tests.py -H -v2
        RESULT=$?
-       echo "**** py2 test result: "${RESULT}
+       echo "*** py2 test result: "${RESULT}
        set +e
        source activate py3
        set -e
-       curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > $WORKDIR/cc-test-reporter
-       chmod +x $WORKDIR/cc-test-reporter
-       $WORKDIR/cc-test-reporter before-build
-       python run_tests.py -H -v2 -c
+       python run_tests.py -H -v2 $COVERAGE
        PY3_RESULT=$?
        echo "*** py3 test result: "${PY3_RESULT}
        RESULT=$(( $RESULT + $PY3_RESULT))
-       coveralls
-       COVERAGE_SRC=$WORKDIR/miniconda/envs/py3/lib/python3.6/site-packages/genutil
-       $WORKDIR/cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $RESULT --prefix $COVERAGE_SRC
-       # $WORKDIR/cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $RESULT
+       if [[ $COVERAGE == '-c' ]]; then
+          coveralls
+       fi
        exit $RESULT
 
   - &conda_upload
@@ -120,6 +116,7 @@ jobs:
       OS: "linux-64"
       CONDA_COMPILERS: "gcc_linux-64 gfortran_linux-64"
       LDSHARED_FLAGS: "-shared -pthread"
+      COVERAGE: "-c"
     steps:
       - checkout
       - run: *setup_miniconda 
