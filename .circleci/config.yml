@@ -65,8 +65,9 @@ aliases:
        PY3_RESULT=$?
        echo "*** py3 test result: "${PY3_RESULT}
        RESULT=$(( $RESULT + $PY3_RESULT))
-       COVERAGE_SRC=$WORKDIR/miniconda/envs/py3/lib/python3.6/site-packages/genutil
-       $WORKDIR/cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $RESULT --prefix $COVERAGE_SRC
+       # COVERAGE_SRC=$WORKDIR/miniconda/envs/py3/lib/python3.6/site-packages/genutil
+       # $WORKDIR/cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $RESULT --prefix $COVERAGE_SRC
+       $WORKDIR/cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $RESULT
        exit $RESULT
 
   - &conda_upload
