@@ -58,11 +58,14 @@ aliases:
        set +e
        source activate py3
        set -e
+       curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > $WORKDIR/cc-test-reporter
+       chmod +x $WORKDIR/cc-test-reporter
+       $WORKDIR/cc-test-reporter before-build
        python run_tests.py -H -v2 -c
+       $WORKDIR/cc-test-reporter after-build
        PY3_RESULT=$?
        echo "**** py3 test result: "${PY3_RESULT}
        RESULT=$(( $RESULT + $PY3_RESULT))
-       ls -al .coverage covers
        exit $RESULT
 
   - &conda_upload
@@ -130,7 +133,7 @@ workflows:
   version: 2
   genutil:
     jobs:
-      - macos_genutil
+      #- macos_genutil
       - linux_genutil
 
 
