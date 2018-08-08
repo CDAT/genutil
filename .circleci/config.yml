@@ -62,10 +62,10 @@ aliases:
        chmod +x $WORKDIR/cc-test-reporter
        $WORKDIR/cc-test-reporter before-build
        python run_tests.py -H -v2 -c
-       $WORKDIR/cc-test-reporter after-build
        PY3_RESULT=$?
        echo "**** py3 test result: "${PY3_RESULT}
        RESULT=$(( $RESULT + $PY3_RESULT))
+       $WORKDIR/cc-test-reporter after-build --exit-code $RESULT
        exit $RESULT
 
   - &conda_upload
