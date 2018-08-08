@@ -24,6 +24,8 @@ aliases:
        conda config --set anaconda_upload no
        conda create -n py2 -c cdat/label/nightly -c conda-forge -c cdat cdms2 cdat_info testsrunner udunits2 "python<3" $CONDA_COMPILERS
        conda create -n py3 -c cdat/label/nightly -c conda-forge -c cdat cdms2 cdat_info testsrunner udunits2 "python>3" $CONDA_COMPILERS
+       conda install -n py2 -c cdat/label/linatest testsrunner
+       conda install -n py3 -c cdat/label/linatest testsrunner
 
 
   - &setup_genutil
@@ -50,22 +52,23 @@ aliases:
        set +e
        source activate py2
        set -e
-       python run_tests.py -H -v2 
+       python run_tests.py -H -v2 -c 
        RESULT=$?
        echo "**** py2 test result: "${RESULT}
        set +e
        source activate py3
        set -e
-       python run_tests.py -H -v2 
+       python run_tests.py -H -v2 -c
        PY3_RESULT=$?
        echo "**** py3 test result: "${PY3_RESULT}
        RESULT=$(( $RESULT + $PY3_RESULT))
+       ls -al .coverage covers
        exit $RESULT
 
   - &conda_upload
     name: conda_upload
     command: |
-       if [[ $CIRCLE_BRANCH != 'add_coverage' ]]; then
+       if [[ $CIRCLE_BRANCH != 'master' ]]; then
           exit 0
        fi
        export PATH=${HOME}/project/$WORKDIR/miniconda/bin:$PATH
@@ -77,8 +80,8 @@ aliases:
        export PKG_NAME=genutil
        export USER=cdat
        export VERSION=8.1
-       export LABEL=linatest
-       python ./prep_for_build.py -l $VERSION -b 'add_coverage'
+       export LABEL=nightly
+       python ./prep_for_build.py -l $VERSION
        conda build $PKG_NAME -c cdat/label/nightly -c conda-forge -c cdat
        conda build $PKG_NAME -c cdat/label/nightly -c conda-forge -c cdat --python=3.6
        anaconda -t $CONDA_UPLOAD_TOKEN upload -u $USER -l $LABEL $CONDA_BLD_PATH/$OS/$PKG_NAME-$VERSION.`date +%Y*`0.tar.bz2 --force
