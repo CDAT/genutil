@@ -63,9 +63,9 @@ aliases:
        $WORKDIR/cc-test-reporter before-build
        python run_tests.py -H -v2 -c
        PY3_RESULT=$?
-       echo "**** py3 test result: "${PY3_RESULT}
+       echo "*** py3 test result: "${PY3_RESULT}
        RESULT=$(( $RESULT + $PY3_RESULT))
-       $WORKDIR/cc-test-reporter after-build --exit-code $RESULT
+       $WORKDIR/cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $RESULT
        exit $RESULT
 
   - &conda_upload
