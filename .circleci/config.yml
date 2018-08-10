@@ -22,7 +22,7 @@ aliases:
        conda config --set always_yes yes --set changeps1 no
        conda update -y -q conda
        conda config --set anaconda_upload no
-       conda create -n py2 -c cdat/label/nightly -c conda-forge -c cdat cdms2 cdat_info testsrunner udunits2 "python<3" $CONDA_COMPILERS coverage coveralls
+       conda create -n py2 -c cdat/label/nightly -c conda-forge -c cdat cdms2 cdat_info testsrunner udunits2 "python<3" $CONDA_COMPILERS
        conda create -n py3 -c cdat/label/nightly -c conda-forge -c cdat cdms2 cdat_info testsrunner udunits2 "python>3" $CONDA_COMPILERS coverage coveralls
        conda install -n py2 -c cdat/label/linatest testsrunner
        conda install -n py3 -c cdat/label/linatest testsrunner
@@ -62,10 +62,16 @@ aliases:
        PY3_RESULT=$?
        echo "*** py3 test result: "${PY3_RESULT}
        RESULT=$(( $RESULT + $PY3_RESULT))
-       if [[ $COVERAGE == '-c' ]]; then
-          coveralls
-       fi
        exit $RESULT
+
+  - &upload_coverage
+    name: upload_coverage
+    command: |
+       export PATH=$WORKDIR/miniconda/bin:$PATH
+       export UVCDAT_ANONYMOUS_LOG=False
+       source activate py3
+       coveralls
+       source deactivate
 
   - &conda_upload
     name: conda_upload
@@ -123,6 +129,7 @@ jobs:
       - run: *create_conda_env
       - run: *setup_genutil
       - run: *run_genutil_tests
+      - run: *upload_coverage
       - run: *conda_upload
       - store_artifacts:
           path: tests_html
@@ -133,7 +140,7 @@ workflows:
   version: 2
   genutil:
     jobs:
-      #- macos_genutil
+      - macos_genutil
       - linux_genutil
 
 
