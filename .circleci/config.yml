@@ -30,22 +30,6 @@ aliases:
           conda create -n $PY_VER $CHANNELS $PKGS "python>3" $CONDA_COMPILERS coverage coveralls
        fi
 
-  - &setup_genutil_ORIG
-    name: setup_genutil_ORIG
-    command: |
-       export PATH=$WORKDIR/miniconda/bin:$PATH
-       export UVCDAT_ANONYMOUS_LOG=False
-       set +e
-       source activate py3
-       set -e
-       export LDSHARED="$CC ${LDSHARED_FLAGS}"
-       LDSHARED=${LDSHARED} python setup.py install
-       set +e
-       source activate py2
-       set -e
-       rm -rf build
-       LDSHARED=${LDSHARED} python setup.py install
-
   - &setup_genutil
     name: setup_genutil
     command: |
@@ -84,7 +68,7 @@ aliases:
     environment:
        CHANNELS: "-c cdat/label/nightly -c conda-forge -c cdat"
     command: |
-       if [[ $CIRCLE_BRANCH != 'add_coverage' ]]; then
+       if [[ $CIRCLE_BRANCH != 'master' ]]; then
           exit 0
        fi
        export PATH=${HOME}/project/$WORKDIR/miniconda/bin:$PATH
@@ -96,8 +80,8 @@ aliases:
        export PKG_NAME=genutil
        export USER=cdat
        export VERSION=8.1
-       export LABEL=linatest
-       python ./prep_for_build.py -l $VERSION -b 'add_coverage'
+       export LABEL=nightly
+       python ./prep_for_build.py -l $VERSION
        if [[ $PY_VER = 'py2' ]]; then
           conda build $PKG_NAME $CHANNELS
        else
