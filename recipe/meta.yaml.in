@@ -1,0 +1,30 @@
+package:
+    name: genutil
+    version: @VERSION@.npy{{ numpy }}
+
+source:
+    git_rev: @UVCDAT_BRANCH@
+    git_url: git://github.com/CDAT/genutil.git
+
+build:
+  number: @BUILD_NUMBER@
+ 
+requirements:
+  build:
+    - {{ compiler("c") }}
+  host:
+    - python {{ python }}
+    - setuptools
+    - numpy >1.11.*
+    - udunits2
+  run:
+    - python {{ python }}
+    - cdms2
+    - udunits2
+    - {{ pin_compatible('numpy') }}
+
+about:
+    home:  http://gitub.com/CDAT/genutil
+    license: BSD
+    license_file: bsd-3-clause.txt
+
