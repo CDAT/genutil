@@ -17,7 +17,7 @@ aliases:
   - &create_conda_env
     name: create_conda_env
     environment:
-       PKGS: "cdms2 cdat_info testsrunner udunits2"
+       PKGS: "cdms2 cdat_info testsrunner udunits2 'numpy<1.14.6'"
        CHANNELS: "-c cdat/label/nightly -c conda-forge -c cdat"
     command: |
        export PATH=$WORKDIR/miniconda/bin:$PATH
@@ -81,6 +81,10 @@ aliases:
        export USER=cdat
        export VERSION=8.1
        export LABEL=nightly
+       if [[ -d $PKG_NAME ]]; then
+          rm -rf $PKG_NAME
+       fi
+       ln -s ../recipe $PKG_NAME
        python ./prep_for_build.py -l $VERSION
        if [[ $PY_VER = 'py2' ]]; then
           conda build $PKG_NAME $CHANNELS
