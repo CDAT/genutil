@@ -17,7 +17,7 @@ aliases:
   - &create_conda_env
     name: create_conda_env
     environment:
-       PKGS: "cdms2 cdat_info testsrunner udunits2 'numpy<1.14.6'"
+       PKGS: "cdms2 cdat_info testsrunner udunits2 numpy"
        CHANNELS: "-c cdat/label/nightly -c conda-forge -c cdat"
     command: |
        export PATH=$WORKDIR/miniconda/bin:$PATH
@@ -181,10 +181,10 @@ workflows:
   genutil:
     jobs:
       - macos_genutil_py2
-      - macos_genutil_py3:
-           requires:
-              - macos_genutil_py2
+      - macos_genutil_py3
+          # requires:
+          #    - macos_genutil_py2
       - linux_genutil_py2
-      - linux_genutil_py3:
-           requires:
-              - linux_genutil_py2
+      - linux_genutil_py3
+          #     requires:
+          #    - linux_genutil_py2
