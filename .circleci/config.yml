@@ -180,11 +180,8 @@ workflows:
   version: 2
   genutil:
     jobs:
-      - macos_genutil_py2
+      #- macos_genutil_py2
       - macos_genutil_py3
-          # requires:
-          #    - macos_genutil_py2
       - linux_genutil_py2
       - linux_genutil_py3
-          #     requires:
-          #    - linux_genutil_py2
+
