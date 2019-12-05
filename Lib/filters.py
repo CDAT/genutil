@@ -5,6 +5,7 @@ import cdms2
 import MV2
 import genutil
 
+
 def custom1D(x, filter, axis=0):
     """
     Apply a custom 1 dimensional filter to an array over a specified axis

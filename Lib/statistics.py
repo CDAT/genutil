@@ -8,6 +8,7 @@ from . import arrayindexing
 from . import array_indexing_emulate as array_indexing
 from .stats_checker import __checker, StatisticsError
 
+
 def __gammln1(x):
     cof = [76.18009172947146, -86.50532032941677,
            24.01409824083091, -1.231739572450155,

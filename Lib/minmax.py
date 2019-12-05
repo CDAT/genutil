@@ -1,6 +1,7 @@
 import numpy
 # Adapted for numpy/ma/cdms2 by convertcdms.py
 
+
 def minmax(*data):
     """
     Returns the minimum and maximum of a series of arrays/lists/tuples (or a combination of these)
