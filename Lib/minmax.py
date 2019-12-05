@@ -1,7 +1,5 @@
 import numpy
-import cdat_info
 # Adapted for numpy/ma/cdms2 by convertcdms.py
-
 
 def minmax(*data):
     """

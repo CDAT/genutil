@@ -4,8 +4,6 @@ import numpy
 import cdms2
 import MV2
 import genutil
-import cdat_info
-
 
 def custom1D(x, filter, axis=0):
     """

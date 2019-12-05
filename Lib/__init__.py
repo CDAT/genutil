@@ -17,7 +17,6 @@ from . import ASCII  # noqa
 from . import udunits  # noqa
 from .Filler import Filler, StringConstructor  # noqa
 from .averager import averager, AveragerError, area_weights, getAxisWeight, getAxisWeightByName, __check_weightoptions  # noqa
-import cdat_info  # noqa
 from .ASCII import get_parenthesis_content  # noqa
 import os  # noqa
 import sys  # noqa

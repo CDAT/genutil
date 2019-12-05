@@ -3,7 +3,6 @@ import numpy
 import numpy.ma
 import cdms2
 import MV2
-import cdat_info
 
 try:
     basestring
