@@ -34,7 +34,6 @@ aliases:
     name: setup_genutil
     command: |
        export PATH=$WORKDIR/miniconda/bin:$PATH
-       export CDAT_ANONYMOUS_LOG=False
        set +e
        source activate $PY_VER
        set -e
@@ -46,7 +45,6 @@ aliases:
     name: run_genutil_tests
     command: |
        export PATH=$WORKDIR/miniconda/bin:$PATH
-       export CDAT_ANONYMOUS_LOG=False
        set +e
        source activate $PY_VER
        set -e

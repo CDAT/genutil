@@ -23,7 +23,6 @@ def custom1D(x, filter, axis=0):
         (integer value 0...n) over which you want to compute the statistic.
     :type axis: str or int
     """
-    
     isMV2 = cdms2.isVariable(x)
     if isMV2:
         xatt = x.attributes
@@ -99,7 +98,6 @@ def smooth121(x, axis=0):
         (integer value 0...n) over which you want to compute the statistic.
     :type axis: str or int
     """
-    
     return custom1D(x, [1., 2., 1.], axis=axis)
 
 
@@ -129,5 +127,4 @@ def runningaverage(x, N, axis=0):
     :type axis: str or int
     """
     filter = numpy.ma.ones((N,), dtype='f')
-    
     return custom1D(x, filter, axis=axis)

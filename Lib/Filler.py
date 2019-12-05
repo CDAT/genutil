@@ -1,6 +1,3 @@
-import cdat_info
-
-
 class StringConstructor:
     """
     This class aims at spotting keywords in a string and replacing them

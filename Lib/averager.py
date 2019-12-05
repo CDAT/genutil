@@ -194,7 +194,6 @@ def area_weights(ds, axisoptions=None):
     :returns: A masked array of the same dimensions as ds containing area weights, but masked where ds is masked.
     :rtype: cdms.tvariable.TransientVariable
     """
-    
     #
     __DEBUG__ = 0
     #
@@ -994,7 +993,6 @@ def averager(V, axis=None, weights=None, action='average',
             the 'weighted' keyword appears.
     """
     __DEBUG__ = 0
-    
     #
     # Check the weight = option. This is done for backward compatibility since
     # weights= is the current default syntax.
