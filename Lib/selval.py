@@ -239,7 +239,7 @@ def picker(*args, **kargs):
             >>> s=f('ta',genutil.picker(time=['1987-7','1988-3',cdtime.comptime(1989,3)],level=[1000,700,850]))
 
     """
-    cdat_info.pingPCMDIdb("cdat", "genutil.picker")
+    #cdat_info.pingPCMDIdb("cdat", "genutil.picker")
     import cdms2 as cdms
     a = cdms.selectors.Selector(PickComponent(*args, **kargs))
     return a
