@@ -42,4 +42,4 @@ else:
     except BaseException:
         pass
 
-#cdat_info.pingPCMDIdb("cdat", "genutil")
+
