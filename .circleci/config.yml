@@ -96,7 +96,7 @@ aliases:
 jobs:
   macos_genutil_py2:
     macos:
-      xcode: "9.2.0"
+      xcode: "11.1.0"
     environment:
       WORKDIR: "workspace/test_macos_genutil_py2"
       OS: "osx-64"
@@ -116,7 +116,7 @@ jobs:
 
   macos_genutil_py3:
     macos:
-      xcode: "9.2.0"
+      xcode: "11.1.0"
     environment:
       WORKDIR: "workspace/test_macos_genutil_py3"
       OS: "osx-64"
