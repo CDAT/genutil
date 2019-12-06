@@ -4,7 +4,6 @@ import numpy.ma
 import cdms2
 from .grower import grower
 import numpy
-import cdat_info
 from . import arrayindexing
 from . import array_indexing_emulate as array_indexing
 from .stats_checker import __checker, StatisticsError
@@ -590,7 +589,6 @@ def covariance(x, y, weights=None, axis=0, centered=1,
     :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
     :type max_pct_missing: float
     """
-    cdat_info.pingPCMDIdb("cdat", "genutil.statistics.covariance")
     if cdms2.isVariable(x):
         xatt = x.attributes
     if cdms2.isVariable(y):
@@ -653,7 +651,6 @@ def variance(x, weights=None, axis=0, centered=1,
     :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
     :type max_pct_missing: float
     """
-    cdat_info.pingPCMDIdb("cdat", "genutil.statistics.variance")
     if cdms2.isVariable(x):
         xatt = x.attributes
     x, dum, weights, axis, ax = __checker(x, None, weights, axis)
@@ -718,7 +715,6 @@ def std(x, weights=None, axis=0, centered=1, biased=1, max_pct_missing=100.):
     :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
     :type max_pct_missing: float
     """
-    cdat_info.pingPCMDIdb("cdat", "genutil.statistics.std")
     if cdms2.isVariable(x):
         xatt = x.attributes
     x, dum, weights, axis, ax = __checker(x, None, weights, axis)
@@ -782,7 +778,6 @@ def correlation(x, y, weights=None, axis=0, centered=1,
     :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
     :type max_pct_missing: float
     """
-    cdat_info.pingPCMDIdb("cdat", "genutil.statistics.corelation")
     x, y, weights, axis, ax = __checker(x, y, weights, axis)
 
     cor = __correlation(
@@ -848,7 +843,6 @@ def rms(x, y, weights=None, axis=0, centered=0,
     :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
     :type max_pct_missing: float
     """
-    cdat_info.pingPCMDIdb("cdat", "genutil.statistics.rms")
     if cdms2.isVariable(x):
         xatt = x.attributes
     x, y, weights, axis, ax = __checker(x, y, weights, axis)
@@ -915,7 +909,6 @@ def laggedcovariance(x, y, lag=None, axis=0, centered=1,
     :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
     :type max_pct_missing: float
     """
-    cdat_info.pingPCMDIdb("cdat", "genutil.statistics.laggedcovariance")
     if cdms2.isVariable(x):
         xatt = x.attributes
     if cdms2.isVariable(y):
@@ -1020,7 +1013,6 @@ def laggedcorrelation(x, y, lag=None, axis=0, centered=1,
     :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
     :type max_pct_missing: float
     """
-    cdat_info.pingPCMDIdb("cdat", "genutil.statistics.laggedcorrelation")
     x, y, w, axis, ax = __checker(x, y, None, axis)
     if lag is None:
         lags = list(range(x.shape[0]))
@@ -1115,7 +1107,6 @@ def autocovariance(x, lag=None, axis=0, centered=1,
     :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
     :type max_pct_missing: float
     """
-    cdat_info.pingPCMDIdb("cdat", "genutil.statistics.autocovariance")
     if cdms2.isVariable(x):
         xatt = x.attributes
     x, dum, dum, axis, ax = __checker(x, None, None, axis)
@@ -1206,7 +1197,6 @@ def autocorrelation(x, lag=None, axis=0, centered=1, partial=1,
     :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
     :type max_pct_missing: float
     """
-    cdat_info.pingPCMDIdb("cdat", "genutil.statistics.autocorrelation")
     x, dum, dum, axis, ax = __checker(x, None, None, axis)
     if lag is None:
         lags = list(range(x.shape[0]))
@@ -1286,7 +1276,6 @@ def meanabsdiff(x, y, weights=None, axis=0, centered=1, max_pct_missing=100.):
     :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
     :type max_pct_missing: float
     """
-    cdat_info.pingPCMDIdb("cdat", "genutil.statistics.meanabsdiff")
     if cdms2.isVariable(x):
         xatt = x.attributes
     x, y, weights, axis, ax = __checker(x, y, weights, axis)
@@ -1438,7 +1427,6 @@ def linearregression(y, axis=None, x=None, error=None,
                           linearregression(y, error=2,probability=1,noslope=1)
 
     """
-    cdat_info.pingPCMDIdb("cdat", "genutil.statistics.linearregression")
     yisV = cdms2.isVariable(y)
     if yisV:
         yatt = y.attributes
@@ -1666,7 +1654,6 @@ def geometricmean(x, axis=0, max_pct_missing=100.):
     :param max_pct_missing: Maximum percentage of cell which is allowed to be masked (missing).
     :type max_pct_missing: float
     """
-    cdat_info.pingPCMDIdb("cdat", "genutil.statistics.geometricmean")
     if cdms2.isVariable(x):
         xatt = x.attributes
     x, dum, weights, axis, ax = __checker(x, None, None, axis)
@@ -1760,7 +1747,6 @@ def percentiles(x, percentiles=[50.], axis=0):
         (integer value 0...n) over which you want to compute the statistic.
     :type axis: int or str
     """
-    cdat_info.pingPCMDIdb("cdat", "genutil.statistics.percentiles")
     if cdms2.isVariable(x):
         xatt = x.attributes
     x, dum, weights, axis, ax = __checker(x, None, None, axis)
@@ -1802,7 +1788,6 @@ def median(x, axis=0):
             (integer value 0...n) over which you want to compute the statistic.
     :type axis: str or int
     """
-    cdat_info.pingPCMDIdb("cdat", "genutil.statistics.median")
     tmp = percentiles(x, percentiles=[50.], axis=axis)
     tmp.id = 'median'
     return tmp
@@ -1836,7 +1821,6 @@ def rank(x, axis=0):
     """
 
     # preprocessing
-    cdat_info.pingPCMDIdb("cdat", "genutil.statistics.rank")
     if cdms2.isVariable(x):
         xatt = x.attributes
         axs = x.getAxisList()

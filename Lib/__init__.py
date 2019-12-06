@@ -17,10 +17,10 @@ from . import ASCII  # noqa
 from . import udunits  # noqa
 from .Filler import Filler, StringConstructor  # noqa
 from .averager import averager, AveragerError, area_weights, getAxisWeight, getAxisWeightByName, __check_weightoptions  # noqa
-import cdat_info  # noqa
 from .ASCII import get_parenthesis_content  # noqa
 import os  # noqa
 import sys  # noqa
+import cdat_info
 
 # udunits bits
 from .udunits import udunits, addBaseUnit, addDimensionlessUnit, addScaledUnit  # noqa
@@ -41,5 +41,3 @@ else:
             os.environ["UDUNITS2_XML_PATH"] = xml_pth
     except BaseException:
         pass
-
-cdat_info.pingPCMDIdb("cdat", "genutil")

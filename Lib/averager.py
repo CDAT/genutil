@@ -3,7 +3,6 @@ import numpy
 import numpy.ma
 import cdms2
 import MV2
-import cdat_info
 
 try:
     basestring
@@ -194,7 +193,6 @@ def area_weights(ds, axisoptions=None):
     :returns: A masked array of the same dimensions as ds containing area weights, but masked where ds is masked.
     :rtype: cdms.tvariable.TransientVariable
     """
-    cdat_info.pingPCMDIdb("cdat", "genutil.area_weights")
     #
     __DEBUG__ = 0
     #
@@ -994,7 +992,6 @@ def averager(V, axis=None, weights=None, action='average',
             the 'weighted' keyword appears.
     """
     __DEBUG__ = 0
-    cdat_info.pingPCMDIdb("cdat", "genutil.averager")
     #
     # Check the weight = option. This is done for backward compatibility since
     # weights= is the current default syntax.

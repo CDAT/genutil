@@ -4,7 +4,6 @@ import numpy
 import cdms2
 import MV2
 import genutil
-import cdat_info
 
 
 def custom1D(x, filter, axis=0):
@@ -23,7 +22,6 @@ def custom1D(x, filter, axis=0):
         (integer value 0...n) over which you want to compute the statistic.
     :type axis: str or int
     """
-    cdat_info.pingPCMDIdb("cdat", "genutil.filters.custom1D")
     isMV2 = cdms2.isVariable(x)
     if isMV2:
         xatt = x.attributes
@@ -99,7 +97,6 @@ def smooth121(x, axis=0):
         (integer value 0...n) over which you want to compute the statistic.
     :type axis: str or int
     """
-    cdat_info.pingPCMDIdb("cdat", "genutil.filters.smooth121")
     return custom1D(x, [1., 2., 1.], axis=axis)
 
 
@@ -129,5 +126,4 @@ def runningaverage(x, N, axis=0):
     :type axis: str or int
     """
     filter = numpy.ma.ones((N,), dtype='f')
-    cdat_info.pingPCMDIdb("cdat", "genutil.filters.runningaverage(%i)" % N)
     return custom1D(x, filter, axis=axis)

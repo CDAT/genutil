@@ -1,6 +1,3 @@
-import cdat_info
-
-
 class StringConstructor:
     """
     This class aims at spotting keywords in a string and replacing them
@@ -38,7 +35,6 @@ class StringConstructor:
             There can be an unlimited number of keywords, delimited by %( on
             the left and ) on the right.
         """
-        cdat_info.pingPCMDIdb("cdat", "genutil.StringConstructor")
         self.template = template
         # ok we need to generate the keys and set them to empty it seems like a
         # better idea

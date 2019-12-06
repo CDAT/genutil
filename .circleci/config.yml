@@ -17,7 +17,7 @@ aliases:
   - &create_conda_env
     name: create_conda_env
     environment:
-       PKGS: "cdms2 cdat_info testsrunner udunits2 numpy"
+       PKGS: "cdms2 cdat_info testsrunner udunits2 numpy 'libnetcdf=4.6.2'"
        CHANNELS: "-c cdat/label/nightly -c conda-forge -c cdat"
     command: |
        export PATH=$WORKDIR/miniconda/bin:$PATH
@@ -34,7 +34,6 @@ aliases:
     name: setup_genutil
     command: |
        export PATH=$WORKDIR/miniconda/bin:$PATH
-       export CDAT_ANONYMOUS_LOG=False
        set +e
        source activate $PY_VER
        set -e
@@ -46,7 +45,6 @@ aliases:
     name: run_genutil_tests
     command: |
        export PATH=$WORKDIR/miniconda/bin:$PATH
-       export CDAT_ANONYMOUS_LOG=False
        set +e
        source activate $PY_VER
        set -e
@@ -96,7 +94,7 @@ aliases:
 jobs:
   macos_genutil_py2:
     macos:
-      xcode: "9.2.0"
+      xcode: "11.1.0"
     environment:
       WORKDIR: "workspace/test_macos_genutil_py2"
       OS: "osx-64"
@@ -116,7 +114,7 @@ jobs:
 
   macos_genutil_py3:
     macos:
-      xcode: "9.2.0"
+      xcode: "11.1.0"
     environment:
       WORKDIR: "workspace/test_macos_genutil_py3"
       OS: "osx-64"
