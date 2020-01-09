@@ -1,185 +1,263 @@
 version: 2
 
-checkout:
-  post:
-    - ./ci-support/checkout_merge_commit.sh
-        
 aliases:
-
   - &setup_miniconda
     name: setup_miniconda
     command: |
-      mkdir -p workspace
-      git clone -b validateNightly --depth 1 git@github.com:CDAT/cdat workspace/cdat
-      ls workspace/cdat
-      python workspace/cdat/scripts/install_miniconda.py -w $WORKDIR -p 'py3'
-      
-  - &create_conda_env
-    name: create_conda_env
+       mkdir -p workspace
+       git clone -b validateNightly git@github.com:CDAT/cdat workspace/cdat
+       # install_miniconda.py installs miniconda3 under $WORKDIR/miniconda
+       python workspace/cdat/scripts/install_miniconda.py -w $WORKDIR -p 'py3'
+
+  - &conda_rerender
+    name: conda_rerender
+    command: |
+       git clone -b conda_forge_pinning https://github.com/CDAT/conda-recipes.git $WORKDIR/conda-recipes 
+       source $WORKDIR/miniconda/etc/profile.d/conda.sh
+       conda activate base
+       BUILD_SCRIPT="$WORKDIR/conda-recipes/build_tools/conda_build.py"
+       python $BUILD_SCRIPT -w $WORKDIR -l $LAST_STABLE -B 0 -p $PKG_NAME -r $REPO_NAME -b $CIRCLE_BRANCH --do_rerender
+
+  - &conda_build
+    name: conda_build
+    command: |
+       source $WORKDIR/miniconda/etc/profile.d/conda.sh
+       conda activate base
+       conda config --add channels conda-forge --force
+       conda config --add channels cdat/label/nightly --force
+       conda config --set channel_priority strict
+       BUILD_SCRIPT="$WORKDIR/conda-recipes/build_tools/conda_build.py"
+       python $BUILD_SCRIPT -w $WORKDIR -p $PKG_NAME -r $REPO_NAME --build_version $BUILD_VARIANT_VER --do_build
+
+  - &setup_run_tests
+    name: setup_run_tests
     environment:
-       PKGS: "cdms2 cdat_info testsrunner udunits2 numpy 'libnetcdf=4.6.2'"
-       CHANNELS: "-c cdat/label/nightly -c conda-forge -c cdat"
+       PKGS: "cdms2 cdat_info testsrunner udunits2 numpy"
+       CHANNELS: "-c cdat/label/nightly -c conda-forge"
     command: |
-       export PATH=$WORKDIR/miniconda/bin:$PATH
-       conda config --set always_yes yes --set changeps1 no
-       conda update -y -q conda
-       conda config --set anaconda_upload no
-       if [[ $PY_VER = "py2" ]]; then
-          conda create -n $PY_VER $CHANNELS $PKGS "python<3" $CONDA_COMPILERS
-       else
-          conda create -n $PY_VER $CHANNELS $PKGS "python>3" $CONDA_COMPILERS coverage coveralls
-       fi
+       source $WORKDIR/miniconda/etc/profile.d/conda.sh
+       conda activate base
+       conda create -y -n test_genutil --use-local $CHANNELS "$CONDA_PY_VER" $PKG_NAME $PKGS $COVERAGE_PKGS
+       conda activate test_genutil
+       conda list
 
-  - &setup_genutil
-    name: setup_genutil
+  - &run_tests
+    name: run_tests
     command: |
-       export PATH=$WORKDIR/miniconda/bin:$PATH
-       set +e
-       source activate $PY_VER
-       set -e
-       export LDSHARED="$CC ${LDSHARED_FLAGS}"
-       LDSHARED=${LDSHARED} python setup.py install
-       rm -rf build
-
-  - &run_genutil_tests
-    name: run_genutil_tests
-    command: |
-       export PATH=$WORKDIR/miniconda/bin:$PATH
-       set +e
-       source activate $PY_VER
-       set -e
+       source $WORKDIR/miniconda/etc/profile.d/conda.sh
+       conda activate test_genutil
        python run_tests.py -H -v2 $COVERAGE
-       RESULT=$?
-       echo "*** $PY_VER test result: "${RESULT}
-       exit $RESULT
+
+  - &conda_upload
+    name: conda_upload
+    command: |
+       ##if [[ $CIRCLE_BRANCH != "master" ]]; then
+       #   exit 0
+       #fi
+       source $WORKDIR/miniconda/etc/profile.d/conda.sh
+       conda activate base
+       UPLOAD_OPTIONS="-t $CONDA_UPLOAD_TOKEN upload -u $USER -l $LABEL"
+       anaconda $UPLOAD_OPTIONS linux_build/miniconda/conda-bld/linux-64/$PKG_NAME-$VERSION.`date +%Y*`0.tar.bz2 --force
+       anaconda $UPLOAD_OPTIONS macos_build/miniconda/conda-bld/osx-64/$PKG_NAME-$VERSION.`date +%Y*`0.tar.bz2 --force
 
   - &run_coveralls
     name: run_coveralls
     command: |
-       export PATH=$WORKDIR/miniconda/bin:$PATH
-       source activate $PY_VER
+       source $WORKDIR/miniconda/etc/profile.d/conda.sh
+       conda activate $ENV_NAME
        coveralls
-       source deactivate
+       conda deactivate
 
-  - &conda_upload
-    name: conda_upload
-    environment:
-       CHANNELS: "-c cdat/label/nightly -c conda-forge -c cdat"
-    command: |
-       if [[ $CIRCLE_BRANCH != 'master' ]]; then
-          exit 0
-       fi
-       export PATH=${HOME}/project/$WORKDIR/miniconda/bin:$PATH
-       conda install conda-build anaconda-client
-       conda config --set anaconda_upload no
-       export CONDA_BLD_PATH=`pwd`/conda_build
-       git clone git://github.com/cdat/conda-recipes
-       cd conda-recipes
-       export PKG_NAME=genutil
-       export USER=cdat
-       export VERSION=8.1
-       export LABEL=nightly
-       if [[ -d $PKG_NAME ]]; then
-          rm -rf $PKG_NAME
-       fi
-       ln -s ../recipe $PKG_NAME
-       python ./prep_for_build.py -l $VERSION
-       if [[ $PY_VER = 'py2' ]]; then
-          conda build $PKG_NAME $CHANNELS
-       else
-          conda build $PKG_NAME $CHANNELS --python=3.6
-       fi
-       anaconda -t $CONDA_UPLOAD_TOKEN upload -u $USER -l $LABEL $CONDA_BLD_PATH/$OS/$PKG_NAME-$VERSION.`date +%Y*`0.tar.bz2 --force
- 
 jobs:
-  macos_genutil_py2:
-    macos:
-      xcode: "11.1.0"
-    environment:
-      WORKDIR: "workspace/test_macos_genutil_py2"
-      OS: "osx-64"
-      PY_VER: "py2"
-      CONDA_COMPILERS: "clang_osx-64 gfortran_osx-64"
-      LDSHARED_FLAGS: "-bundle -undefined dynamic_lookup"
-    steps:
-      - checkout
-      - run: *setup_miniconda
-      - run: *create_conda_env
-      - run: *setup_genutil
-      - run: *run_genutil_tests
-      - run: *conda_upload
-      - store_artifacts:
-          path: tests_html
-          destination: tests_html
+   macos_setup:
+      macos:
+         xcode: "11.3.0"
+      environment:
+         WORKDIR: /Users/distiller/project/macos_build
+         PKG_NAME: "genutil"
+         REPO_NAME: "genutil"
+         LAST_STABLE: "8.2"
+      steps:
+         - checkout
+         - run: *setup_miniconda
+         - run: *conda_rerender
+         - persist_to_workspace:
+              root: .
+              paths: 
+                 - macos_build
 
-  macos_genutil_py3:
-    macos:
-      xcode: "11.1.0"
-    environment:
-      WORKDIR: "workspace/test_macos_genutil_py3"
-      OS: "osx-64"
-      PY_VER: "py3"
-      CONDA_COMPILERS: "clang_osx-64 gfortran_osx-64"
-      LDSHARED_FLAGS: "-bundle -undefined dynamic_lookup"
-    steps:
-      - checkout
-      - run: *setup_miniconda
-      - run: *create_conda_env
-      - run: *setup_genutil
-      - run: *run_genutil_tests
-      - run: *conda_upload
-      - store_artifacts:
-          path: tests_html
-          destination: tests_html
+   linux_setup:
+      machine:
+         image: circleci/classic:latest
+      environment:
+         WORKDIR: /home/circleci/project/linux_build
+         PKG_NAME: "genutil"
+         REPO_NAME: "genutil"
+         LAST_STABLE: "8.2"
+      steps:
+         - checkout
+         - run: *setup_miniconda
+         - run: *conda_rerender
+         - persist_to_workspace:
+              root: .
+              paths:
+                 - linux_build
 
-  linux_genutil_py2:
-    machine:
-      image: circleci/classic:latest
-    environment:
-      WORKDIR: "workspace/test_linux_genutil_py2"
-      OS: "linux-64"
-      PY_VER: "py2"
-      CONDA_COMPILERS: "gcc_linux-64 gfortran_linux-64"
-      LDSHARED_FLAGS: "-shared -pthread"
-    steps:
-      - checkout
-      - run: *setup_miniconda 
-      - run: *create_conda_env
-      - run: *setup_genutil
-      - run: *run_genutil_tests
-      - run: *conda_upload
-      - store_artifacts:
-          path: tests_html
-          destination: tests_html
+   macos_genutil_py2:
+      macos:
+         xcode: "11.3.0"
+      environment:
+         WORKDIR: /Users/distiller/project/macos_build
+         PKG_NAME: "genutil"
+         REPO_NAME: "genutil"
+         ENV_NAME: "test_genutil"
+         LAST_STABLE: "8.2"
+         CONDA_PY_VER: "python<3"
+         BUILD_VARIANT_VER: "2.7"
+      steps:
+         - checkout
+         - attach_workspace:
+              at: .
+         - run: *conda_build
+         - run: *setup_run_tests
+         - run: *run_tests
+         - store_artifacts:
+              path: tests_html
+              destination: tests_html
+         - store_artifacts:
+             path: tests_png
+             destination: tests_png
+         - persist_to_workspace:
+              root: .
+              paths:
+                 - macos_build/miniconda/conda-bld/osx-64/genutil*tar.bz2
 
-  linux_genutil_py3:
-    machine:
-      image: circleci/classic:latest
-    environment:
-      WORKDIR: "workspace/test_linux_genutil_py3"
-      OS: "linux-64"
-      PY_VER: "py3"
-      CONDA_COMPILERS: "gcc_linux-64 gfortran_linux-64"
-      LDSHARED_FLAGS: "-shared -pthread"
-      COVERAGE: "-c tests/coverage.json"
-    steps:
-      - checkout
-      - run: *setup_miniconda 
-      - run: *create_conda_env
-      - run: *setup_genutil
-      - run: *run_genutil_tests
-      - run: *run_coveralls
-      - run: *conda_upload
-      - store_artifacts:
-          path: tests_html
-          destination: tests_html
+   macos_genutil_py37:
+      macos:
+         xcode: "11.3.0"
+      environment:
+         WORKDIR: /Users/distiller/project/macos_build
+         PKG_NAME: "genutil"
+         REPO_NAME: "genutil"
+         ENV_NAME: "test_genutil"
+         LAST_STABLE: "8.2"
+         CONDA_PY_VER: "python>=3.7,<3.8"
+         BUILD_VARIANT_VER: "3.7"
+      steps:
+         - checkout
+         - attach_workspace:
+              at: .
+         - run: *conda_build
+         - run: *setup_run_tests
+         - run: *run_tests
+         - store_artifacts:
+              path: tests_html
+              destination: tests_html
+         - store_artifacts:
+             path: tests_png
+             destination: tests_png
+         - persist_to_workspace:
+              root: .
+              paths:
+                 - macos_build/miniconda/conda-bld/osx-64/genutil*tar.bz2
+
+   linux_genutil_py2:
+      machine:
+         image: circleci/classic:latest
+      environment:
+         WORKDIR: /home/circleci/project/linux_build
+         PKG_NAME: "genutil"
+         REPO_NAME: "genutil"
+         ENV_NAME: "test_genutil"
+         LAST_STABLE: "8.2"
+         CONDA_PY_VER: "python<3"
+         BUILD_VARIANT_VER: "2.7"
+      steps:
+         - checkout
+         - attach_workspace:
+              at: .
+         - run: *conda_build
+         - run: *setup_run_tests
+         - run: *run_tests
+         - store_artifacts:
+              path: tests_html
+              destination: tests_html
+         - store_artifacts:
+             path: tests_png
+             destination: tests_png
+         - persist_to_workspace:
+              root: .
+              paths:
+                 - linux_build/miniconda/conda-bld/linux-64/genutil*tar.bz2
+
+   linux_genutil_py37:
+      machine:
+         image: circleci/classic:latest
+      environment:
+         WORKDIR: /home/circleci/project/linux_build
+         PKG_NAME: "genutil"
+         REPO_NAME: "genutil"
+         ENV_NAME: "test_genutil"
+         LAST_STABLE: "8.2"
+         CONDA_PY_VER: "python>=3.7,<3.8"
+         BUILD_VARIANT_VER: "3.7"
+         COVERAGE: "-c tests/coverage.json --coverage-from-egg"
+         COVERAGE_PKGS: "coverage coveralls"
+      steps:
+         - checkout
+         - attach_workspace:
+              at: .
+         - run: *conda_build
+         - run: *setup_run_tests
+         - run: *run_tests
+         - run: *run_coveralls
+         - store_artifacts:
+              path: tests_html
+              destination: tests_html
+         - store_artifacts:
+             path: tests_png
+             destination: tests_png
+         - persist_to_workspace:
+              root: .
+              paths:
+                 - linux_build/miniconda/conda-bld/linux-64/genutil*tar.bz2
+
+   upload:
+      machine:
+         image: circleci/classic:latest
+      environment:
+         WORKDIR: /home/circleci/project/linux_build
+         PKG_NAME: "genutil"
+         VERSION: "8.2"
+         USER: "cdat"
+         LABEL: "nightly"
+      steps:
+         - attach_workspace:
+              at: .
+         - run: pwd
+         - run: *conda_upload
 
 workflows:
-  version: 2
-  genutil:
-    jobs:
-      #- macos_genutil_py2
-      - macos_genutil_py3
-      - linux_genutil_py2
-      - linux_genutil_py3
-
+   version: 2
+   genutil:
+      jobs:
+         - macos_setup
+         - linux_setup
+         - macos_genutil_py2:
+              requires:
+                 - macos_setup
+         - macos_genutil_py37:
+              requires:
+                 - macos_setup
+         - linux_genutil_py2:
+              requires:
+                 - linux_setup
+         - linux_genutil_py37:
+              requires:
+                 - linux_setup
+         - upload:
+              requires:
+                 - macos_genutil_py2
+                 - macos_genutil_py37
+                 - linux_genutil_py2
+                 - linux_genutil_py37
