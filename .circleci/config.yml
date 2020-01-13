@@ -12,7 +12,7 @@ aliases:
   - &conda_rerender
     name: conda_rerender
     command: |
-       git clone -b conda_forge_pinning https://github.com/CDAT/conda-recipes.git $WORKDIR/conda-recipes 
+       git clone https://github.com/CDAT/conda-recipes.git $WORKDIR/conda-recipes 
        source $WORKDIR/miniconda/etc/profile.d/conda.sh
        conda activate base
        BUILD_SCRIPT="$WORKDIR/conda-recipes/build_tools/conda_build.py"
@@ -111,7 +111,6 @@ jobs:
          PKG_NAME: "genutil"
          REPO_NAME: "genutil"
          ENV_NAME: "test_genutil"
-         LAST_STABLE: "8.2"
          CONDA_PY_VER: "python<3"
          BUILD_VARIANT_VER: "2.7"
       steps:
@@ -124,9 +123,6 @@ jobs:
          - store_artifacts:
               path: tests_html
               destination: tests_html
-         - store_artifacts:
-             path: tests_png
-             destination: tests_png
          - persist_to_workspace:
               root: .
               paths:
@@ -140,7 +136,6 @@ jobs:
          PKG_NAME: "genutil"
          REPO_NAME: "genutil"
          ENV_NAME: "test_genutil"
-         LAST_STABLE: "8.2"
          CONDA_PY_VER: "python>=3.7,<3.8"
          BUILD_VARIANT_VER: "3.7"
       steps:
@@ -153,9 +148,6 @@ jobs:
          - store_artifacts:
               path: tests_html
               destination: tests_html
-         - store_artifacts:
-             path: tests_png
-             destination: tests_png
          - persist_to_workspace:
               root: .
               paths:
@@ -169,7 +161,6 @@ jobs:
          PKG_NAME: "genutil"
          REPO_NAME: "genutil"
          ENV_NAME: "test_genutil"
-         LAST_STABLE: "8.2"
          CONDA_PY_VER: "python<3"
          BUILD_VARIANT_VER: "2.7"
       steps:
@@ -182,9 +173,6 @@ jobs:
          - store_artifacts:
               path: tests_html
               destination: tests_html
-         - store_artifacts:
-             path: tests_png
-             destination: tests_png
          - persist_to_workspace:
               root: .
               paths:
@@ -198,7 +186,6 @@ jobs:
          PKG_NAME: "genutil"
          REPO_NAME: "genutil"
          ENV_NAME: "test_genutil"
-         LAST_STABLE: "8.2"
          CONDA_PY_VER: "python>=3.7,<3.8"
          BUILD_VARIANT_VER: "3.7"
          COVERAGE: "-c tests/coverage.json --coverage-from-egg"
@@ -214,9 +201,6 @@ jobs:
          - store_artifacts:
               path: tests_html
               destination: tests_html
-         - store_artifacts:
-             path: tests_png
-             destination: tests_png
          - persist_to_workspace:
               root: .
               paths:
