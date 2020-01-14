@@ -10,21 +10,36 @@ build:
   number: @BUILD_NUMBER@
  
 requirements:
-  build:
-    - {{ compiler("c") }}
-  host:
-    - python {{ python }}
-    - setuptools
-    - numpy >1.11.*
-    - udunits2
-  run:
-    - python {{ python }}
-    - cdms2
-    - udunits2
-    - {{ pin_compatible('numpy') }}
+    build:
+        - {{ compiler("c") }}
+    host:
+        - python
+        - cython
+        - numpy
+        - udunits2
+        - cdms2
+    run:
+        - python
+        - cdms2
+        - udunits2
+        - {{ pin_compatible('numpy') }}
+test:
+    commands:
+        - python -c "import genutil"
 
 about:
-    home:  http://gitub.com/CDAT/genutil
+    home:  http://github.com/CDAT/genutil
     license: BSD
     license_file: bsd-3-clause.txt
+    summary: 'General Utitilites for the Community Data Analysys Tools'
+
+extra:
+    recipe-maintainers:
+        - doutriaux1
+        - dnadeau4
+        - xylar
+        - downiec
+        - muryanto1
+        - jasonb5
+        - forsyth2
 
