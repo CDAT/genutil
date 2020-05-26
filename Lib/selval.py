@@ -67,13 +67,13 @@ class PickComponent(SelectorComponent):
                         or isinstance(specs[0], type(cdtime.reltime(0, 'days since 1999')))\
                         or isinstance(specs[0], type('')):
                     list2 = []
-                    for l in specs:
-                        if not isinstance(l, type('')):
-                            list2.append(l.torel('days since 1900').value)
+                    for el in specs:
+                        if not isinstance(el, type('')):
+                            list2.append(el.torel('days since 1900').value)
                         else:
                             list2.append(
                                 cdtime.s2r(
-                                    l, 'days since 1900').value)
+                                    el, 'days since 1900').value)
                     min = minimum(list2)
                     max = maximum(list2)
                     specification[i] = cdtime.reltime(
@@ -121,13 +121,13 @@ class PickComponent(SelectorComponent):
                     if isinstance(specs[0], type(cdtime.comptime(1999))) or isinstance(
                             specs[0], type(cdtime.reltime(0, 'days since 1999'))) or isinstance(specs[0], type('')):
                         list2 = []
-                        for l in specs:
-                            if not isinstance(l, type('')):
-                                list2.append(l.torel('days since 1900').value)
+                        for el in specs:
+                            if not isinstance(el, type('')):
+                                list2.append(el.torel('days since 1900').value)
                             else:
                                 list2.append(
                                     cdtime.s2r(
-                                        l, 'days since 1900').value)
+                                        el, 'days since 1900').value)
                         min = minimum(list2)
                         max = maximum(list2)
                         specification[axis] = cdtime.reltime(
@@ -158,9 +158,9 @@ class PickComponent(SelectorComponent):
                 a = None
                 sh = list(fetched.shape)
                 sh[i] = 1
-                for l in self.aux[i]:
+                for el in self.aux[i]:
                     try:
-                        tmp = fetched(**{faxes[i].id: (l, l)})
+                        tmp = fetched(**{faxes[i].id: (el, el)})
                         ax = tmp.getAxis(i)
                         # print ax
                         newaxvals.append(ax[0])
@@ -172,21 +172,21 @@ class PickComponent(SelectorComponent):
                         if self.match == 1:
                             raise Exception(
                                 'Error axis value :' +
-                                str(l) +
+                                str(el) +
                                 ' was requested but is not present in slab\n(more missing might exists)')
                         elif self.match == 0:
                             tmp = MV2.ones(sh, typecode=MV2.float)
                             tmp = MV2.masked_equal(tmp, 1)
-                            if isinstance(l, type(cdtime.comptime(1999))) or isinstance(
-                                    l, type(cdtime.reltime(0, 'days since 1999'))) or isinstance(l, type('')):
-                                if not isinstance(l, type('')):
+                            if isinstance(el, type(cdtime.comptime(1999))) or isinstance(
+                                    el, type(cdtime.reltime(0, 'days since 1999'))) or isinstance(el, type('')):
+                                if not isinstance(el, type('')):
                                     newaxvals.append(
-                                        l.torel(faxes[i].units).value)
+                                        el.torel(faxes[i].units).value)
                                 else:
                                     newaxvals.append(cdtime.s2r(
-                                        l, faxes[i].units).value)
+                                        el, faxes[i].units).value)
                             else:
-                                newaxvals.append(l)
+                                newaxvals.append(el)
                             if bounds is not None:
                                 bounds.append([ax[-1] - 1., ax[-1] + 1])
                         else:

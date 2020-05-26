@@ -685,13 +685,13 @@ def str2rgb(col):
         f = open('/usr/X11R6/lib/X11/rgb.txt', 'r')
         ln = f.readlines()
         f.close()
-        for l in ln[1:]:
-            c = l.split()[3:]
+        for line in ln[1:]:
+            c = line.split()[3:]
             c = " ".join(c)
             c = c.lower()
             c = c.replace(' ', '')
             if c == col:
-                ret = l.split()[:3]
+                ret = line.split()[:3]
         if len(ret) != 3:
             ret = [None, None, None]
         for i in range(3):
@@ -735,8 +735,8 @@ def rgb2str(r, g=None, b=None):
         f = open('/usr/X11R6/lib/X11/rgb.txt', 'r')
         ln = f.readlines()
         f.close()
-        for l in ln[1:]:
-            sp = l.split()
+        for line in ln[1:]:
+            sp = line.split()
             r2, g2, b2 = float(sp[0]), float(sp[1]), float(sp[2])
             rms = (r2 - r)**2. + (b2 - b)**2. + (g2 - g)**2.
             if rms < rmsmin:
