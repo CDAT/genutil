@@ -14,15 +14,14 @@ requirements:
         - {{ compiler("c") }}
     host:
         - python
+        - pip
         - cython
+        - setuptools
         - numpy
-        - cdms2
-        - cdat_info
         - udunits2
     run:
         - python
         - cdms2
-        - cdat_info
         - udunits2
         - {{ pin_compatible('numpy') }}
 test:
