@@ -16,11 +16,13 @@ requirements:
         - python
         - cython
         - numpy
-        - udunits2
         - cdms2
+        - cdat_info
+        - udunits2
     run:
         - python
         - cdms2
+        - cdat_info
         - udunits2
         - {{ pin_compatible('numpy') }}
 test:
