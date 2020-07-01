@@ -14,10 +14,11 @@ requirements:
         - {{ compiler("c") }}
     host:
         - python
+        - pip
         - cython
+        - setuptools
         - numpy
         - udunits2
-        - cdms2
     run:
         - python
         - cdms2
