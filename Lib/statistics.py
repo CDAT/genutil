@@ -1696,7 +1696,7 @@ def _percentiles(out, percent):
             pass
         Aii = numpy.where(numpy.equal(ns, 1), 100., tmp)
         ii = numpy.where(numpy.equal(ii, ns), ns - 1, ii)
-        if numpy.rank(ii) > 0:
+        if numpy.ndim(ii) > 0:
             ii = ii.astype(numpy.int)
 # tmp = (p-Ai)/(Aii-Ai)*array_indexing.extract(out,ii) + \
 # (Aii-p)/(Aii-Ai)*array_indexing.extract(out,i)

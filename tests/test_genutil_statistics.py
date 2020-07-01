@@ -17,6 +17,11 @@ class GENUTIL(unittest.TestCase):
         if not skip:
             self.assertTrue(numpy.ma.allclose(A,B))
 
+    def testPercentiles(self):
+        a = numpy.array([1.0,2.0,3.0,4.0,5.0])
+        p = genutil.statistics.percentiles(a,percentiles=[1])
+        # REVISIT
+
     def testStatisitcs(self):
         f=cdms2.open(os.path.join(cdat_info.get_sampledata_path(),'clt.nc'))
 
