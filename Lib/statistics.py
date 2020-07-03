@@ -1668,6 +1668,10 @@ def geometricmean(x, axis=0, max_pct_missing=100.):
 
 
 def _percentiles(out, percent):
+    # change 1d to 2d array
+    if out.ndim == 1:
+        out = out.reshape((1,)+out.shape)
+
     if cdms2.isVariable(out):
         out = MV2.sort(out, axis=0).asma()
         ns = MV2.count(out, axis=0).asma()
@@ -1698,8 +1702,6 @@ def _percentiles(out, percent):
         ii = numpy.where(numpy.equal(ii, ns), ns - 1, ii)
         if numpy.ndim(ii) > 0:
             ii = ii.astype(numpy.int)
-# tmp = (p-Ai)/(Aii-Ai)*array_indexing.extract(out,ii) + \
-# (Aii-p)/(Aii-Ai)*array_indexing.extract(out,i)
 
         tmp = (p - Ai) / (Aii - Ai) * arrayindexing.get(out, ii) + \
             (Aii - p) / (Aii - Ai) * arrayindexing.get(out, i)
