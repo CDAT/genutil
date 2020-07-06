@@ -88,10 +88,7 @@ def __checker(x, y, w, axes, smally=0):
         if smally == 0:
             if x.shape != numpy.ma.shape(y) and y is not None:
                 raise StatisticsError(
-                    "Error x and y shape do not match !"
-                    + str(x.shape)
-                    + ","
-                    + str(numpy.ma.shape(y))
+                    "Error x and y shape do not match !" + str(x.shape) + "," + str(numpy.ma.shape(y))
                 )
         else:
             shy = list(y.shape)
@@ -117,41 +114,26 @@ def __checker(x, y, w, axes, smally=0):
                     sh[i] = myaxes[i]
                 y = numpy.ma.transpose(y, sh)
             if x.shape != numpy.ma.shape(y) and y is not None:
+                err_msg = "Error x and y shape do not match (y shouldbe 1D less than x) !"
                 raise StatisticsError(
-                    "Error x and y shape do not match (y shouldbe 1D less than x) !"
-                    + str(x.shape)
-                    + ","
-                    + str(shy2)
-                    + " Remember y must be 1D less than x"
+                    err_msg + str(x.shape) + "," + str(shy2) + " Remember y must be 1D less than x"
                 )
         if x.shape != numpy.ma.shape(w) and w is not None:
-            raise StatisticsError(
-                "Error x and weights shape do not match !"
-                + str(x.shape)
-                + ","
-                + str(numpy.ma.shape(w))
-                + " ATTENTION if you are trynig to pass a list of 1D arrays"
-                + "for each dim, then x must be an MV2 !!!"
-            )
+            msg1 = "Error x and weights shape do not match !"
+            msg2 = " ATTENTION if you are trying to pass a list of 1D arrays for each dim, then x must be an MV2 !!!"
+            raise StatisticsError(msg1 + str(x.shape) + "," + str(numpy.ma.shape(w)) + msg2)
         if not isinstance(axes, type([])):
             axes = cdms2.orderparse(str(axes))
         for i in axes:
             if len(x.shape) < i:
-                raise StatisticsError(
-                    "Error you have "
-                    + str(len(x.shape))
-                    + " dimensions and try to work on dim:"
-                    + str(i)
-                )
+                err_msg = "Error you have " + str(len(x.shape)) + " dimensions and try to work on dim:" + str(i)
+                raise StatisticsError(err_msg)
     else:
         if y is not None:
             x, y = grower(x, y)
             if x.shape != y.shape:
                 raise StatisticsError(
-                    "Error x and y have different shapes"
-                    + str(x.shape)
-                    + ", "
-                    + str(y.shape)
+                    "Error x and y have different shapes" + str(x.shape) + ", " + str(y.shape)
                 )
         ax = x.getAxisList()
         xorder = x.getOrder(ids=1)
@@ -166,10 +148,7 @@ def __checker(x, y, w, axes, smally=0):
             x, w = grower(x, w)
             if x.shape != w.shape:
                 raise StatisticsError(
-                    "Error x and weights have different shapes"
-                    + str(x.shape)
-                    + ", "
-                    + str(w.shape)
+                    "Error x and weights have different shapes" + str(x.shape) + ", " + str(w.shape)
                 )
         # Last thing convert the axes input to numbers
         if isinstance(axes, type(1)):
@@ -192,10 +171,7 @@ def __checker(x, y, w, axes, smally=0):
                     # slab...
                     if isinstance(axesparse[i], type("")):
                         raise StatisticsError(
-                            "Error axis id :"
-                            + o
-                            + " not found in first slab: "
-                            + x.getOrder(ids=1)
+                            "Error axis id :" + o + " not found in first slab: " + x.getOrder(ids=1)
                         )
             axes = axesparse
     # Now we have array those shape match, and a nice list of axes let's keep
