@@ -13,11 +13,11 @@ build_script = conda-recipes/build_tools/conda_build.py
 test_pkgs = testsrunner
 last_stable ?= 8.2
 
-conda_env ?= base
+conda_env ?= genutil-build
 workdir ?= $(PWD)/workspace
 branch ?= $(shell git rev-parse --abbrev-ref HEAD)
 extra_channels ?= cdat/label/nightly conda-forge
-conda ?= $(or $(CONDA_EXE),$(shell find /opt/*conda*/bin $(HOME)/*conda* -type f -iname conda))
+conda ?= $(or $(CONDA_EXE),$(shell find /opt/*conda*/bin $(HOME)/*conda*/bin -type f -iname conda))
 artifact_dir ?= $(PWD)/artifacts
 conda_env_filename ?= spec-file
 build_version ?= 3.7
@@ -41,20 +41,33 @@ help: ## Prints help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
 		sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+dev-docker:
+	docker run -d --name genutil-dev -v $(PWD):/src -w /src continuumio/miniconda3 /bin/sleep infinity || exit 0
+	docker start genutil-dev
+	docker exec -it genutil-dev /bin/bash -c "apt update; apt install -y make"
+	docker exec -it genutil-dev /bin/bash -c "make dev-environment"
+	docker exec -it genutil-dev /bin/bash -c "conda init bash; echo 'conda activate genutil-dev' >> ~/.bashrc"
+	docker exec -it genutil-dev /bin/bash
+
 dev-environment: conda_channels := -c conda-forge
-dev-environment: gcc := $(or $(if $(findstring $(shell uname),Darwin),clang_osx-64), gcc_linux-64)
+dev-environment: gcc := $(or $(if $(findstring os,Darwin),clang_osx-64), gcc_linux-64)
 dev-environment: conda_pkgs := $(gcc) "numpy>=1.18" udunits expat pytest ipython cdms2
 dev-environment: export conda_env := genutil-dev
 dev-environment: ## Creates dev environment and installs genutil in "Development Mode". If you modify c code you will need to run "make dev-install".
-	source $(conda_activate) base; conda create -n $(conda_env) \
+ifeq ($(os),Darwin)
+	$(error dev-environment on OSX is not support)
+endif
+
+	source $(conda_activate) base; conda create -y -n $(conda_env) \
 		$(conda_channels) $(conda_pkgs)
 
 	$(MAKE) dev-install
 
+dev-install: export conda_env := genutil-dev
 dev-install: ## Installs genutil in "Development Mode", will recompile c code each invocation."
 	source $(conda_activate) $(conda_env); \
 		python setup.py build -gf; \
-		python setup.py develop 
+		python setup.py install
 
 conda-info: ## Prints conda info for environment
 	source $(conda_activate) $(conda_env); conda info
