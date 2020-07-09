@@ -4,6 +4,7 @@
 
 .DEFAULT_GOAL: help
 
+SHELL := /bin/bash
 os = $(shell uname)
 pkg_name = genutil
 repo_name = genutil
@@ -40,24 +41,20 @@ help: ## Prints help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
 		sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-dev-environment: export conda_env := build-genutil
-dev-environment: export numpy_ver := 1.18
-dev-environment: export py_ver := 3.7
-dev-environment: ## Creates development environment using local conda
-	source $(conda_activate) base; conda create -y -n $(conda_env) \
-		$(foreach x,$(extra_channels),-c $(x)) \
-		"python=$(py_ver)" "numpy=$(numpy_ver)" gcc_$(os)-64 \
-		cdat_info udunits2 cdms2 cdutil testsrunner
-
-	source $(conda_activate) $(conda_env); \
-		conda remove genutil --force
+dev-environment: conda_channels := -c conda-forge
+dev-environment: gcc := $(or $(if $(findstring $(shell uname),Darwin),clang_osx-64), gcc_linux-64)
+dev-environment: conda_pkgs := $(gcc) "numpy>=1.18" udunits expat pytest ipython cdms2
+dev-environment: export conda_env := genutil-dev
+dev-environment: ## Creates dev environment and installs genutil in "Development Mode". If you modify c code you will need to run "make dev-install".
+	source $(conda_activate) base; conda create -n $(conda_env) \
+		$(conda_channels) $(conda_pkgs)
 
 	$(MAKE) dev-install
 
-dev-install: ## Installs package in development environment
+dev-install: ## Installs genutil in "Development Mode", will recompile c code each invocation."
 	source $(conda_activate) $(conda_env); \
-		python setup.py build -g; \
-		python setup.py install --record files.txt --force
+		python setup.py build -gf; \
+		python setup.py develop 
 
 conda-info: ## Prints conda info for environment
 	source $(conda_activate) $(conda_env); conda info
