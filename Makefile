@@ -8,18 +8,22 @@ SHELL := /bin/bash
 os = $(shell uname)
 pkg_name = genutil
 repo_name = genutil
+
+user ?= cdat
+label ?= nightly
+
 build_script = conda-recipes/build_tools/conda_build.py
 
 test_pkgs = testsrunner
 last_stable ?= 8.2
 
-conda_build_env = genutil-build
-conda_test_env = genutil-test
+conda_test_env = test-$(pkg_name)
+conda_build_env = build-$(pkg_name)
 
 branch ?= $(shell git rev-parse --abbrev-ref HEAD)
 extra_channels ?= cdat/label/nightly conda-forge
 conda ?= $(or $(CONDA_EXE),$(shell find /opt/*conda*/bin $(HOME)/*conda*/bin -type f -iname conda))
-artifact_dir ?= $(PWD)/artifacts
+
 conda_env_filename ?= spec-file
 build_version ?= 3.7
 
@@ -35,6 +39,8 @@ endif
 workdir := $(shell cat $(PWD)/.tempdir)
 endif
 
+artif_dir = $(workdir)/$(artifact_dir)
+
 ifneq ($(coverage),)
 coverage = -c tests/coverage.json --coverage-from-egg
 endif
@@ -44,7 +50,7 @@ conda_recipes_branch ?= master
 conda_base = $(patsubst %/bin/conda,%,$(conda))
 conda_activate = $(conda_base)/bin/activate
 
-conda_build_extra = --copy_conda_package $(artifact_dir)/
+conda_build_extra = --copy_conda_package $(artif_dir)/
 
 # Is this needed?
 # ifndef $(local_repo)
@@ -66,7 +72,7 @@ dev-docker:
 dev-environment: conda_channels := -c conda-forge
 dev-environment: gcc := $(or $(if $(findstring os,Darwin),clang_osx-64), gcc_linux-64)
 dev-environment: conda_pkgs := $(gcc) "numpy>=1.18" udunits expat pytest ipython cdms2 $(test_pkgs)
-dev-environment: export conda_env := genutil-dev
+dev-environment: export conda_env := dev-$(pkg_name)
 dev-environment: ## Creates dev environment and installs genutil. Will need to run dev-install after any code change.
 ifeq ($(os),Darwin)
 	$(error dev-environment on OSX is not support)
@@ -110,7 +116,7 @@ conda-rerender: setup-build ## Rerender conda recipe using conda-smithy
 		--conda_activate $(conda_activate)
 
 conda-build: ## Builds conda recipe
-	mkdir -p $(artifact_dir)
+	mkdir -p $(artif_dir)
 
 	python $(workdir)/$(build_script) -w $(workdir) -p $(pkg_name) --build_version $(build_version) \
 		--do_build --conda_env $(conda_build_env) --extra_channels $(extra_channels) \
@@ -118,7 +124,7 @@ conda-build: ## Builds conda recipe
 
 conda-upload: ## Upload conda packages in artifcat directory
 	source $(conda_activate) $(conda_build_env); \
-		anaconda -t $(conda_upload_token) upload -u $(user) -l $(label) --force $(artifact_dir)/*.tar.bz2
+		anaconda -t $(conda_upload_token) upload -u $(user) -l $(label) --force $(artif_dir)/*.tar.bz2
 
 conda-dump-env: ## Dumps conda environment
 	mkdir -p $(artifact_dir)
