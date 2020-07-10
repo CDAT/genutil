@@ -28,7 +28,7 @@ conda_env_filename ?= spec-file
 build_version ?= 3.7
 
 # Only populate if workdir is not defined
-ifeq ($(origin workdir),undefined)
+ifeq ($(workdir),)
 # Create .tempdir if it doesn't exist
 ifeq ($(wildcard $(PWD)/.tempdir),)
 workdir := $(shell mktemp -d -t "build_$(pkg_name).XXXXXXXX")
