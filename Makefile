@@ -19,6 +19,7 @@ last_stable ?= 8.2
 
 conda_test_env = test-$(pkg_name)
 conda_build_env = build-$(pkg_name)
+conda_dev_env = dev-$(pkg_name)
 
 branch ?= $(shell git rev-parse --abbrev-ref HEAD)
 extra_channels ?= cdat/label/nightly conda-forge
@@ -62,17 +63,17 @@ help: ## Prints help
 		sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 dev-docker:
-	docker run -d --name genutil-dev -v $(PWD):/src -w /src continuumio/miniconda3 /bin/sleep infinity || exit 0
-	docker start genutil-dev
-	docker exec -it genutil-dev /bin/bash -c "apt update; apt install -y make"
-	docker exec -it genutil-dev /bin/bash -c "make dev-environment"
-	docker exec -it genutil-dev /bin/bash -c "conda init bash; echo 'conda activate dev-$(pkg_name)' >> ~/.bashrc"
-	docker exec -it genutil-dev /bin/bash
+	docker run -d --name $(conda_dev_env) -v $(PWD):/src -w /src continuumio/miniconda3 /bin/sleep infinity || exit 0
+	docker start $(conda_dev_env)
+	docker exec -it $(conda_dev_env) /bin/bash -c "apt update; apt install -y make"
+	docker exec -it $(conda_dev_env) /bin/bash -c "make dev-environment"
+	docker exec -it $(conda_dev_env) /bin/bash -c "conda init bash; echo 'conda activate $(conda_dev_env)' >> ~/.bashrc"
+	docker exec -it $(conda_dev_env) /bin/bash
 
 dev-environment: conda_channels := -c cdat/label/nightly -c conda-forge
 dev-environment: gcc := $(or $(if $(findstring os,Darwin),clang_osx-64), gcc_linux-64)
 dev-environment: conda_pkgs := $(gcc) "numpy>=1.18" udunits expat pytest ipython cdms2 $(test_pkgs)
-dev-environment: export conda_env := dev-$(pkg_name)
+dev-environment: export conda_env := $(conda_dev_env)
 dev-environment: ## Creates dev environment and installs genutil. Will need to run dev-install after any code change.
 ifeq ($(os),Darwin)
 	$(error dev-environment on OSX is not support)
@@ -83,14 +84,17 @@ endif
 
 	$(MAKE) dev-install
 
-dev-install: export conda_env := dev-$(pkg_name)
-dev-install: ## Installs genutil in conda environment "genutil-dev"
+dev-install: export conda_env := $(conda_dev_env)
+dev-install: ## Installs genutil in conda environment "$(conda_dev_env)"
 	source $(conda_activate) $(conda_env); \
 		python setup.py build -gf; \
 		python setup.py install
 
 dev-conda-build: conda_build_extra := --local_repo $(PWD)
 dev-conda-build: setup-build conda-rerender conda-build ## Build conda package
+
+dev-run-tests: ## Runs the tests using environment
+	source $(conda_activate) $(conda_dev_env); python run_tests.py -H -v2 $(coverage)
 
 conda-info: ## Prints conda info for environment
 	source $(conda_activate) base; conda info
