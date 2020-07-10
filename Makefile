@@ -66,7 +66,7 @@ dev-docker:
 	docker start genutil-dev
 	docker exec -it genutil-dev /bin/bash -c "apt update; apt install -y make"
 	docker exec -it genutil-dev /bin/bash -c "make dev-environment"
-	docker exec -it genutil-dev /bin/bash -c "conda init bash; echo 'conda activate genutil-dev' >> ~/.bashrc"
+	docker exec -it genutil-dev /bin/bash -c "conda init bash; echo 'conda activate dev-$(pkg_name)' >> ~/.bashrc"
 	docker exec -it genutil-dev /bin/bash
 
 dev-environment: conda_channels := -c conda-forge
@@ -83,7 +83,7 @@ endif
 
 	$(MAKE) dev-install
 
-dev-install: export conda_env := genutil-dev
+dev-install: export conda_env := dev-$(pkg_name)
 dev-install: ## Installs genutil in conda environment "genutil-dev"
 	source $(conda_activate) $(conda_env); \
 		python setup.py build -gf; \
