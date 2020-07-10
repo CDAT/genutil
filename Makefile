@@ -69,7 +69,7 @@ dev-docker:
 	docker exec -it genutil-dev /bin/bash -c "conda init bash; echo 'conda activate dev-$(pkg_name)' >> ~/.bashrc"
 	docker exec -it genutil-dev /bin/bash
 
-dev-environment: conda_channels := -c conda-forge
+dev-environment: conda_channels := -c cdat/label/nightly -c conda-forge
 dev-environment: gcc := $(or $(if $(findstring os,Darwin),clang_osx-64), gcc_linux-64)
 dev-environment: conda_pkgs := $(gcc) "numpy>=1.18" udunits expat pytest ipython cdms2 $(test_pkgs)
 dev-environment: export conda_env := dev-$(pkg_name)
