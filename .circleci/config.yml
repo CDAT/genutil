@@ -49,7 +49,7 @@ aliases:
        export CONDA_PY_VER="python=$PY_VER"
        export LIBNETCDF_VER="libnetcdf=*=${LIBNETCDF}_*"
        make setup-tests workdir=$WORKDIR extra_pkgs="$CONDA_PY_VER $LIBNETCDF_VER $COVERAGE_PKGS"
-       make conda-dump-env workdir=$WORKDIR artifact_dir=$PWDspec_artifacts conda_env_filename=$CIRCLE_JOB
+       make conda-dump-env workdir=$WORKDIR artifact_dir=$PWD/spec_artifacts conda_env_filename=$CIRCLE_JOB
 
   - &run_tests
     name: run_tests
