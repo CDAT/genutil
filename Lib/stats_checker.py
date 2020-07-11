@@ -4,7 +4,7 @@ from .grower import grower
 from .averager import __check_weightoptions
 
 
-class StatisticsError (Exception):
+class StatisticsError(Exception):
     def __init__(self, args=None):
         """Create an exception"""
         self.args = args
@@ -12,6 +12,7 @@ class StatisticsError (Exception):
     def __str__(self):
         """Calculate the string representation"""
         return str(self.args)
+
     __repr__ = __str__
 
 
@@ -32,10 +33,10 @@ def __makeweights(x, w, axes):
     if not numpy.ma.isarray(w):
         # Ok Krishna returned a list of 1D arrays.... Let's put it together
         axs = x.getAxisList()
-        axes = cdms2.order2index(axs, axes)[:len(cdms2.orderparse(axes))]
+        axes = cdms2.order2index(axs, axes)[: len(cdms2.orderparse(axes))]
         endax = []
         for i in range(len(axes)):
-            if w[i] == 'unweighted':
+            if w[i] == "unweighted":
                 w[i] = numpy.ma.ones(len(axs[axes[i]]), dtype=x.dtype.char)
             if i == 0:
                 wo = w[i]
@@ -45,8 +46,8 @@ def __makeweights(x, w, axes):
                 endax.append(axs[axes[i]])
         w = cdms2.MV2.array(wo)
         w.setAxisList(endax)
-# else:
-# w.setAxisList(x.getAxisList())
+    # else:
+    # w.setAxisList(x.getAxisList())
     return w
 
 
@@ -64,20 +65,21 @@ def __checker(x, y, w, axes, smally=0):
         x = numpy.ma.array(x, copy=0)
     if not numpy.ma.isarray(y) and y is not None:
         y = numpy.ma.array(y, copy=0)
-    if not numpy.ma.isarray(
-            w) and w is not None and not isinstance(w, type('')):
-        if not isinstance(w[0], type('')):
+    if not numpy.ma.isarray(w) and w is not None and not isinstance(w, type("")):
+        if not isinstance(w[0], type("")):
             w = numpy.ma.array(w, copy=0)
         else:
             if not xismv:
                 raise StatisticsError(
-                    'Error if weights are a list then x must be an MV2 !!!')
+                    "Error if weights are a list then x must be an MV2 !!!"
+                )
             w = __makeweights(x, w, axes)
             wismv = 1
     elif w is not None:
         if not xismv:
             raise StatisticsError(
-                'Error if weights are a list then x must be an MV2 !!!')
+                "Error if weights are a list then x must be an MV2 !!!"
+            )
         w = __makeweights(x, w, axes)
         wismv = 1
 
@@ -85,8 +87,9 @@ def __checker(x, y, w, axes, smally=0):
         # We didn't pass all MV2s shapes have to match (unless None)
         if smally == 0:
             if x.shape != numpy.ma.shape(y) and y is not None:
-                raise StatisticsError('Error x and y shape do not match !' +
-                                      str(x.shape) + ',' + str(numpy.ma.shape(y)))
+                raise StatisticsError(
+                    "Error x and y shape do not match !" + str(x.shape) + "," + str(numpy.ma.shape(y))
+                )
         else:
             shy = list(y.shape)
             shy2 = y.shape
@@ -96,7 +99,9 @@ def __checker(x, y, w, axes, smally=0):
                 for i in axes:
                     myaxes.append(eval(i))
             elif isinstance(axes, int):
-                myaxes = [axes, ]
+                myaxes = [
+                    axes,
+                ]
             else:
                 myaxes = list(axes)
             for anaxis in myaxes[::-1]:
@@ -109,25 +114,27 @@ def __checker(x, y, w, axes, smally=0):
                     sh[i] = myaxes[i]
                 y = numpy.ma.transpose(y, sh)
             if x.shape != numpy.ma.shape(y) and y is not None:
-                raise StatisticsError('Error x and y shape do not match (y shouldbe 1D less than x) !' +
-                                      str(x.shape) + ',' + str(shy2) + ' Remember y must be 1D less than x')
+                err_msg = "Error x and y shape do not match (y shouldbe 1D less than x) !"
+                raise StatisticsError(
+                    err_msg + str(x.shape) + "," + str(shy2) + " Remember y must be 1D less than x"
+                )
         if x.shape != numpy.ma.shape(w) and w is not None:
-            raise StatisticsError('Error x and weights shape do not match !' +
-                                  str(x.shape) + ',' + str(numpy.ma.shape(w)) +
-                                  ' ATTENTION if you are trynig to pass a list of 1D arrays' +
-                                  'for each dim, then x must be an MV2 !!!')
+            msg1 = "Error x and weights shape do not match !"
+            msg2 = " ATTENTION if you are trying to pass a list of 1D arrays for each dim, then x must be an MV2 !!!"
+            raise StatisticsError(msg1 + str(x.shape) + "," + str(numpy.ma.shape(w)) + msg2)
         if not isinstance(axes, type([])):
             axes = cdms2.orderparse(str(axes))
         for i in axes:
             if len(x.shape) < i:
-                raise StatisticsError('Error you have ' + str(len(x.shape)) +
-                                      ' dimensions and try to work on dim:' + str(i))
+                err_msg = "Error you have " + str(len(x.shape)) + " dimensions and try to work on dim:" + str(i)
+                raise StatisticsError(err_msg)
     else:
         if y is not None:
             x, y = grower(x, y)
             if x.shape != y.shape:
                 raise StatisticsError(
-                    'Error x and y have different shapes' + str(x.shape) + ', ' + str(y.shape))
+                    "Error x and y have different shapes" + str(x.shape) + ", " + str(y.shape)
+                )
         ax = x.getAxisList()
         xorder = x.getOrder(ids=1)
         # Now grows w
@@ -136,11 +143,13 @@ def __checker(x, y, w, axes, smally=0):
             for o in worder:
                 if o not in xorder:
                     raise StatisticsError(
-                        'Error weights have a dimension that is neither in x or y:' + o)
+                        "Error weights have a dimension that is neither in x or y:" + o
+                    )
             x, w = grower(x, w)
             if x.shape != w.shape:
                 raise StatisticsError(
-                    'Error x and weights have different shapes' + str(x.shape) + ', ' + str(w.shape))
+                    "Error x and weights have different shapes" + str(x.shape) + ", " + str(w.shape)
+                )
         # Last thing convert the axes input to numbers
         if isinstance(axes, type(1)):
             axes = str(axes)
@@ -149,24 +158,21 @@ def __checker(x, y, w, axes, smally=0):
             naxes = len(axesparse)
             for i in range(naxes):
                 o = axesparse[i]
-                if isinstance(o, type('')):
+                if isinstance(o, type("")):
                     for j in range(len(xorder)):
                         if xorder[j] == o:
                             axesparse[i] = j
                     # Well it must be a name for x y t....
-                    if isinstance(axesparse[i], type('')):
+                    if isinstance(axesparse[i], type("")):
                         for j in range(len(x.shape)):
                             if o[1:-1] == x.getAxis(j).id:
                                 axesparse[i] = j
                     # Everything failed the axis id must be not existing in the
                     # slab...
-                    if isinstance(axesparse[i], type('')):
+                    if isinstance(axesparse[i], type("")):
                         raise StatisticsError(
-                            'Error axis id :' +
-                            o +
-                            ' not found in first slab: ' +
-                            x.getOrder(
-                                ids=1))
+                            "Error axis id :" + o + " not found in first slab: " + x.getOrder(ids=1)
+                        )
             axes = axesparse
     # Now we have array those shape match, and a nice list of axes let's keep
     # going
@@ -176,8 +182,12 @@ def __checker(x, y, w, axes, smally=0):
     xorder = list(range(len(x.shape)))
     forder = []
     for i in range(naxes):
-        forder.append(axes[i])
-        n0 = n0 * xsh[axes[i]]
+        a = axes[i]
+        forder.append(a)
+        try:
+            n0 = n0 * xsh[a]
+        except IndexError:
+            raise Exception("Axis {} is out of bounds for dimension {}".format(a, len(xsh)))
     fsh = [n0]
     ax2 = []
     for i in range(len(x.shape)):
