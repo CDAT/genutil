@@ -17,8 +17,8 @@ build_script = conda-recipes/build_tools/conda_build.py
 test_pkgs = testsrunner
 last_stable ?= 8.2
 
-conda_test_env = test-$(pkg_name)
-conda_build_env = build-$(pkg_name)
+conda_test_env ?= test-$(pkg_name)
+conda_build_env ?= build-$(pkg_name)
 conda_dev_env = dev-$(pkg_name)
 
 branch ?= $(shell git rev-parse --abbrev-ref HEAD)
@@ -40,7 +40,7 @@ endif
 workdir := $(shell cat $(PWD)/.tempdir)
 endif
 
-artif_dir = $(workdir)/$(artifact_dir)
+artifact_dir ?= $(PWD)/artifacts
 
 ifneq ($(coverage),)
 coverage = -c tests/coverage.json --coverage-from-egg
@@ -51,7 +51,7 @@ conda_recipes_branch ?= master
 conda_base = $(patsubst %/bin/conda,%,$(conda))
 conda_activate = $(conda_base)/bin/activate
 
-conda_build_extra = --copy_conda_package $(artif_dir)/
+conda_build_extra = --copy_conda_package $(artifact_dir)/
 
 # Is this needed?
 # ifndef $(local_repo)
@@ -120,15 +120,15 @@ conda-rerender: setup-build ## Rerender conda recipe using conda-smithy
 		--conda_activate $(conda_activate)
 
 conda-build: ## Builds conda recipe
-	mkdir -p $(artif_dir)
+	mkdir -p $(artifact_dir)
 
 	python $(workdir)/$(build_script) -w $(workdir) -p $(pkg_name) --build_version $(build_version) \
 		--do_build --conda_env $(conda_build_env) --extra_channels $(extra_channels) \
 		--conda_activate $(conda_activate) $(conda_build_extra)
 
-conda-upload: ## Upload conda packages in artifcat directory
+conda-upload: ## Upload conda packages in artifact directory
 	source $(conda_activate) $(conda_build_env); \
-		anaconda -t $(conda_upload_token) upload -u $(user) -l $(label) --force $(artif_dir)/*.tar.bz2
+		anaconda -t $(conda_upload_token) upload -u $(user) -l $(label) --force $(artifact_dir)/*.tar.bz2
 
 conda-dump-env: ## Dumps conda environment
 	mkdir -p $(artifact_dir)
