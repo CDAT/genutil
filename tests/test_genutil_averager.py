@@ -6,6 +6,13 @@ cdms2.setAutoBounds('on')
 import unittest
 
 class GENUTIL(unittest.TestCase):
+    def testError(self):
+        error = AveragerError("Custom error message")
+
+        print(str(error))
+
+        self.assertTrue(str(error) == "Custom error message")
+
     def testAverager(self):
         f=cdms2.open(os.path.join(cdat_info.get_sampledata_path(),'tas_ukmo_con.nc'))
         x = f('tas')

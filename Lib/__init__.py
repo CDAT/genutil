@@ -21,6 +21,7 @@ from .ASCII import get_parenthesis_content  # noqa
 import os  # noqa
 import sys  # noqa
 import cdat_info
+from .stats_checker import StatisticsError  # noqa
 
 # udunits bits
 from .udunits import udunits, addBaseUnit, addDimensionlessUnit, addScaledUnit  # noqa

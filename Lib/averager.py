@@ -11,14 +11,7 @@ except NameError:
 
 
 class AveragerError (Exception):
-    def __init__(self, args=None):
-        """Create an exception"""
-        self.args = args
-
-    def __str__(self):
-        """Calculate the string representation"""
-        return str(self.args)
-    __repr__ = __str__
+    pass
 
 
 def _check_axisoptions(x, axisoptions):

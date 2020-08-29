@@ -5,15 +5,7 @@ from .averager import __check_weightoptions
 
 
 class StatisticsError(Exception):
-    def __init__(self, args=None):
-        """Create an exception"""
-        self.args = args
-
-    def __str__(self):
-        """Calculate the string representation"""
-        return str(self.args)
-
-    __repr__ = __str__
+    pass
 
 
 def __makeweights(x, w, axes):
