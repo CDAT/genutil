@@ -22,6 +22,7 @@ jobs:
         days-before-stale: 30
         days-before-close: 7
         stale-issue-label: 'stale'
-        exempt-issue-labels: 'kind/bug,kind/package,kind/feature' 
+        exempt-issue-labels: 'kind/bug,kind/package,kind/feature'
         stale-pr-label: 'stale'
+        exempt-pr-labels: 'work-in-progress'
         debug-only: false # Setting to true will enable dry-run
