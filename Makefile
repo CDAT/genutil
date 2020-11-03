@@ -15,7 +15,7 @@ label ?= nightly
 build_script = conda-recipes/build_tools/conda_build.py
 
 test_pkgs = testsrunner
-last_stable ?= 8.2
+last_stable ?= 8.2.1
 
 conda_test_env ?= test-$(pkg_name)
 conda_build_env ?= build-$(pkg_name)
