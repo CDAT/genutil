@@ -1,0 +1,5 @@
+build/
+dist/
+genutil.egg-info/
+tests/__pycache__/
+tests/.last_failure

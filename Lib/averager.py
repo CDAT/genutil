@@ -11,14 +11,7 @@ except NameError:
 
 
 class AveragerError (Exception):
-    def __init__(self, args=None):
-        """Create an exception"""
-        self.args = args
-
-    def __str__(self):
-        """Calculate the string representation"""
-        return str(self.args)
-    __repr__ = __str__
+    pass
 
 
 def _check_axisoptions(x, axisoptions):
@@ -442,7 +435,7 @@ def __check_weightoptions(x, axisoptions, weightoptions):
     if __DEBUG__:
         print('axislist = ', axislist)
     #
-    if not isinstance(weightoptions, list):
+    if not isinstance(weightoptions, (list, tuple)):
         #
         # We have either 1 axis only or multiple axes and one MV2 of weights
         #
@@ -490,6 +483,11 @@ def __check_weightoptions(x, axisoptions, weightoptions):
         #
         # We have multiple axes to deal with each with a weight....
         #
+
+        # Ensure we have a mutable list, handles tuple (https://github.com/CDAT/genutil/issues/32
+        if not isinstance(weightoptions, list):
+            weightoptions = list(weightoptions)
+
         for i in range(len(axislist)):
             weightoptions[i] = __check_each_weight_option(
                 x, axislist[i], axisindex[i], weightoptions[i])
